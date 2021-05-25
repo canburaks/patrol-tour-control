@@ -21,6 +21,8 @@ import Application from '@ioc:Adonis/Core/Application'
 import Route from '@ioc:Adonis/Core/Route'
 import HealthCheck from '@ioc:Adonis/Core/HealthCheck'
 import PrismaController from '../app/Controllers/Http/PrismaController'
+import MailController from '../app/Controllers/Http/MailController'
+import View from '@ioc:Adonis/Core/View'
 
 const COOKIE_NAME = Application.config.get('session.cookieName')
 
@@ -46,7 +48,7 @@ Route.get('/dashboard', async ({ request, response, view, session }) => {
 
 /* LOGIN */
 Route.get('/login', async ctx => {
-	let { request, auth, response, session, view } = ctx
+	let { request, response, session, view } = ctx
 	const sessionValue = session.get(COOKIE_NAME, {})
 	console.log('Login route session value: ', sessionValue)
 	return view.render('auth/login', { error: sessionValue.error && sessionValue.error })
@@ -64,7 +66,14 @@ Route.post('/login', async ctx => {
 
 /* LOGIN */
 Route.get('/logout', async ctx => {
-	let { request, auth, response, session, view } = ctx
+	let { request, response, session, view } = ctx
 	const sessionValue = session.put(COOKIE_NAME, {})
 	return response.redirect().toPath('/')
+})
+
+Route.post('/mail', async ctx => {
+	new MailController().send(ctx)
+})
+Route.get('/mail', async ctx => {
+	return ctx.view.render('emails/form')
 })

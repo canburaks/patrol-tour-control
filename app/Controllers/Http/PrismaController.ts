@@ -54,8 +54,8 @@ export default class PrismaController {
 		// SUCCESS
 		const NAME = operatorData.OP_ADI
 			? operatorData.OP_ADI
-			: bayilerData.ADI
-			? bayilerData.ADI
+			: bayilerData?.ADI
+			? bayilerData?.ADI
 			: null
 
 		const authorizedOperatorData = {
