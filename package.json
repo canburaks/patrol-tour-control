@@ -6,9 +6,11 @@
     "build": "node ace build --production",
     "start": "node server.js",
     "dev": "node ace serve --watch",
+	"pre-production": "ENV_PATH=/home/cbs/Projects/Github/patrol-tour-control/.env node server.js",
     "lint": "eslint . --ext=.ts",
     "format": "prettier --write ."
   },
+  "engines" : { "node" : "14.15.4" },
   "devDependencies": {
     "@adonisjs/assembler": "^5.1.1",
     "@symfony/webpack-encore": "^1.2.0",
