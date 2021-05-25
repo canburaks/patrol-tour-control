@@ -3,9 +3,10 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "build": "node ace build --production --no-assets",
+    "build": "node ace build --production",
     "start": "node server.js",
     "dev": "node ace serve --watch",
+	"pre-production": "ENV_PATH=/home/cbs/Projects/Github/patrol-tour-control/.env node server.js",
     "lint": "eslint . --ext=.ts",
     "format": "prettier --write ."
   },
