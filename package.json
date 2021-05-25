@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "build": "node ace build --production",
-    "start": "node build/server.js ENV_PATH=/etc/myapp/.env",
+    "start": "node server.js",
     "dev": "node ace serve --watch",
     "lint": "eslint . --ext=.ts",
     "format": "prettier --write ."
