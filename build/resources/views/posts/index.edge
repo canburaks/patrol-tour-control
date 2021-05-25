@@ -1,0 +1,17 @@
+@layout('layouts/master')
+@section('content')
+
+<main class="flex flex-col w-auto max-w-full overflow-x-hidden">
+  <h1>This is post list page</h1>
+
+    <div class="w-12">
+
+    @each(item in posts)
+        <a href="{{ item.id }}"> {{ item.name }} </a>
+    @end
+
+    </div>
+
+</main>
+
+@endsection
