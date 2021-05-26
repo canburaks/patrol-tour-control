@@ -1,18 +1,20 @@
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Mail from '@ioc:Adonis/Addons/Mail'
+import Env from '@ioc:Adonis/Core/Env'
 
 export default class MailController {
-	public async send({ request, response, view }: HttpContextContract) {
-		const email = request.input('email')
-		const tel = request.input('tel')
-		console.log('mail params: ', email, tel)
-		const mailObject = await this.sender({
-			from: 'info@webmeister.org',
-			to: email,
-			subject: 'Adonis mail',
-		})
-		console.log('mail object', mailObject)
-		return view.renderRaw(`OK! email:${email} tel:${tel}`)
+	public static SENDER = Env.get('SMTP_USERNAME')
+	public static TARGET = 'info@filizguvenlik.com.tr'
+	public static SUBJECT = 'ÖNEMLİ !!! Bir Ziyaretçi form doldurdu.'
+
+	public async formHandler({ request, response, view }: HttpContextContract) {
+		const formData = request.all()
+		const data = {
+			website: request.input('sender'),
+			...formData,
+		}
+		this.sendLater(data)
+		return `OK! ${JSON.stringify(data).split(',').join('\n')}`
 	}
 
 	public async create({}: HttpContextContract) {}
@@ -27,15 +29,15 @@ export default class MailController {
 
 	public async destroy({}: HttpContextContract) {}
 
-	public async sender({ from, to, subject }) {
-		const mailObject = await Mail.send(message => {
+	public async sendLater(data) {
+		const mailObject = await Mail.sendLater(message => {
 			message
-				.from(from)
-				.to(to)
-				.subject(subject)
-				.htmlView('emails/welcome', {
-					user: { fullName: 'Can Burak' },
-					url: 'https://your-app.com/verification-url',
+				.from(MailController.SENDER)
+				.to(MailController.TARGET)
+				.subject(MailController.SUBJECT)
+				.priority('high')
+				.htmlView('emails/template', {
+					data: { ...data },
 				})
 		})
 		return mailObject
