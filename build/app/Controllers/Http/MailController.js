@@ -4,18 +4,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const Mail_1 = __importDefault(global[Symbol.for('ioc.use')]("Adonis/Addons/Mail"));
+const Env_1 = __importDefault(global[Symbol.for('ioc.use')]("Adonis/Core/Env"));
 class MailController {
-    async send({ request, response, view }) {
-        const email = request.input('email');
-        const tel = request.input('tel');
-        console.log('mail params: ', email, tel);
-        const mailObject = await this.sender({
-            from: 'info@webmeister.org',
-            to: email,
-            subject: 'Adonis mail',
-        });
-        console.log('mail object', mailObject);
-        return view.renderRaw(`OK! email:${email} tel:${tel}`);
+    async formHandler({ request, response, view }) {
+        const formData = request.all();
+        const data = {
+            website: request.input('sender'),
+            ...formData,
+        };
+        this.sendLater(data);
+        return `OK! ${JSON.stringify(data).split(',').join('\n')}`;
     }
     async create({}) { }
     async store({}) { }
@@ -23,19 +21,22 @@ class MailController {
     async edit({}) { }
     async update({}) { }
     async destroy({}) { }
-    async sender({ from, to, subject }) {
-        const mailObject = await Mail_1.default.send(message => {
+    async sendLater(data) {
+        const mailObject = await Mail_1.default.sendLater(message => {
             message
-                .from(from)
-                .to(to)
-                .subject(subject)
-                .htmlView('emails/welcome', {
-                user: { fullName: 'Can Burak' },
-                url: 'https://your-app.com/verification-url',
+                .from(MailController.SENDER)
+                .to(MailController.TARGET)
+                .subject(MailController.SUBJECT)
+                .priority('high')
+                .htmlView('emails/template', {
+                data: { ...data },
             });
         });
         return mailObject;
     }
 }
 exports.default = MailController;
+MailController.SENDER = Env_1.default.get('SMTP_USERNAME');
+MailController.TARGET = 'info@filizguvenlik.com.tr';
+MailController.SUBJECT = 'ÖNEMLİ !!! Bir Ziyaretçi form doldurdu.';
 //# sourceMappingURL=MailController.js.map

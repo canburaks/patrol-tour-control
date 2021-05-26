@@ -71,9 +71,12 @@ Route.get('/logout', async ctx => {
 	return response.redirect().toPath('/')
 })
 
-Route.post('/mail', async ctx => {
-	new MailController().send(ctx)
-})
-Route.get('/mail', async ctx => {
+// TEST FORM
+Route.get('/form', async ctx => {
 	return ctx.view.render('emails/form')
+})
+
+// FORM ENDPOINT
+Route.post('/form-endpoint', async ctx => {
+	return new MailController().formHandler(ctx)
 })

@@ -44,10 +44,10 @@ Route_1.default.get('/logout', async (ctx) => {
     const sessionValue = session.put(COOKIE_NAME, {});
     return response.redirect().toPath('/');
 });
-Route_1.default.post('/mail', async (ctx) => {
-    new MailController_1.default().send(ctx);
-});
-Route_1.default.get('/mail', async (ctx) => {
+Route_1.default.get('/form', async (ctx) => {
     return ctx.view.render('emails/form');
+});
+Route_1.default.post('/form-endpoint', async (ctx) => {
+    return new MailController_1.default().formHandler(ctx);
 });
 //# sourceMappingURL=routes.js.map
