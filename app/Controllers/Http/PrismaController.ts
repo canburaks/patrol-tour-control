@@ -6,6 +6,11 @@ const COOKIE_NAME = Application.config.get('session.cookieName')
 const prisma = new PrismaClient()
 
 export default class PrismaController {
+	constructor() {
+		PrismaController.client = new PrismaClient()
+	}
+	public static client
+
 	public async index(ctx: HttpContextContract) {}
 
 	public async fresh(ctx: HttpContextContract) {
@@ -127,7 +132,7 @@ export default class PrismaController {
 	public async destroy({}: HttpContextContract) {}
 
 	public async queryOperators(OP_KODU, MPAROLA) {
-		return await prisma.operators.findFirst({
+		return await PrismaController.client().operators.findFirst({
 			where: {
 				OP_KODU: OP_KODU,
 				MPAROLA: MPAROLA,
@@ -143,7 +148,7 @@ export default class PrismaController {
 		})
 	}
 	public async queryBayiler(OP_KODU) {
-		return await prisma.bayiler.findFirst({
+		return await PrismaController.client().bayiler.findFirst({
 			where: {
 				KODU: OP_KODU,
 			},
@@ -155,7 +160,7 @@ export default class PrismaController {
 		})
 	}
 	public async queryMusteri(F_KODU, WEBPAROLA) {
-		return await prisma.musteri.findFirst({
+		return await PrismaController.client().musteri.findFirst({
 			where: {
 				F_KODU: F_KODU,
 				WEBPAROLA: WEBPAROLA,
@@ -174,7 +179,7 @@ export default class PrismaController {
 			.catch(e => {
 				throw e
 			})
-			.finally(async () => await prisma.$disconnect())
+			.finally(async () => await PrismaController.client.$disconnect())
 	}
 
 	// eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
