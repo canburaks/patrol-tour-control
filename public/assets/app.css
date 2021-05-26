@@ -1013,11 +1013,11 @@ select {
   --list-counter-style: lower-alpha;
 }
 
-.prose ol[type="A s"] {
+.prose ol[type="A" s] {
   --list-counter-style: upper-alpha;
 }
 
-.prose ol[type="a s"] {
+.prose ol[type="a" s] {
   --list-counter-style: lower-alpha;
 }
 
@@ -1029,11 +1029,11 @@ select {
   --list-counter-style: lower-roman;
 }
 
-.prose ol[type="I s"] {
+.prose ol[type="I" s] {
   --list-counter-style: upper-roman;
 }
 
-.prose ol[type="i s"] {
+.prose ol[type="i" s] {
   --list-counter-style: lower-roman;
 }
 
@@ -32035,11 +32035,11 @@ button {
     --list-counter-style: lower-alpha;
   }
 
-  .sm\:prose ol[type="A s"] {
+  .sm\:prose ol[type="A" s] {
     --list-counter-style: upper-alpha;
   }
 
-  .sm\:prose ol[type="a s"] {
+  .sm\:prose ol[type="a" s] {
     --list-counter-style: lower-alpha;
   }
 
@@ -32051,11 +32051,11 @@ button {
     --list-counter-style: lower-roman;
   }
 
-  .sm\:prose ol[type="I s"] {
+  .sm\:prose ol[type="I" s] {
     --list-counter-style: upper-roman;
   }
 
-  .sm\:prose ol[type="i s"] {
+  .sm\:prose ol[type="i" s] {
     --list-counter-style: lower-roman;
   }
 
@@ -62883,11 +62883,11 @@ button {
     --list-counter-style: lower-alpha;
   }
 
-  .md\:prose ol[type="A s"] {
+  .md\:prose ol[type="A" s] {
     --list-counter-style: upper-alpha;
   }
 
-  .md\:prose ol[type="a s"] {
+  .md\:prose ol[type="a" s] {
     --list-counter-style: lower-alpha;
   }
 
@@ -62899,11 +62899,11 @@ button {
     --list-counter-style: lower-roman;
   }
 
-  .md\:prose ol[type="I s"] {
+  .md\:prose ol[type="I" s] {
     --list-counter-style: upper-roman;
   }
 
-  .md\:prose ol[type="i s"] {
+  .md\:prose ol[type="i" s] {
     --list-counter-style: lower-roman;
   }
 
@@ -93731,11 +93731,11 @@ button {
     --list-counter-style: lower-alpha;
   }
 
-  .lg\:prose ol[type="A s"] {
+  .lg\:prose ol[type="A" s] {
     --list-counter-style: upper-alpha;
   }
 
-  .lg\:prose ol[type="a s"] {
+  .lg\:prose ol[type="a" s] {
     --list-counter-style: lower-alpha;
   }
 
@@ -93747,11 +93747,11 @@ button {
     --list-counter-style: lower-roman;
   }
 
-  .lg\:prose ol[type="I s"] {
+  .lg\:prose ol[type="I" s] {
     --list-counter-style: upper-roman;
   }
 
-  .lg\:prose ol[type="i s"] {
+  .lg\:prose ol[type="i" s] {
     --list-counter-style: lower-roman;
   }
 
@@ -124579,11 +124579,11 @@ button {
     --list-counter-style: lower-alpha;
   }
 
-  .xl\:prose ol[type="A s"] {
+  .xl\:prose ol[type="A" s] {
     --list-counter-style: upper-alpha;
   }
 
-  .xl\:prose ol[type="a s"] {
+  .xl\:prose ol[type="a" s] {
     --list-counter-style: lower-alpha;
   }
 
@@ -124595,11 +124595,11 @@ button {
     --list-counter-style: lower-roman;
   }
 
-  .xl\:prose ol[type="I s"] {
+  .xl\:prose ol[type="I" s] {
     --list-counter-style: upper-roman;
   }
 
-  .xl\:prose ol[type="i s"] {
+  .xl\:prose ol[type="i" s] {
     --list-counter-style: lower-roman;
   }
 
@@ -155427,11 +155427,11 @@ button {
     --list-counter-style: lower-alpha;
   }
 
-  .\32xl\:prose ol[type="A s"] {
+  .\32xl\:prose ol[type="A" s] {
     --list-counter-style: upper-alpha;
   }
 
-  .\32xl\:prose ol[type="a s"] {
+  .\32xl\:prose ol[type="a" s] {
     --list-counter-style: lower-alpha;
   }
 
@@ -155443,11 +155443,11 @@ button {
     --list-counter-style: lower-roman;
   }
 
-  .\32xl\:prose ol[type="I s"] {
+  .\32xl\:prose ol[type="I" s] {
     --list-counter-style: upper-roman;
   }
 
-  .\32xl\:prose ol[type="i s"] {
+  .\32xl\:prose ol[type="i" s] {
     --list-counter-style: lower-roman;
   }
 
