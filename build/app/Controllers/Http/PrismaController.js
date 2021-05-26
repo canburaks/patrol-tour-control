@@ -8,6 +8,9 @@ const Application_1 = __importDefault(global[Symbol.for('ioc.use')]("Adonis/Core
 const COOKIE_NAME = Application_1.default.config.get('session.cookieName');
 const prisma = new client_1.PrismaClient();
 class PrismaController {
+    constructor() {
+        PrismaController.client = new client_1.PrismaClient();
+    }
     async index(ctx) { }
     async fresh(ctx) {
         const COOKIE_NAME = Application_1.default.config.get('session.cookieName');
@@ -94,7 +97,7 @@ class PrismaController {
     async update({}) { }
     async destroy({}) { }
     async queryOperators(OP_KODU, MPAROLA) {
-        return await prisma.operators.findFirst({
+        return await PrismaController.client().operators.findFirst({
             where: {
                 OP_KODU: OP_KODU,
                 MPAROLA: MPAROLA,
@@ -110,7 +113,7 @@ class PrismaController {
         });
     }
     async queryBayiler(OP_KODU) {
-        return await prisma.bayiler.findFirst({
+        return await PrismaController.client().bayiler.findFirst({
             where: {
                 KODU: OP_KODU,
             },
@@ -122,7 +125,7 @@ class PrismaController {
         });
     }
     async queryMusteri(F_KODU, WEBPAROLA) {
-        return await prisma.musteri.findFirst({
+        return await PrismaController.client().musteri.findFirst({
             where: {
                 F_KODU: F_KODU,
                 WEBPAROLA: WEBPAROLA,
@@ -141,7 +144,7 @@ class PrismaController {
             .catch(e => {
             throw e;
         })
-            .finally(async () => await prisma.$disconnect());
+            .finally(async () => await PrismaController.client.$disconnect());
     }
     hasCredentials(request) {
         const existingUser = request.cookie('user', []);
