@@ -115,8 +115,6 @@ export default class PrismaController {
 		return view.render('dashboard', sessionValue)
 	}
 
-
-
 	public async queryMesajlarByMuster(F_KODU: string) {
 		return await PrismaController.client.mesajlar.findMany({
 			where: {
