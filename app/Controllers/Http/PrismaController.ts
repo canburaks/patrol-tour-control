@@ -13,20 +13,6 @@ export default class PrismaController {
 
 	public async index(ctx: HttpContextContract) {}
 
-	public async fresh(ctx: HttpContextContract) {
-		const COOKIE_NAME = Application.config.get('session.cookieName')
-
-		const newuser = {
-			userId: null,
-			password: null,
-			accountType: null,
-		}
-
-		ctx.response.cookie(COOKIE_NAME, newuser)
-		console.log('cookie', ctx.request.cookie(COOKIE_NAME))
-		return ctx.view.render('auth/login')
-	}
-
 	public async authBayi({ request, response, view, session }: HttpContextContract) {
 		const accountId = request.input('accountId')
 		const password = request.input('password')
@@ -35,27 +21,24 @@ export default class PrismaController {
 		const formData = {
 			// Database'de aboneler F_KODU ile, bayiler OP_KODU ile giriş yapıyor.
 			OP_KODU: accountId,
-			MPAROLA: password,
+			MPAROLA: password
 		}
 		console.log('bayi formData: ', formData)
 
 		// QUERY
-		const operatorData = await new PrismaController().queryOperators(
-			formData.OP_KODU,
-			formData.MPAROLA
-		)
+		const operatorData = await this.queryOperators(formData.OP_KODU, formData.MPAROLA)
 		console.log('query result: ', operatorData)
 		// FAIL
 		if (!operatorData) {
 			return view.render('auth/login', {
 				error: 'Kullanıcı adınız ya da parolanız yanlış.',
 				accountId,
-				accountType,
+				accountType
 			})
 		}
 
 		// QUERY BAYILER
-		const bayilerData = await new PrismaController().queryBayiler(formData.OP_KODU)
+		const bayilerData = await this.queryBayiler(formData.OP_KODU)
 		// SUCCESS
 		const NAME = operatorData.OP_ADI
 			? operatorData.OP_ADI
@@ -70,15 +53,23 @@ export default class PrismaController {
 			NAME: NAME,
 			ADI: bayilerData?.ADI,
 			KODU: bayilerData?.KODU,
-			...operatorData,
+			BAYI: bayilerData?.ID,
+			...operatorData
 		}
+		console.log('authorizedOperatorData: ', authorizedOperatorData)
 		const sessionValue = session.put(COOKIE_NAME, authorizedOperatorData)
+
+		// Query Bayi Musterileri
+		const bayiMusterileri = await this.queryMusteriByBayi(parseInt(authorizedOperatorData.BAYI))
+		authorizedOperatorData.MUSTERILER = bayiMusterileri
+
+		console.log('query musteriByBayi: ', '\n\n', bayiMusterileri)
 		//console.log('sessionValue', sessionValue)
 		response.cookie(COOKIE_NAME, authorizedOperatorData)
 		return response.redirect().toPath('/dashboard')
 	}
 
-	public async authAbone({ request, response, view, session }: HttpContextContract) {
+	public async authMusteri({ request, response, view, session }: HttpContextContract) {
 		const accountId = request.input('accountId')
 		const password = request.input('password')
 		const accountType = request.input('accountType')
@@ -86,22 +77,19 @@ export default class PrismaController {
 		const formData = {
 			// Database'de aboneler F_KODU ile, bayiler OP_KODU ile giriş yapıyor.
 			F_KODU: accountId,
-			WEBPAROLA: password,
+			WEBPAROLA: password
 		}
 		console.log('abone formData: ', formData)
 
 		// QUERY
-		const musteriData = await new PrismaController().queryMusteri(
-			formData.F_KODU,
-			formData.WEBPAROLA
-		)
+		const musteriData = await this.queryMusteri(formData.F_KODU, formData.WEBPAROLA)
 		console.log('musteri query result: ', musteriData)
 		// FAIL
 		if (!musteriData) {
 			return view.render('auth/login', {
 				error: 'Kullanıcı adınız ya da parolanız yanlış.',
 				accountId,
-				accountType,
+				accountType
 			})
 		}
 
@@ -113,29 +101,46 @@ export default class PrismaController {
 			data: new Date(),
 			accountType: accountType,
 			NAME: NAME,
-			...musteriData,
+			...musteriData
 		}
 		const sessionValue = session.put(COOKIE_NAME, authorizedMusteriData)
 		//console.log('sessionValue', sessionValue)
 		response.cookie(COOKIE_NAME, authorizedMusteriData)
-		return response.redirect().toPath('/dashboard')
+		return response.redirect().toPath(`/account/${authorizedMusteriData.F_KODU}`)
 	}
 
 	public async dashboard({ request, response, view, session }: HttpContextContract) {
 		const sessionValue = session.get(COOKIE_NAME)
+
+		return view.render('dashboard', sessionValue)
 	}
 
-	public async edit({}: HttpContextContract) {}
 
-	public async update({}: HttpContextContract) {}
 
-	public async destroy({}: HttpContextContract) {}
+	public async queryMesajlarByMuster(F_KODU: string) {
+		return await PrismaController.client.mesajlar.findMany({
+			where: {
+				F_KODU: F_KODU,
+				OR: [{ ALARMKODU: 'E120' }, { ALARMKODU: 'E130' }]
+			},
+			select: {
+				ALARMKODU: true,
+				BOLGE: true,
+				KULLANICI: true,
+				MESAJTIPI: true,
+				MESAJ: true,
+				TARIH: true
+			},
+			orderBy: { TARIH: 'desc' },
+			take: 2
+		})
+	}
 
 	public async queryOperators(OP_KODU, MPAROLA) {
-		return await PrismaController.client().operators.findFirst({
+		return await PrismaController.client.operators.findFirst({
 			where: {
 				OP_KODU: OP_KODU,
-				MPAROLA: MPAROLA,
+				MPAROLA: MPAROLA
 			},
 			select: {
 				ID: true,
@@ -143,37 +148,51 @@ export default class PrismaController {
 				OP_ADI: true,
 				BAYIID: true,
 				MPAROLA: true,
-				TIP: true,
-			},
+				TIP: true
+			}
 		})
 	}
 	public async queryBayiler(OP_KODU) {
-		return await PrismaController.client().bayiler.findFirst({
+		return await PrismaController.client.bayiler.findFirst({
 			where: {
-				KODU: OP_KODU,
+				KODU: OP_KODU
 			},
 			select: {
 				ID: true,
 				ADI: true,
-				KODU: true,
-			},
+				KODU: true
+			}
 		})
 	}
 	public async queryMusteri(F_KODU, WEBPAROLA) {
-		return await PrismaController.client().musteri.findFirst({
+		return await PrismaController.client.musteri.findFirst({
 			where: {
 				F_KODU: F_KODU,
-				WEBPAROLA: WEBPAROLA,
+				WEBPAROLA: WEBPAROLA
 			},
 			select: {
 				ID: true,
 				F_KODU: true,
 				FIRMA_ADI: true,
 				WEBPAROLA: true,
-				BAYI: true,
-			},
+				BAYI: true
+			}
 		})
 	}
+	public async queryMusteriByBayi(BAYI: number) {
+		return await PrismaController.client.musteri.findMany({
+			where: {
+				BAYI
+			},
+			select: {
+				ID: true,
+				F_KODU: true,
+				FIRMA_ADI: true,
+				BAYI: true
+			}
+		})
+	}
+
 	public async disconnect(outerFunction) {
 		outerFunction()
 			.catch(e => {

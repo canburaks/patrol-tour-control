@@ -1,6 +1,10 @@
 import '../css/app.css'
+import { Grid } from 'gridjs'
+import 'gridjs/dist/theme/mermaid.css'
+
+window.Grid = Grid
+/*
 import themify from './theme'
-//console.log('app js')
 ;(function init() {
 	document.documentElement.dataset.theme = 'aqua'
 })()
