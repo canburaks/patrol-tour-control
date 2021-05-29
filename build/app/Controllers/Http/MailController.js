@@ -10,7 +10,7 @@ class MailController {
         const formData = request.all();
         const data = {
             website: request.input('sender'),
-            ...formData,
+            ...formData
         };
         this.sendLater(data);
         return `OK! ${JSON.stringify(data).split(',').join('\n')}`;
@@ -29,7 +29,7 @@ class MailController {
                 .subject(MailController.SUBJECT)
                 .priority('high')
                 .htmlView('emails/template', {
-                data: { ...data },
+                data: { ...data }
             });
         });
         return mailObject;

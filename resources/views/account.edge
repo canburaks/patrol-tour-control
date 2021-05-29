@@ -1,0 +1,241 @@
+@layout('layouts/master')
+
+
+@section('content')
+<section class="text-gray-700 ">
+<div class="flex flex-col lg:flex-row min-h-full font-semibold text-blue-900 text-base subpixel-antialiased">
+
+
+
+	<!--- sidebar -->
+	<div id="menu" class="bg-white w-54 xl:w-64 2xl:w-80 px-4 lg:px-6 xl:px-8 pt-4 lg:pt-6 sticky top-0 bottom-0 hidden lg:flex flex-col shadow-inner h-screen border-l-8 border-blue-900 z-10">
+
+	  <!-- menu and logo-->
+	  <div class="flex-1 pt-4">
+		<a href="/account/{{ F_KODU }}"  class="hidden md:block">
+		  <span class="sr-only">{{FIRMA_ADI}}</span>
+		</a>
+		<nav class="mx-2">
+		  <ul class="text-base pt-2 space-y-3">
+			<li>
+			  <a href="{{accountType === "abone" ? `/account/${F_KODU}` : "/dashboard"}}" class="bg-blue-50 hover:bg-blue-50 transition-colors duration-100 text-blue-800 flex items-end py-3 px-4 space-x-2 rounded-lg font-bold">
+				<svg class="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+				  <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"></path>
+				</svg>
+				<span class="flex-1">
+				  Panel
+				</span>
+			  </a>
+			</li>
+			<!--li>
+			  <a href="#" class="bg-white hover:bg-blue-50 transition-colors duration-100 text-blue-800 flex items-end py-3 px-4 space-x-2 rounded-lg font-bold text-opacity-70 hover:text-opacity-100">
+				<svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+				  <path fill-rule="evenodd" d="M5 3a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V5a2 2 0 00-2-2H5zm0 2h10v7h-2l-1 2H8l-1-2H5V5z" clip-rule="evenodd"></path>
+				</svg>
+				<span class="flex-1">
+				  Inbox
+				</span>
+				<span class="bg-red-500 text-white text-xs w-5 h-5 rounded-full inline-flex items-center justify-center">
+				  3
+				</span>
+			  </a>
+			</li>
+			<li>
+			  <a href="#" class="bg-white hover:bg-blue-50 transition-colors duration-100 text-blue-800 flex items-end py-3 px-4 space-x-2 rounded-lg font-bold text-opacity-70 hover:text-opacity-100">
+				<svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+				  <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"></path>
+				</svg>
+				<span class="flex-1">
+				  Sales
+				</span>
+			  </a>
+			</li>
+			<li>
+			  <a href="#" class="bg-white hover:bg-blue-50 transition-colors duration-100 text-blue-800 flex items-end py-3 px-4 space-x-2 rounded-lg font-bold text-opacity-70 hover:text-opacity-100">
+				<svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+				  <path d="M5.5 16a3.5 3.5 0 01-.369-6.98 4 4 0 117.753-1.977A4.5 4.5 0 1113.5 16h-8z"></path>
+				</svg>
+				<span class="flex-1">
+				  Downloads
+				</span>
+			  </a>
+			</li>
+			<li>
+			  <a href="#" class="bg-white hover:bg-blue-50 transition-colors duration-100 text-blue-800 flex items-end py-3 px-4 space-x-2 rounded-lg font-bold text-opacity-70 hover:text-opacity-100">
+				<svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+				  <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"></path>
+				</svg>
+				<span class="flex-1">
+				  Team
+				</span>
+			  </a>
+			</li-->
+		  </ul>
+		</nav>
+	  </div>
+	  <!--/ menu and logo -->
+
+	  <!-- profile link -->
+	  <a href="/logout" class="text-teal-600 px-8 py-2 mb-4 border-teal-600  font-medium leading-6 border-2 rounded-lg transition ease-out duration-300 hover:text-blueGray-100 hover:bg-teal-600">
+		  Çıkış yap
+	  </a>
+
+	  <!--/ profile link -->
+
+	</div>
+	<!--/ sidebar -->
+
+	<div class="flex-1 flex flex-col bg-white py-4 lg:py-8 px-4 lg:px-6 xl:px-8 overflow-hidden">
+
+	  <!-- topbar -->
+	  <div class="max-w-screen-2xl w-full mx-auto flex justify-between">
+		<div class="hidden md:block">
+		  <h1 class="text-2xl mb-1 font-bold text-blue-800">Hoşgeldiniz, {{FIRMA_ADI}}.</h1>
+		  <p class="text-lg text-blue-900 hidden font-normal lg:block">Sistem sinyallerinizi inceleyin.</p>
+		</div>
+
+	  </div>
+	  <!--/ topbar -->
+
+	  <!-- main content -->
+	  <div class="flex-1 py-4 lg:py-10">
+		<div class="max-w-screen-2xl mx-auto">
+
+		  <!-- cards row -->
+		  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 2xl:gap-8">
+
+			<!-- monthly target -->
+			<!--div class="col-span-1 bg-white rounded-lg px-4 lg:px-8 py-4 lg:py-6">
+			  <h2 class="text-xl text-blue-900 font-bold mb-4 lg:mb-6">Monthly target</h2>
+			  <div class="flex space-x-4 items-end mb-4 lg:mb-6">
+				<div class="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center">
+				  <svg class="w-6 h-6 text-blue-500" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+					<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.736 6.979C9.208 6.193 9.696 6 10 6c.304 0 .792.193 1.264.979a1 1 0 001.715-1.029C12.279 4.784 11.232 4 10 4s-2.279.784-2.979 1.95c-.285.475-.507 1-.67 1.55H6a1 1 0 000 2h.013a9.358 9.358 0 000 1H6a1 1 0 100 2h.351c.163.55.385 1.075.67 1.55C7.721 15.216 8.768 16 10 16s2.279-.784 2.979-1.95a1 1 0 10-1.715-1.029c-.472.786-.96.979-1.264.979-.304 0-.792-.193-1.264-.979a4.265 4.265 0 01-.264-.521H10a1 1 0 100-2H8.017a7.36 7.36 0 010-1H10a1 1 0 100-2H8.472c.08-.185.167-.36.264-.521z" clip-rule="evenodd"></path>
+				  </svg>
+				</div>
+				<span class="text-2xl mb-2 text-blue-900">&euro;21.291,09</span>
+				<span class="text-blue-900 opacity-70 mb-2 whitespace-pre hidden xl:inline-block">/ &euro;40.000</span>
+			  </div>
+			  <div class="rounded-full bg-green-50 h-7 overflow-hidden">
+				<div style="width:65%;"
+				  class="bg-green-400 h-7 rounded-full text-center text-green-50 flex items-center justify-center">
+				  65%
+				</div>
+			  </div>
+			</div>
+			<!--/ monthly target -->
+
+			<!-- customers -->
+			<!--div class="col-span-1 bg-white rounded-lg px-4 lg:px-8 py-4 lg:py-6">
+			  <h2 class="text-xl text-blue-900 font-bold mb-4 lg:mb-6">Customers</h2>
+			  <div class="flex space-x-4 items-end mb-4 lg:mb-6">
+				<div class="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center">
+				  <svg class="w-6 h-6 text-blue-500" fill="currentColor" viewBox="0 0 20 20"
+					xmlns="http://www.w3.org/2000/svg">
+					<path
+					  d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z">
+					</path>
+				  </svg>
+				</div>
+				<span class="text-2xl mb-2">491</span>
+				<span class="text-green-500 text-base mb-2 bg-green-100 border-full  px-3 rounded-full">&#8605; 32</span>
+			  </div>
+			  <p>Customers this month</p>
+			</div>
+			<!--/ customers -->
+
+			<!-- sales -->
+			<!--div class="col-span-1 bg-white rounded-lg px-4 lg:px-8 py-4 lg:py-6">
+			  <h2 class="text-xl text-blue-900 font-bold mb-4 lg:mb-6">Sales</h2>
+			  <div class="flex space-x-4 items-end mb-4 lg:mb-6">
+				<div class="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center">
+				  <svg class="w-6 h-6 text-blue-500" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+					<path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"></path>
+				  </svg>
+				</div>
+				<span class="text-2xl mb-2">230</span>
+				<span class="text-red-500 text-base mb-2 bg-red-100 border-full  px-3 rounded-full">
+				  <span class="transform rotate-180 inline-block">
+					&#8604;
+				  </span>
+				  12
+				</span>
+			  </div>
+			  <p>Sales this month</p>
+			</div>
+			<!--/ sales -->
+
+		  </div>
+		  <!--/ cards row -->
+
+			<!-- recent orders -->
+			<div class="bg-white rounded-lg  py-4 lg:py-6 mt-8">
+				<h2 class="text-xl text-blue-900 font-bold mb-4 lg:mb-6">SİNYALLER</h2>
+				<div class="overflow-x-auto min-h-1/2">
+					<div class="align-middle inline-block min-w-full overflow-hidden">
+						<table class="min-w-full">
+						<thead class="text-left bg-blue-50">
+							<tr>
+							<!--th class="py-2 px-3">ID</th-->
+							<!--th class="py-2 px-3">FIRMA KODU</th-->
+							<th class="py-2 pr-8 w-auto">SİNYAL KODU</th>
+							<th class="py-2 pr-8">BOLGE</th>
+							<th class="py-2 pr-8 w-auto">MESAJ</th>
+							<th class="py-2 pr-8 w-auto">KULLANICI</th>
+							<th class="py-2 px-4">TARIH</th>
+							<th class="py-2 px-4">SAAT</th>
+							</tr>
+						</thead>
+						<tbody class="divide-y divide-blue-100 text-blue-900 text-opacity-80 whitespace-nowrap">
+							@each(mesaj in MESAJLAR)
+							<tr>
+								<td class="py-3 pr-8">
+									@set("mesaj_class", "transition duration-300 ease-out text-xs rounded-full px-4 py-2  w-20 inline-block text-center  uppercase")
+									<span
+									class="{{ mesaj.ALARMKODU === "E120" ? "bg-red-200 text-red-700" + mesaj_class : "bg-teal-200 text-teal-700" + mesaj_class}}">
+										{{mesaj.ALARMKODU}}
+									</span>
+								</td>
+							<td class="py-3 pr-8">{{ mesaj.BOLGE }}</td>
+							<td class="py-3 pr-8">{{ mesaj.MESAJ }}</td>
+							<td class="py-3 pr-8">{{ mesaj.KULLANICI }}</td>
+							<td class="py-3 pr-8">{{ mesaj.TARIH.toLocaleString("tr-TR", {weekday: "long", year: "numeric", month: "long", day: "2-digit"}) }}</td>
+							<td class="py-3 pr-8">{{ mesaj.TARIH.toLocaleString("tr-TR", {hour: "2-digit", minute: "2-digit", second: "2-digit"}) }}</td>
+
+							</tr>
+							@end
+
+						</tbody>
+						</table>
+					</div>
+				</div>
+				<div class="flex justify-between items-center w-full px-10 py-4 rounded-lg bg-teal-50 min-h-4">
+					<div class="min-w-4 min-h-2">
+						@if(PAGE > 1)
+							<a href="/account/{{ F_KODU }}/{{ PAGE-1 }}" class="font-bold text-teal-700 inline-block hover:underline">Önceki</a>
+						@endif
+					</div>
+
+					<a href="/account/{{ F_KODU }}/{{ PAGE+1 }}" class="font-bold text-teal-700 inline-block hover:underline">Sonraki</a>
+				</div>
+
+			</div>
+
+
+
+		</div>
+	  </div>
+	  <!--/ main content -->
+	</div>
+  </div>
+
+
+
+
+
+</section>
+
+@endsection
+
+
+

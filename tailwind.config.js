@@ -7,8 +7,8 @@ module.exports = {
 	purge: {
 		content: ['./resources/views/**/*.edge', './resources/assets/ts/**/*.ts'],
 		options: {
-			safelist: [/data-theme$/],
-		},
+			safelist: [/data-theme$/]
+		}
 	},
 	theme: {
 		extend: {},
@@ -21,27 +21,34 @@ module.exports = {
 			red: colors.rose,
 			violet: colors.violet,
 			indigo: colors.indigo,
-			teal: colors.teal,
+			teal: colors.teal
 		},
 		fontFamily: {
-			sans: ['Poppins', 'sans-serif'],
+			sans: ['Poppins', 'sans-serif']
+		},
+		minHeight: {
+			'0': '0',
+			'1/4': '25%',
+			'1/2': '50vh',
+			'3/4': '75vh',
+			'full': '1vh'
 		},
 		extend: {
 			spacing: {
 				128: '32rem',
-				144: '36rem',
+				144: '36rem'
 			},
 			borderRadius: {
-				'4xl': '2rem',
-			},
-		},
+				'4xl': '2rem'
+			}
+		}
 	},
 	variants: {
-		extend: {},
+		extend: {}
 	},
 	plugins: [
 		require('@tailwindcss/forms'),
 		require('@tailwindcss/typography'),
-		require('@tailwindcss/forms'),
-	],
+		require('@tailwindcss/forms')
+	]
 }
