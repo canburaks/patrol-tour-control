@@ -21,19 +21,19 @@ exports.http = {
         maxAge: '7d',
         httpOnly: true,
         secure: false,
-        sameSite: false,
-    },
+        sameSite: false
+    }
 };
 exports.logger = {
     name: Env_1.default.get('APP_NAME'),
     enabled: true,
     level: Env_1.default.get('LOG_LEVEL', 'info'),
-    prettyPrint: Env_1.default.get('NODE_ENV') === 'development',
+    prettyPrint: Env_1.default.get('NODE_ENV') === 'development'
 };
 exports.profiler = {
     enabled: true,
     blacklist: [],
-    whitelist: [],
+    whitelist: []
 };
 exports.validator = {};
 exports.assets = {
@@ -41,11 +41,11 @@ exports.assets = {
     publicPath: Application_1.default.publicPath('assets'),
     script: {
         attributes: {
-            defer: true,
-        },
+            defer: true
+        }
     },
     style: {
-        attributes: {},
-    },
+        attributes: {}
+    }
 };
 //# sourceMappingURL=app.js.map
