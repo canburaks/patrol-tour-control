@@ -1,5 +1,5 @@
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient } from '../../../prisma/client'
 import Application from '@ioc:Adonis/Core/Application'
 
 const COOKIE_NAME = Application.config.get('session.cookieName')
