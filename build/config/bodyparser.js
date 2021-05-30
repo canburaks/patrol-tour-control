@@ -10,21 +10,21 @@ const bodyParserConfig = {
             'application/json',
             'application/json-patch+json',
             'application/vnd.api+json',
-            'application/csp-report',
-        ],
+            'application/csp-report'
+        ]
     },
     form: {
         encoding: 'utf-8',
         limit: '1mb',
         queryString: {},
         convertEmptyStringsToNull: true,
-        types: ['application/x-www-form-urlencoded'],
+        types: ['application/x-www-form-urlencoded']
     },
     raw: {
         encoding: 'utf-8',
         limit: '1mb',
         queryString: {},
-        types: ['text/*'],
+        types: ['text/*']
     },
     multipart: {
         autoProcess: true,
@@ -33,8 +33,8 @@ const bodyParserConfig = {
         convertEmptyStringsToNull: true,
         maxFields: 1000,
         limit: '20mb',
-        types: ['multipart/form-data'],
-    },
+        types: ['multipart/form-data']
+    }
 };
 exports.default = bodyParserConfig;
 //# sourceMappingURL=bodyparser.js.map

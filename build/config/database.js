@@ -10,16 +10,16 @@ const databaseConfig = {
         sqlite: {
             client: 'sqlite',
             connection: {
-                filename: 'database/db.sqlite',
+                filename: 'database/db.sqlite'
             },
             migrations: {
-                naturalSort: true,
+                naturalSort: true
             },
             useNullAsDefault: true,
             healthCheck: false,
-            debug: false,
-        },
-    },
+            debug: false
+        }
+    }
 };
 exports.default = databaseConfig;
 //# sourceMappingURL=database.js.map

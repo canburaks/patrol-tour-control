@@ -8,29 +8,29 @@ const Env_1 = __importDefault(global[Symbol.for('ioc.use')]("Adonis/Core/Env"));
 exports.csp = {
     enabled: false,
     directives: {},
-    reportOnly: false,
+    reportOnly: false
 };
 exports.csrf = {
     enabled: Env_1.default.get('NODE_ENV') !== 'testing',
     exceptRoutes: [],
     enableXsrfCookie: true,
-    methods: ['POST', 'PUT', 'PATCH', 'DELETE'],
+    methods: ['POST', 'PUT', 'PATCH', 'DELETE']
 };
 exports.dnsPrefetch = {
     enabled: true,
-    allow: true,
+    allow: true
 };
 exports.xFrame = {
     enabled: true,
-    action: 'DENY',
+    action: 'DENY'
 };
 exports.hsts = {
     enabled: true,
     maxAge: '180 days',
     includeSubDomains: true,
-    preload: false,
+    preload: false
 };
 exports.contentTypeSniffing = {
-    enabled: true,
+    enabled: true
 };
 //# sourceMappingURL=shield.js.map
