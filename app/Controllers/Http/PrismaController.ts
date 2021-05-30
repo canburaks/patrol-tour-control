@@ -115,7 +115,10 @@ export default class PrismaController {
 		return view.render('dashboard', sessionValue)
 	}
 
-	public async queryMesajlarByMuster(F_KODU: string) {
+	public async queryMesajlarByMuster(F_KODU: string, PAGE: number) {
+		const TAKE = 100
+		const SKIP = (PAGE - 1) * TAKE
+
 		return await PrismaController.client.mesajlar.findMany({
 			where: {
 				F_KODU: F_KODU,
@@ -130,7 +133,8 @@ export default class PrismaController {
 				TARIH: true
 			},
 			orderBy: { TARIH: 'desc' },
-			take: 2
+			take: TAKE,
+			skip: SKIP
 		})
 	}
 

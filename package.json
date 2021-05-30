@@ -8,6 +8,7 @@
     "dev": "node ace serve --watch",
     "pre-production": "ENV_PATH=/home/cbs/Projects/Github/patrol-tour-control/.env node server.js",
     "lint": "eslint . --ext=.ts",
+    "deploy": "node ace build --production && cp -r prisma build/prisma && cd build && npm ci --production && git add . && git commit -m 'auto-commit' && git push",
     "format": "prettier --write ."
   },
   "engines": {
@@ -15,7 +16,6 @@
   },
   "devDependencies": {
     "@adonisjs/assembler": "^5.1.1",
-    "@babel/preset-react": "^7.13.13",
     "@symfony/webpack-encore": "^1.2.0",
     "adonis-preset-ts": "^2.1.0",
     "autoprefixer": "^10.2.5",
@@ -36,7 +36,6 @@
   },
   "dependencies": {
     "@adonisjs/ally": "^3.2.1",
-    "@adonisjs/auth": "^8.0.4",
     "@adonisjs/core": "^5.1.7",
     "@adonisjs/lucid": "^14.1.0",
     "@adonisjs/mail": "^7.1.1",
@@ -47,11 +46,9 @@
     "@prisma/client": "^2.23.0",
     "@tailwindcss/forms": "^0.3.2",
     "@tailwindcss/typography": "^0.4.1",
-    "gridjs": "^4.0.0",
     "luxon": "^1.26.0",
     "proxy-addr": "^2.0.6",
     "reflect-metadata": "^0.1.13",
-    "source-map-support": "^0.5.19",
-    "sqlite3": "^5.0.2"
+    "source-map-support": "^0.5.19"
   }
 }
