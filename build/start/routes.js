@@ -28,7 +28,7 @@ Route_1.default.get('/account/:F_KODU/:PAGE?', async ({ params, request, respons
             return response.redirect().toPath('/dashboard');
         }
         if (allowedFirmaCodes.includes(URL_PARAMS)) {
-            const MESAJLAR = await new PrismaController_1.default().queryMesajlarByMuster(URL_PARAMS);
+            const MESAJLAR = await new PrismaController_1.default().queryMesajlarByMuster(URL_PARAMS, PAGE);
             const CURRENT_MUSTERI = sessionValue.MUSTERILER.filter(m => m.F_KODU === URL_PARAMS)[0];
             const updatedSessionValue = {
                 ...sessionValue,
@@ -46,7 +46,7 @@ Route_1.default.get('/account/:F_KODU/:PAGE?', async ({ params, request, respons
             return response.redirect().toPath(`/accounts/${sessionValue.F_KODU}`);
         }
         if (sessionValue.F_KODU === URL_PARAMS) {
-            const MESAJLAR = await new PrismaController_1.default().queryMesajlarByMuster(URL_PARAMS);
+            const MESAJLAR = await new PrismaController_1.default().queryMesajlarByMuster(URL_PARAMS, PAGE);
             const updatedSessionValue = { ...sessionValue, PAGE, MESAJLAR };
             console.log('updated session values: ', updatedSessionValue);
             return view.render('account', updatedSessionValue);
