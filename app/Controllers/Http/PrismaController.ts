@@ -3,11 +3,11 @@ import { PrismaClient } from '@prisma/client'
 import Application from '@ioc:Adonis/Core/Application'
 
 const COOKIE_NAME = Application.config.get('session.cookieName')
-//const prisma = new PrismaClient()
+const prisma = new PrismaClient()
 
 export default class PrismaController {
 	constructor() {
-		PrismaController.client = new PrismaClient()
+		PrismaController.client = prisma
 	}
 	public static client
 

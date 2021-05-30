@@ -6,9 +6,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const client_1 = require("@prisma/client");
 const Application_1 = __importDefault(global[Symbol.for('ioc.use')]("Adonis/Core/Application"));
 const COOKIE_NAME = Application_1.default.config.get('session.cookieName');
+const prisma = new client_1.PrismaClient();
 class PrismaController {
     constructor() {
-        PrismaController.client = new client_1.PrismaClient();
+        PrismaController.client = prisma;
     }
     async index(ctx) { }
     async authBayi({ request, response, view, session }) {
