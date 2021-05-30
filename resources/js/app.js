@@ -1,19 +1,18 @@
+import React from 'react'
+import ReactDOM from 'react-dom'
+import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom'
+import App from './src/index.jsx'
+import { QueryClient, QueryClientProvider } from 'react-query'
 import '../css/app.css'
 
-/*
-import themify from './theme'
-;(function init() {
-	document.documentElement.dataset.theme = 'aqua'
-})()
+const queryClient = new QueryClient()
+const root = document.getElementById('root')
 
-window.themify = themify
-
-/*
-
-function tryCookie(request, response, key, value) {
-	const existingItems = request.cookie(key, [])
-	console.log('existing items: ', existingItems)
-	response.cookie(key, value)
-}
-
-*/
+ReactDOM.render(
+	<QueryClientProvider client={queryClient}>
+		<Router>
+			<App  />
+		</Router>
+	</QueryClientProvider>,
+	root
+)

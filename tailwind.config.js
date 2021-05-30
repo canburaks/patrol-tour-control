@@ -13,6 +13,8 @@ module.exports = {
 	theme: {
 		extend: {},
 		colors: {
+			white: colors.white,
+			black: colors.black,
 			transparent: 'transparent',
 			current: 'currentColor',
 			gray: colors.coolGray,
@@ -20,8 +22,10 @@ module.exports = {
 			blueGray: colors.blueGray,
 			red: colors.rose,
 			violet: colors.violet,
+			purple: colors.violet,
 			indigo: colors.indigo,
-			teal: colors.teal
+			teal: colors.teal,
+			green: colors.teal
 		},
 		fontFamily: {
 			sans: ['Poppins', 'sans-serif']
@@ -46,9 +50,5 @@ module.exports = {
 	variants: {
 		extend: {}
 	},
-	plugins: [
-		require('@tailwindcss/forms'),
-		require('@tailwindcss/typography'),
-		require('@tailwindcss/forms')
-	]
+	plugins: []
 }

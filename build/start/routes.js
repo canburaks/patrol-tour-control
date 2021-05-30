@@ -7,17 +7,61 @@ const Application_1 = __importDefault(global[Symbol.for('ioc.use')]("Adonis/Core
 const Route_1 = __importDefault(global[Symbol.for('ioc.use')]("Adonis/Core/Route"));
 const PrismaController_1 = __importDefault(require("../app/Controllers/Http/PrismaController"));
 const MailController_1 = __importDefault(require("../app/Controllers/Http/MailController"));
+const Bayi_1 = __importDefault(require("../app/Models/Bayi"));
 const COOKIE_NAME = Application_1.default.config.get('session.cookieName');
+Route_1.default.get('/login', async ({ response, session, request, view }) => {
+    return response.redirect().toPath('/');
+});
+Route_1.default.post('/login', async (ctx) => {
+    const GIRIS_KODU = ctx.request.input('username');
+    const PAROLA = ctx.request.input('password');
+    const ACCOUNT_TYPE = ctx.request.input('accountType');
+    if (ACCOUNT_TYPE === 'bayi') {
+        const bayi = new Bayi_1.default(GIRIS_KODU, PAROLA);
+        const isAuthorized = await bayi.authorize();
+        if (isAuthorized) {
+            const bayiData = await bayi.getBayiData();
+            const bayiMusteriler = await bayi.getMusteriler();
+            console.log('ctx bayi', bayi);
+            ctx.response.cookie(COOKIE_NAME, bayi);
+            ctx.session.put(COOKIE_NAME, bayi);
+            return {
+                ...bayi,
+                error: null
+            };
+        }
+        else
+            return {
+                error: 'Lütfen giriş kodunuzu veya parolanızı kontrol ediniz.'
+            };
+    }
+    else if (ACCOUNT_TYPE === 'abone') {
+        return new PrismaController_1.default().authMusteri(ctx);
+    }
+    return ctx.view.render('auth/login');
+});
+Route_1.default.get('/logout', async (ctx) => {
+    let { request, response, session, view } = ctx;
+    const sessionValue = ctx.session.put(COOKIE_NAME, {});
+    return response.redirect().toPath('/');
+});
+Route_1.default.get('/form', async (ctx) => {
+    return ctx.view.render('emails/form');
+});
+Route_1.default.post('/form-endpoint', async (ctx) => {
+    return new MailController_1.default().formHandler(ctx);
+});
 Route_1.default.get('/', async ({ request, response, session, view }) => {
     const sessionValue = session.get(COOKIE_NAME, {});
-    return view.render('index', sessionValue);
+    console.log("landing page server session", sessionValue);
+    return view.render('app');
 });
 Route_1.default.get('/account/:F_KODU/:PAGE?', async ({ params, request, response, view, session }) => {
     let cookieValue = request.cookie(COOKIE_NAME);
     const sessionValue = session.get(COOKIE_NAME, {});
     const URL_PARAMS = params.F_KODU;
     const PAGE = params.PAGE || 1;
-    if (!sessionValue.auth) {
+    if (!sessionValue.AUTH) {
         session.put(COOKIE_NAME, { ...sessionValue, error: 'Lütfen giriş yapınız.' });
         return response.redirect().toPath('/login');
     }
@@ -49,48 +93,14 @@ Route_1.default.get('/account/:F_KODU/:PAGE?', async ({ params, request, respons
             return view.render('account', updatedSessionValue);
         }
     }
-    else if (sessionValue.auth) {
+    else if (sessionValue.AUTH) {
         return view.render('dashboard', sessionValue);
     }
     return `Viewing post with id ${params.F_KODU}`;
 });
-Route_1.default.get('/dashboard', async ({ request, response, view, session }) => {
-    let cookieValue = request.cookie(COOKIE_NAME);
+Route_1.default.get('*', async ({ request, response, session, view }) => {
     const sessionValue = session.get(COOKIE_NAME, {});
-    if (!sessionValue.auth) {
-        session.put(COOKIE_NAME, { ...sessionValue, error: 'Tekrar giriş yapmanız gerekli' });
-        return response.redirect().toPath('/login');
-    }
-    else if (sessionValue.auth) {
-        return view.render('dashboard', sessionValue);
-    }
-});
-Route_1.default.get('/login', async (ctx) => {
-    let { request, response, session, view } = ctx;
-    const sessionValue = session.get(COOKIE_NAME, {});
-    if (sessionValue.auth) {
-        return response.redirect().toPath('/dashboard');
-    }
-    return view.render('auth/login', { error: sessionValue.error && sessionValue.error });
-});
-Route_1.default.post('/login', async (ctx) => {
-    if (ctx.request.input('accountType') === 'bayi') {
-        return new PrismaController_1.default().authBayi(ctx);
-    }
-    else if (ctx.request.input('accountType') === 'abone') {
-        return new PrismaController_1.default().authMusteri(ctx);
-    }
-    return ctx.view.render('auth/login');
-});
-Route_1.default.get('/logout', async (ctx) => {
-    let { request, response, session, view } = ctx;
-    const sessionValue = session.put(COOKIE_NAME, {});
-    return response.redirect().toPath('/');
-});
-Route_1.default.get('/form', async (ctx) => {
-    return ctx.view.render('emails/form');
-});
-Route_1.default.post('/form-endpoint', async (ctx) => {
-    return new MailController_1.default().formHandler(ctx);
+    const privateUrls = ["/dashboard", "/account", "/operator"];
+    return view.render('app');
 });
 //# sourceMappingURL=routes.js.map
