@@ -87,7 +87,9 @@ class PrismaController {
         const sessionValue = session.get(COOKIE_NAME);
         return view.render('dashboard', sessionValue);
     }
-    async queryMesajlarByMuster(F_KODU) {
+    async queryMesajlarByMuster(F_KODU, PAGE) {
+        const TAKE = 100;
+        const SKIP = (PAGE - 1) * TAKE;
         return await PrismaController.client.mesajlar.findMany({
             where: {
                 F_KODU: F_KODU,
@@ -102,7 +104,8 @@ class PrismaController {
                 TARIH: true
             },
             orderBy: { TARIH: 'desc' },
-            take: 2
+            take: TAKE,
+            skip: SKIP
         });
     }
     async queryOperators(OP_KODU, MPAROLA) {
