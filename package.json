@@ -8,7 +8,7 @@
     "dev": "node ace serve --watch",
     "pre-production": "ENV_PATH=/home/cbs/Projects/Github/patrol-tour-control/.env node server.js",
     "lint": "eslint . --ext=.ts",
-    "deploy": "node ace build --production && cp -r prisma build/prisma && cd build && npm ci --production && git add . && git commit -m 'auto-commit' && git push",
+    "deploy": "node ace build  && cp -r prisma build/prisma && git add . && git commit -m 'auto-commit' && git push",
     "format": "prettier --write ."
   },
   "engines": {
