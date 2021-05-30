@@ -39,7 +39,7 @@ Route.get('/account/:F_KODU/:PAGE?', async ({ params, request, response, view, s
 
 	const URL_PARAMS = params.F_KODU
 	const PAGE = params.PAGE || 1
-	console.log('params page:', PAGE)
+	//console.log('params page:', PAGE)
 	//console.log('account route params: route params:', URL_PARAMS, 'sessionValue:', sessionValue)
 	// IF NOT AUTHORIZED
 	if (!sessionValue.auth) {
@@ -65,7 +65,7 @@ Route.get('/account/:F_KODU/:PAGE?', async ({ params, request, response, view, s
 				PAGE,
 				MESAJLAR
 			}
-			console.log('updated session values: ', updatedSessionValue)
+			//console.log('updated session values: ', updatedSessionValue)
 			return view.render('account', updatedSessionValue)
 		}
 	}
@@ -79,7 +79,7 @@ Route.get('/account/:F_KODU/:PAGE?', async ({ params, request, response, view, s
 		if (sessionValue.F_KODU === URL_PARAMS) {
 			const MESAJLAR = await new PrismaController().queryMesajlarByMuster(URL_PARAMS, PAGE)
 			const updatedSessionValue = { ...sessionValue, PAGE, MESAJLAR }
-			console.log('updated session values: ', updatedSessionValue)
+			//console.log('updated session values: ', updatedSessionValue)
 			return view.render('account', updatedSessionValue)
 		}
 	}
@@ -124,7 +124,7 @@ Route.post('/login', async ctx => {
 	} else if (ctx.request.input('accountType') === 'abone') {
 		return new PrismaController().authMusteri(ctx)
 	}
-	console.log('accountType neither abone nor bayi')
+	//console.log('accountType neither abone nor bayi')
 	return ctx.view.render('auth/login')
 })
 

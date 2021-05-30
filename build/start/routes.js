@@ -17,7 +17,6 @@ Route_1.default.get('/account/:F_KODU/:PAGE?', async ({ params, request, respons
     const sessionValue = session.get(COOKIE_NAME, {});
     const URL_PARAMS = params.F_KODU;
     const PAGE = params.PAGE || 1;
-    console.log('params page:', PAGE);
     if (!sessionValue.auth) {
         session.put(COOKIE_NAME, { ...sessionValue, error: 'Lütfen giriş yapınız.' });
         return response.redirect().toPath('/login');
@@ -37,7 +36,6 @@ Route_1.default.get('/account/:F_KODU/:PAGE?', async ({ params, request, respons
                 PAGE,
                 MESAJLAR
             };
-            console.log('updated session values: ', updatedSessionValue);
             return view.render('account', updatedSessionValue);
         }
     }
@@ -48,7 +46,6 @@ Route_1.default.get('/account/:F_KODU/:PAGE?', async ({ params, request, respons
         if (sessionValue.F_KODU === URL_PARAMS) {
             const MESAJLAR = await new PrismaController_1.default().queryMesajlarByMuster(URL_PARAMS, PAGE);
             const updatedSessionValue = { ...sessionValue, PAGE, MESAJLAR };
-            console.log('updated session values: ', updatedSessionValue);
             return view.render('account', updatedSessionValue);
         }
     }
@@ -83,7 +80,6 @@ Route_1.default.post('/login', async (ctx) => {
     else if (ctx.request.input('accountType') === 'abone') {
         return new PrismaController_1.default().authMusteri(ctx);
     }
-    console.log('accountType neither abone nor bayi');
     return ctx.view.render('auth/login');
 });
 Route_1.default.get('/logout', async (ctx) => {
