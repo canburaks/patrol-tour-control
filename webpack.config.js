@@ -10,6 +10,7 @@ if (!Encore.isRuntimeEnvironmentConfigured()) {
 	Encore.configureRuntimeEnvironment(process.env.NODE_ENV || 'dev')
 }
 
+Encore.enableReactPreset()
 /*
 |--------------------------------------------------------------------------
 | Output path
@@ -57,10 +58,10 @@ Encore.addEntry('app', './resources/js/app.js')
 | we must copy them manually.
 |
 */
-// Encore.copyFiles({
-//   from: './resources/images',
-//   to: 'images/[path][name].[hash:8].[ext]',
-// })
+Encore.copyFiles({
+	from: './resources/img',
+	to: 'images/[path][name].[ext]'
+})
 
 /*
 |--------------------------------------------------------------------------
@@ -143,7 +144,7 @@ Encore.configureDevServerOptions(options => {
 	options.liveReload = true
 	options.static.push({
 		directory: join(__dirname, './resources/views'),
-		watch: true,
+		watch: true
 	})
 })
 
@@ -199,7 +200,7 @@ Encore.enablePostCssLoader()
 */
 const config = Encore.getWebpackConfig()
 config.infrastructureLogging = {
-	level: 'warn',
+	level: 'warn'
 }
 config.stats = 'errors-warnings'
 

@@ -24,72 +24,14 @@ import HealthCheck from '@ioc:Adonis/Core/HealthCheck'
 import PrismaController from '../app/Controllers/Http/PrismaController'
 import MailController from '../app/Controllers/Http/MailController'
 import View from '@ioc:Adonis/Core/View'
-import Bayi from '../app/Models/Bayi'
-import Musteri from '../app/Models/Musteri'
 
 const COOKIE_NAME = Application.config.get('session.cookieName')
 
-
-
-
-
-Route.get('/login', async ({ response, session, request, view }) => {
-	return response.redirect().toPath('/')
-})
-
-Route.post('/login', async ctx => {
-	const GIRIS_KODU = ctx.request.input('username')
-	const PAROLA = ctx.request.input('password')
-	const ACCOUNT_TYPE = ctx.request.input('accountType')
-
-	if (ACCOUNT_TYPE === 'bayi') {
-		const bayi = new Bayi(GIRIS_KODU, PAROLA)
-		const isAuthorized = await bayi.authorize()
-		if (isAuthorized) {
-			const bayiData = await bayi.getBayiData()
-			const bayiMusteriler = await bayi.getMusteriler()
-			console.log('ctx bayi', bayi)
-			ctx.response.cookie(COOKIE_NAME, bayi)
-			ctx.session.put(COOKIE_NAME, bayi)
-			return {
-				...bayi,
-				error: null
-			}
-		} else
-			return {
-				error: 'Lütfen giriş kodunuzu veya parolanızı kontrol ediniz.'
-			}
-	} else if (ACCOUNT_TYPE === 'abone') {
-		return new PrismaController().authMusteri(ctx)
-	}
-	//console.log('accountType neither abone nor bayi')
-	return ctx.view.render('auth/login')
-})
-
-/* LOGOUT */
-Route.get('/logout', async ctx => {
-	let { request, response, session, view } = ctx
-	const sessionValue = ctx.session.put(COOKIE_NAME, {})
-	return response.redirect().toPath('/')
-})
-
-// TEST FORM
-Route.get('/form', async ctx => {
-	return ctx.view.render('emails/form')
-})
-
-// FORM ENDPOINT
-Route.post('/form-endpoint', async ctx => {
-	return new MailController().formHandler(ctx)
-})
-
 Route.get('/', async ({ request, response, session, view }) => {
 	const sessionValue = session.get(COOKIE_NAME, {})
-	console.log("landing page server session", sessionValue)
 	//return view.render('index', sessionValue)
-	return view.render('app')
+	return view.render('app', sessionValue)
 })
-
 
 /* ABONE/Müşteri */
 Route.get('/account/:F_KODU/:PAGE?', async ({ params, request, response, view, session }) => {
@@ -101,7 +43,7 @@ Route.get('/account/:F_KODU/:PAGE?', async ({ params, request, response, view, s
 	//console.log('params page:', PAGE)
 	//console.log('account route params: route params:', URL_PARAMS, 'sessionValue:', sessionValue)
 	// IF NOT AUTHORIZED
-	if (!sessionValue.AUTH) {
+	if (!sessionValue.auth) {
 		session.put(COOKIE_NAME, { ...sessionValue, error: 'Lütfen giriş yapınız.' })
 		return response.redirect().toPath('/login')
 	}
@@ -144,17 +86,63 @@ Route.get('/account/:F_KODU/:PAGE?', async ({ params, request, response, view, s
 	}
 
 	// AUTHORIZED
-	else if (sessionValue.AUTH) {
+	else if (sessionValue.auth) {
 		return view.render('dashboard', sessionValue)
 	}
 	return `Viewing post with id ${params.F_KODU}`
 })
 
-Route.get('*', async ({ request, response, session, view }) => {
+/* BAYİ */
+Route.get('/dashboard', async ({ request, response, view, session }) => {
+	let cookieValue = request.cookie(COOKIE_NAME)
 	const sessionValue = session.get(COOKIE_NAME, {})
-	const privateUrls = ["/dashboard", "/account", "/operator"]
 
+	// NOT AUTHORIZED
+	if (!sessionValue.auth) {
+		session.put(COOKIE_NAME, { ...sessionValue, error: 'Tekrar giriş yapmanız gerekli' })
+		return response.redirect().toPath('/login')
+	}
+	// AUTHORIZED
+	else if (sessionValue.auth) {
+		return view.render('dashboard', sessionValue)
+	}
+})
 
-	//return view.render('index', sessionValue)
-	return view.render('app')
+/* LOGIN */
+Route.get('/login', async ctx => {
+	let { request, response, session, view } = ctx
+	const sessionValue = session.get(COOKIE_NAME, {})
+	if (sessionValue.auth) {
+		return response.redirect().toPath('/dashboard')
+	}
+	//console.log('Login route session value: ', sessionValue)
+	return view.render('auth/login', { error: sessionValue.error && sessionValue.error })
+})
+
+Route.post('/login', async ctx => {
+	console.log('ctx data', ctx.request.requestData)
+	if (ctx.request.input('accountType') === 'bayi') {
+		return new PrismaController().authBayi(ctx)
+	} else if (ctx.request.input('accountType') === 'abone') {
+		return new PrismaController().authMusteri(ctx)
+	}
+	//console.log('accountType neither abone nor bayi')
+	return ctx.view.render('auth/login')
+})
+
+/* LOGIN */
+Route.get('/logout', async ctx => {
+	let { request, response, session, view } = ctx
+	const sessionValue = session.put(COOKIE_NAME, {})
+	return response.redirect().toPath('/')
+})
+
+// TEST FORM
+Route.get('/form', async ctx => {
+	return ctx.view.render('emails/form')
+})
+
+// FORM ENDPOINT
+Route.post('/form-endpoint', async ctx => {
+	return new MailController().formHandler(ctx)
 })

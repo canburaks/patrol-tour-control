@@ -13,6 +13,48 @@ class PrismaController {
         PrismaController.client = exports.prisma;
     }
     async index(ctx) { }
+    async authBayi({ request, response, view, session }) {
+        const accountId = request.input('accountId');
+        const password = request.input('password');
+        const accountType = request.input('accountType');
+        const formData = {
+            OP_KODU: accountId,
+            MPAROLA: password
+        };
+        console.log('bayi formData: ', formData);
+        const operatorData = await this.queryOperators(formData.OP_KODU, formData.MPAROLA);
+        console.log('query result: ', operatorData);
+        if (!operatorData) {
+            return view.render('auth/login', {
+                error: 'Kullanıcı adınız ya da parolanız yanlış.',
+                accountId,
+                accountType
+            });
+        }
+        const bayilerData = await this.queryBayiler(formData.OP_KODU);
+        const NAME = operatorData.OP_ADI
+            ? operatorData.OP_ADI
+            : bayilerData?.ADI
+                ? bayilerData?.ADI
+                : null;
+        const authorizedOperatorData = {
+            auth: true,
+            data: new Date(),
+            accountType: 'bayi',
+            NAME: NAME,
+            ADI: bayilerData?.ADI,
+            KODU: bayilerData?.KODU,
+            BAYI: bayilerData?.ID,
+            ...operatorData
+        };
+        console.log('authorizedOperatorData: ', authorizedOperatorData);
+        const sessionValue = session.put(COOKIE_NAME, authorizedOperatorData);
+        const bayiMusterileri = await this.queryMusteriByBayi(parseInt(authorizedOperatorData.BAYI));
+        authorizedOperatorData.MUSTERILER = bayiMusterileri;
+        console.log('query musteriByBayi: ', '\n\n', bayiMusterileri);
+        response.cookie(COOKIE_NAME, authorizedOperatorData);
+        return response.redirect().toPath('/dashboard');
+    }
     async authMusteri({ request, response, view, session }) {
         const accountId = request.input('accountId');
         const password = request.input('password');
@@ -140,4 +182,4 @@ class PrismaController {
     }
 }
 exports.default = PrismaController;
-//# sourceMappingURL=PrismaController.js.map
+//# sourceMappingURL=PrismaController%20copy.js.map
