@@ -8,6 +8,7 @@ const Route_1 = __importDefault(global[Symbol.for('ioc.use')]("Adonis/Core/Route
 const PrismaController_1 = __importDefault(require("../app/Controllers/Http/PrismaController"));
 const MailController_1 = __importDefault(require("../app/Controllers/Http/MailController"));
 const Bayi_1 = __importDefault(require("../app/Models/Bayi"));
+const Musteri_1 = __importDefault(require("../app/Models/Musteri"));
 const COOKIE_NAME = Application_1.default.config.get('session.cookieName');
 Route_1.default.get('/login', async ({ response, session, request, view }) => {
     return response.redirect().toPath('/');
@@ -36,9 +37,23 @@ Route_1.default.post('/login', async (ctx) => {
             };
     }
     else if (ACCOUNT_TYPE === 'abone') {
-        return new PrismaController_1.default().authMusteri(ctx);
+        const musteri = new Musteri_1.default(GIRIS_KODU, PAROLA);
+        const isAuthorized = await musteri.authorize();
+        if (isAuthorized) {
+            console.log('ctx musteri', musteri);
+            ctx.session.put(COOKIE_NAME, {});
+            ctx.response.cookie(COOKIE_NAME, musteri);
+            ctx.session.put(COOKIE_NAME, musteri);
+            return {
+                ...musteri,
+                error: null
+            };
+        }
+        return {
+            error: 'Lütfen giriş kodunuzu veya parolanızı kontrol ediniz.'
+        };
     }
-    return ctx.view.render('auth/login');
+    return ctx.view.render('app');
 });
 Route_1.default.get('/logout', async (ctx) => {
     let { request, response, session, view } = ctx;

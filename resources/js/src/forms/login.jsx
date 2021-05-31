@@ -44,7 +44,8 @@ const LoginForm = props => {
 			}
 		}
 		;() => handleSuccess()
-	},[mutation])
+	}, [mutation])
+
 	return (
 		<form
 			action="/login"
@@ -55,7 +56,7 @@ const LoginForm = props => {
 			<div className="flex flex-wrap mx-2">
 				<div className="mb-4 w-full  px-2">
 					<input
-						className="w-full p-4 text-xs bg-gray-50 outline-none rounded"
+						className="w-full p-4 text-xs bg-gray-50 outline-none rounded focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent duration-500 transition-all"
 						type="text"
 						required
 						placeholder="Kullanıcı numaranız"
@@ -63,15 +64,15 @@ const LoginForm = props => {
 					/>
 				</div>
 			</div>
-				<div className="mb-4 w-full  px-2">
-					<input
-						className="w-full p-4 text-xs bg-gray-50 outline-none rounded"
-						type={showPassword ? 'text' : 'password'}
-						required
-						placeholder="Parolanız"
-						onChange={e => setPassword(e.target.value)}
-					/>
-				</div>
+			<div className="mb-4 w-full  px-2">
+				<input
+					className="w-full p-4 text-xs bg-gray-50 outline-none rounded focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent duration-500 transition-all"
+					type={showPassword ? 'text' : 'password'}
+					required
+					placeholder="Parolanız"
+					onChange={e => setPassword(e.target.value)}
+				/>
+			</div>
 			<div className="mb-4 text-sm">
 				<span className="mr-4 font-semibold">Hesap </span>
 				<label className="mr-4">
@@ -80,9 +81,7 @@ const LoginForm = props => {
 						type="radio"
 						id="abone"
 						name="accountType"
-						checked=""
 						onChange={setAboneAccount}
-						value="abone"
 					/>
 					<span>Kullanıcı</span>
 				</label>
