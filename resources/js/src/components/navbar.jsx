@@ -29,16 +29,10 @@ const Navbar = props => {
 
         <div className="inline-flex items-center ml-5 space-x-6 lg:justify-end">
 			{ACCOUNT_DATA?.AUTH === true &&
-				<a href="/logout" className="text-teal-600 px-8 py-2 border-teal-600 font-medium leading-6 border-2 rounded-lg transition ease-out duration-300 hover:text-blueGray-100 hover:bg-teal-600">
+				<button href="/logout" onClick={signOut} className="text-teal-600 px-8 py-2 border-teal-600 font-medium leading-6 border-2 rounded-lg transition ease-out duration-300 hover:text-blueGray-100 hover:bg-teal-600">
 					Çıkış yap
-				</a>
+				</button>
 			}
-            <button
-				className="text-teal-600 px-8 py-2 border-teal-600  font-medium leading-6 border-2 rounded-lg transition ease-out duration-300 hover:text-blueGray-100 hover:bg-teal-600"
-				onClick={signOut}
-				>
-                Giriş yap
-            </button>
         </div>
     </div>
 </section>

@@ -60,10 +60,24 @@ Route.post('/login', async ctx => {
 				error: 'Lütfen giriş kodunuzu veya parolanızı kontrol ediniz.'
 			}
 	} else if (ACCOUNT_TYPE === 'abone') {
-		return new PrismaController().authMusteri(ctx)
+		const musteri = new Musteri(GIRIS_KODU, PAROLA)
+		const isAuthorized = await musteri.authorize()
+		if (isAuthorized){
+			console.log('ctx musteri', musteri)
+			ctx.session.put(COOKIE_NAME, {})
+			ctx.response.cookie(COOKIE_NAME, musteri)
+			ctx.session.put(COOKIE_NAME, musteri)
+			return {
+				...musteri,
+				error: null
+			}
+		}
+		return {
+			error: 'Lütfen giriş kodunuzu veya parolanızı kontrol ediniz.'
+		}
 	}
 	//console.log('accountType neither abone nor bayi')
-	return ctx.view.render('auth/login')
+	return ctx.view.render('app')
 })
 
 /* LOGOUT */

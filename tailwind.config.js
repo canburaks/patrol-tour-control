@@ -25,7 +25,9 @@ module.exports = {
 			purple: colors.violet,
 			indigo: colors.indigo,
 			teal: colors.teal,
-			green: colors.teal
+			green: colors.teal,
+			pink: colors.pink,
+			yellow: colors.yellow
 		},
 		fontFamily: {
 			sans: ['Poppins', 'sans-serif']
@@ -35,6 +37,8 @@ module.exports = {
 			'1/4': '25%',
 			'1/2': '50vh',
 			'3/4': '75vh',
+			'4/5': '80vh',
+			'9/10': '90vh',
 			'full': '1vh'
 		},
 		extend: {
