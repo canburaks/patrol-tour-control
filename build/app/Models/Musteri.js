@@ -8,7 +8,6 @@ class Musteri {
     constructor(F_KODU, MPAROLA) {
         this.TYPE = 'abone';
         this.AUTH = false;
-        this.MUSTERILER = [];
         this.PAROLA = MPAROLA;
         this.GIRIS_KODU = F_KODU;
     }
@@ -20,18 +19,10 @@ class Musteri {
             this.ID = musteriData.ID;
             this.NAME = musteriData.FIRMA_ADI;
             this.FIRMA_ADI = musteriData.FIRMA_ADI;
-            this.BAYI_ADI = musteriData.BAYI;
+            this.BAYI_ID = musteriData.BAYI;
             return true;
         }
         return false;
-    }
-    async getMusteriler() {
-        const musteriData = await Bayi.prisma.queryBayiler(this.GIRIS_KODU);
-        console.log("musteriData of Bayi");
-        if (musteriData && musteriData.length > 0) {
-            musteriData.forEach(m => this.MUSTERILER.push(m));
-            return musteriData;
-        }
     }
 }
 exports.default = Musteri;

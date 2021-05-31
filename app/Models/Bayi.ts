@@ -31,6 +31,7 @@ export default class Bayi {
 		return false
 	}
 
+
 	public async getBayiData(){
 		const bayilerData = await Bayi.prisma.queryBayiler(this.GIRIS_KODU)
 		console.log('query bayi from bayi: ', bayilerData)
@@ -44,7 +45,8 @@ export default class Bayi {
 		const musteriData = await Bayi.prisma.queryMusteriByBayi(parseInt(this.BAYI_ID))
 		console.log("musteriData of Bayi", musteriData)
 		if (musteriData && musteriData.length > 0){
-			musteriData.forEach(m =>  this.MUSTERILER.push(m))
+			this.MUSTERILER = musteriData
+			//musteriData.forEach(m =>  this.MUSTERILER.push(m))
 			return musteriData
 		}
 	}
