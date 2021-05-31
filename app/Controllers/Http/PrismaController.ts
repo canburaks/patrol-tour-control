@@ -13,6 +13,61 @@ export default class PrismaController {
 
 	public async index(ctx: HttpContextContract) {}
 
+	public async authBayi({ request, response, view, session }: HttpContextContract) {
+		const accountId = request.input('accountId')
+		const password = request.input('password')
+		const accountType = request.input('accountType')
+
+		const formData = {
+			// Database'de aboneler F_KODU ile, bayiler OP_KODU ile giriş yapıyor.
+			OP_KODU: accountId,
+			MPAROLA: password
+		}
+		console.log('bayi formData: ', formData)
+
+		// QUERY
+		const operatorData = await this.queryOperators(formData.OP_KODU, formData.MPAROLA)
+		console.log('query result: ', operatorData)
+		// FAIL
+		if (!operatorData) {
+			return view.render('auth/login', {
+				error: 'Kullanıcı adınız ya da parolanız yanlış.',
+				accountId,
+				accountType
+			})
+		}
+
+		// QUERY BAYILER
+		const bayilerData = await this.queryBayiler(formData.OP_KODU)
+		// SUCCESS
+		const NAME = operatorData.OP_ADI
+			? operatorData.OP_ADI
+			: bayilerData?.ADI
+			? bayilerData?.ADI
+			: null
+
+		const authorizedOperatorData = {
+			auth: true,
+			data: new Date(),
+			accountType: 'bayi',
+			NAME: NAME,
+			ADI: bayilerData?.ADI,
+			KODU: bayilerData?.KODU,
+			BAYI: bayilerData?.ID,
+			...operatorData
+		}
+		console.log('authorizedOperatorData: ', authorizedOperatorData)
+		const sessionValue = session.put(COOKIE_NAME, authorizedOperatorData)
+
+		// Query Bayi Musterileri
+		const bayiMusterileri = await this.queryMusteriByBayi(parseInt(authorizedOperatorData.BAYI))
+		authorizedOperatorData.MUSTERILER = bayiMusterileri
+
+		console.log('query musteriByBayi: ', '\n\n', bayiMusterileri)
+		//console.log('sessionValue', sessionValue)
+		response.cookie(COOKIE_NAME, authorizedOperatorData)
+		return response.redirect().toPath('/dashboard')
+	}
 
 	public async authMusteri({ request, response, view, session }: HttpContextContract) {
 		const accountId = request.input('accountId')
