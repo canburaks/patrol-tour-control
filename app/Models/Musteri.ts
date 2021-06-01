@@ -1,5 +1,6 @@
 import PrismaController from '../Controllers/Http/PrismaController'
 import Env from '@ioc:Adonis/Core/Env'
+import assert from 'assert'
 
 export default class Musteri {
 	public static prisma = new PrismaController()
@@ -12,6 +13,8 @@ export default class Musteri {
 	public BAYI_ID
 	public NAME
 	public GIRIS_KODU
+	public MESAJLAR = []
+	public LATEST_MESAJLAR = []
 
 	constructor(F_KODU, MPAROLA) {
 		this.PAROLA = MPAROLA
@@ -32,5 +35,27 @@ export default class Musteri {
 		}
 		return false
 	}
-
+	public async getLatestMessages() {
+		const mesajData = await Musteri.prisma.queryLatestMessageByMuster(this.FIRMA_KODU)
+		assert(mesajData, `Latest mesajData for FIRMA_KODU:${this.FIRMA_KODU} is null/undefined`)
+		assert(
+			mesajData.length > 0,
+			`There are no latest mesajData for FIRMA_KODU:${this.FIRMA_KODU}`
+		)
+		this.LATEST_MESAJLAR = mesajData
+		return true
+	}
+	public async getMessagesbyPage(page: number) {
+		const mesajData = await Musteri.prisma.queryMesajlarByMuster(this.FIRMA_KODU, page)
+		assert(
+			mesajData,
+			`Mesaj/sinyal data for FIRMA_KODU:${this.FIRMA_KODU}--PAGE:${page} is null/undefined`
+		)
+		assert(
+			mesajData.length > 0,
+			`There are no mesaj/sinyal for FIRMA_KODU:${this.FIRMA_KODU}--PAGE:${page}`
+		)
+		this.MESAJLAR = mesajData
+		return true
+	}
 }

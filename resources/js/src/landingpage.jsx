@@ -120,8 +120,6 @@ const LandingPage = props => {
 					</div>
 				</div>
 			</section>
-
-
 		</>
 	)
 }

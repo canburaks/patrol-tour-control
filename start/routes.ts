@@ -29,10 +29,6 @@ import Musteri from '../app/Models/Musteri'
 
 const COOKIE_NAME = Application.config.get('session.cookieName')
 
-
-
-
-
 Route.get('/login', async ({ response, session, request, view }) => {
 	return response.redirect().toPath('/')
 })
@@ -46,9 +42,9 @@ Route.post('/login', async ctx => {
 		const bayi = new Bayi(GIRIS_KODU, PAROLA)
 		const isAuthorized = await bayi.authorize()
 		if (isAuthorized) {
+			console.log('Searching authorized bayi data')
 			const bayiData = await bayi.getBayiData()
 			const bayiMusteriler = await bayi.getMusteriler()
-			console.log('ctx bayi', bayi)
 			ctx.response.cookie(COOKIE_NAME, bayi)
 			ctx.session.put(COOKIE_NAME, bayi)
 			return {
@@ -62,7 +58,9 @@ Route.post('/login', async ctx => {
 	} else if (ACCOUNT_TYPE === 'abone') {
 		const musteri = new Musteri(GIRIS_KODU, PAROLA)
 		const isAuthorized = await musteri.authorize()
-		if (isAuthorized){
+		if (isAuthorized) {
+			console.log(`Searching the latest signals for müsteri with F_KODU:${GIRIS_KODU}`)
+			await musteri.getLatestMessages()
 			console.log('ctx musteri', musteri)
 			ctx.session.put(COOKIE_NAME, {})
 			ctx.response.cookie(COOKIE_NAME, musteri)
@@ -99,11 +97,10 @@ Route.post('/form-endpoint', async ctx => {
 
 Route.get('/', async ({ request, response, session, view }) => {
 	const sessionValue = session.get(COOKIE_NAME, {})
-	console.log("landing page server session", sessionValue)
+	//console.log('landing page server session', sessionValue)
 	//return view.render('index', sessionValue)
 	return view.render('app')
 })
-
 
 /* ABONE/Müşteri */
 Route.get('/account/:F_KODU/:PAGE?', async ({ params, request, response, view, session }) => {
@@ -166,8 +163,7 @@ Route.get('/account/:F_KODU/:PAGE?', async ({ params, request, response, view, s
 
 Route.get('*', async ({ request, response, session, view }) => {
 	const sessionValue = session.get(COOKIE_NAME, {})
-	const privateUrls = ["/dashboard", "/account", "/operator"]
-
+	const privateUrls = ['/dashboard', '/account', '/operator']
 
 	//return view.render('index', sessionValue)
 	return view.render('app')

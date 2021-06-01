@@ -110,6 +110,24 @@ class PrismaController {
             skip: SKIP
         });
     }
+    async queryLatestMessageByMuster(F_KODU) {
+        return await PrismaController.client.mesajlar.findMany({
+            where: {
+                F_KODU: F_KODU,
+                OR: [{ ALARMKODU: 'E120' }, { ALARMKODU: 'E130' }]
+            },
+            select: {
+                ALARMKODU: true,
+                BOLGE: true,
+                KULLANICI: true,
+                MESAJTIPI: true,
+                MESAJ: true,
+                TARIH: true
+            },
+            orderBy: { TARIH: 'desc' },
+            take: 5
+        });
+    }
     async queryOperators(OP_KODU, MPAROLA) {
         return await PrismaController.client.operators.findFirst({
             where: {

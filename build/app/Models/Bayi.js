@@ -34,7 +34,7 @@ class Bayi {
     }
     async getMusteriler() {
         const musteriData = await Bayi.prisma.queryMusteriByBayi(parseInt(this.BAYI_ID));
-        console.log("musteriData of Bayi", musteriData);
+        console.log('musteriData of Bayi', musteriData);
         if (musteriData && musteriData.length > 0) {
             this.MUSTERILER = musteriData;
             return musteriData;
