@@ -137,7 +137,24 @@ export default class PrismaController {
 			skip: SKIP
 		})
 	}
-
+	public async queryLatestMessageByMuster(F_KODU: string) {
+		return await PrismaController.client.mesajlar.findMany({
+			where: {
+				F_KODU: F_KODU,
+				OR: [{ ALARMKODU: 'E120' }, { ALARMKODU: 'E130' }]
+			},
+			select: {
+				ALARMKODU: true,
+				BOLGE: true,
+				KULLANICI: true,
+				MESAJTIPI: true,
+				MESAJ: true,
+				TARIH: true
+			},
+			orderBy: { TARIH: 'desc' },
+			take: 5
+		})
+	}
 	public async queryOperators(OP_KODU, MPAROLA) {
 		return await PrismaController.client.operators.findFirst({
 			where: {

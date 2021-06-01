@@ -21,9 +21,9 @@ Route_1.default.post('/login', async (ctx) => {
         const bayi = new Bayi_1.default(GIRIS_KODU, PAROLA);
         const isAuthorized = await bayi.authorize();
         if (isAuthorized) {
+            console.log('Searching authorized bayi data');
             const bayiData = await bayi.getBayiData();
             const bayiMusteriler = await bayi.getMusteriler();
-            console.log('ctx bayi', bayi);
             ctx.response.cookie(COOKIE_NAME, bayi);
             ctx.session.put(COOKIE_NAME, bayi);
             return {
@@ -40,6 +40,8 @@ Route_1.default.post('/login', async (ctx) => {
         const musteri = new Musteri_1.default(GIRIS_KODU, PAROLA);
         const isAuthorized = await musteri.authorize();
         if (isAuthorized) {
+            console.log(`Searching the latest signals for müsteri with F_KODU:${GIRIS_KODU}`);
+            await musteri.getLatestMessages();
             console.log('ctx musteri', musteri);
             ctx.session.put(COOKIE_NAME, {});
             ctx.response.cookie(COOKIE_NAME, musteri);
@@ -68,7 +70,6 @@ Route_1.default.post('/form-endpoint', async (ctx) => {
 });
 Route_1.default.get('/', async ({ request, response, session, view }) => {
     const sessionValue = session.get(COOKIE_NAME, {});
-    console.log("landing page server session", sessionValue);
     return view.render('app');
 });
 Route_1.default.get('/account/:F_KODU/:PAGE?', async ({ params, request, response, view, session }) => {
@@ -115,7 +116,7 @@ Route_1.default.get('/account/:F_KODU/:PAGE?', async ({ params, request, respons
 });
 Route_1.default.get('*', async ({ request, response, session, view }) => {
     const sessionValue = session.get(COOKIE_NAME, {});
-    const privateUrls = ["/dashboard", "/account", "/operator"];
+    const privateUrls = ['/dashboard', '/account', '/operator'];
     return view.render('app');
 });
 //# sourceMappingURL=routes.js.map
