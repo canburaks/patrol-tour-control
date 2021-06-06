@@ -68,11 +68,16 @@ Route.get(`/operator/:OP_KODU/:F_KODU?/:PAGE?`, async ctx => {
 			console.log('Operator is looking a company data')
 			// CHECK WHETHER THE COMPANY IS ITS CLIENT
 			if (OPERATOR.MUSTERI_FIRMA_CODES.includes(FIRMA_KODU)) {
-				const TARGET_FIRMA = OPERATOR.MUSTERILER.filter(m => m.F_KODU === FIRMA_KODU)[0]
 				const params = { F_KODU: FIRMA_KODU, PAGE: TARGET_PAGE || 1 }
 				const prismaClient = new PrismaController()
 				const currentPageData = await prismaClient.queryMesajlar(params)
-				const currentMusteri = OPERATOR.MUSTERILER.filter(m => m.F_KODU === FIRMA_KODU)[0]
+				let musteriler: object[]
+				musteriler = OPERATOR.MUSTERILER.filter(function (musteri: object | any) {
+					if (musteri.F_KODU === FIRMA_KODU) {
+						return true
+					}
+				})
+				let currentMusteri: object | any = musteriler[0]
 				if (currentMusteri) {
 					currentMusteri.MESAJLAR = {}
 					currentMusteri.MESAJLAR[TARGET_PAGE] = currentPageData
@@ -90,7 +95,7 @@ Route.get(`/operator/:OP_KODU/:F_KODU?/:PAGE?`, async ctx => {
 		}
 	}
 	console.log("Error: Session operator code and session operator code doesn't match.")
-	return response.redirect().toPath('/logout', { error: 'Lütfen tekrar giriş yapınız' })
+	return response.redirect().toPath('/logout')
 })
 
 /* COMPANY */
@@ -120,7 +125,7 @@ Route.get('/company/:F_KODU/:PAGE?', async ctx => {
 		console.log('company mesajlar', SESSION_MUSTERI)
 		return view.render('company', { MUSTERI: SESSION_MUSTERI, PAGE })
 	}
-	return response.redirect().toPath('/login', { error: 'Lütfen tekrar giriş yapınız' })
+	return response.redirect().toPath('/login')
 })
 
 /* LOGIN */
@@ -137,9 +142,7 @@ Route.post('/login', async ctx => {
 	const ACCOUNT_TYPE = ctx.request.input('accountType')
 	console.log('Form values: ', GIRIS_KODU, PAROLA, ACCOUNT_TYPE)
 	if (!GIRIS_KODU || !PAROLA || !ACCOUNT_TYPE) {
-		return ctx.response
-			.redirect()
-			.toPath('/login', { error: 'Lütfen girdiğiniz bilgileri kontrol ediniz' })
+		return ctx.response.redirect().toPath('/login')
 	}
 	// OPERATOR
 	if (ACCOUNT_TYPE === 'bayi') {
@@ -190,11 +193,11 @@ Route.post('/login', async ctx => {
 Route.get('/logout', async ctx => {
 	let { request, response, session, view } = ctx
 	session.put(COOKIE_NAME, {})
-	session.put('PAROLA', {})
-	session.put('GIRIS_KODU', {})
-	session.put('ACCOUNT_TYPE', {})
-	session.put('MUSTERI', null)
-	session.put('OPERATOR', null)
+	session.forget('PAROLA')
+	session.forget('GIRIS_KODU')
+	session.forget('ACCOUNT_TYPE')
+	session.forget('MUSTERI')
+	session.forget('OPERATOR')
 
 	return response.redirect().toPath('/')
 })

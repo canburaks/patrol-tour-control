@@ -3212,7 +3212,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "/home/cbs/Projects/Github/patrol-tour-control/prisma/client",
+      "value": "/home/cbs/Projects/Github/patrol-tour-control-ssr/prisma/client",
       "fromEnvVar": null
     },
     "config": {},

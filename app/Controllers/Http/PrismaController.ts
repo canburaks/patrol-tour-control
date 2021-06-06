@@ -153,7 +153,7 @@ export default class PrismaController {
 		// Filtering
 		const FILTER = {
 			F_KODU: F_KODU,
-			OR:[{ALARMKODU: "E120"}, {ALARMKODU:"E130"}]
+			OR: [{ ALARMKODU: 'E120' }, { ALARMKODU: 'E130' }]
 			//...DATE_FILTER
 		}
 

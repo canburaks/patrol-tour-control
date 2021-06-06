@@ -115,7 +115,7 @@ class PrismaController {
         const SKIP = (PAGE - 1) * PrismaController.BATCH_SIZE;
         const FILTER = {
             F_KODU: F_KODU,
-            OR: [{ ALARMKODU: "E120" }, { ALARMKODU: "E130" }]
+            OR: [{ ALARMKODU: 'E120' }, { ALARMKODU: 'E130' }]
         };
         return await PrismaController.client.mesajlar.findMany({
             where: FILTER,
