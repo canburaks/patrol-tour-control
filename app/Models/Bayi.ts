@@ -11,7 +11,7 @@ export default class Bayi {
 	public BAYI_ID
 	public NAME
 	public GIRIS_KODU
-	public MUSTERILER = []
+	public MUSTERILER: object[] = []
 	public MUSTERI_FIRMA_CODES: string[] = []
 
 	constructor(OP_KODU, MPAROLA) {
