@@ -9,15 +9,15 @@ class Musteri {
     constructor(F_KODU, MPAROLA) {
         this.TYPE = 'abone';
         this.AUTH = false;
-        this.MESAJLAR = [];
+        this.MESAJLAR = {};
         this.LATEST_MESAJLAR = [];
         this.PAROLA = MPAROLA;
         this.GIRIS_KODU = F_KODU;
     }
     async authorize() {
         const musteriData = await Musteri.prisma.queryMusteri(this.GIRIS_KODU, this.PAROLA);
-        console.log('query from Musteri: ', musteriData);
         if (musteriData) {
+            console.log('Musteri/Company is authenticated', musteriData);
             this.AUTH = true;
             this.ID = musteriData.ID;
             this.NAME = musteriData.FIRMA_ADI;
@@ -34,12 +34,13 @@ class Musteri {
         this.LATEST_MESAJLAR = mesajData;
         return true;
     }
-    async getMessagesbyPage(page) {
-        const mesajData = await Musteri.prisma.queryMesajlarByMuster(this.FIRMA_KODU, page);
-        assert_1.default(mesajData, `Mesaj/sinyal data for FIRMA_KODU:${this.FIRMA_KODU}--PAGE:${page} is null/undefined`);
-        assert_1.default(mesajData.length > 0, `There are no mesaj/sinyal for FIRMA_KODU:${this.FIRMA_KODU}--PAGE:${page}`);
-        this.MESAJLAR = mesajData;
-        return true;
+    async getMessagesbyPage(params) {
+        const mesajData = await Musteri.prisma.queryMesajlar(params);
+        console.log('mesajdata', mesajData);
+        assert_1.default(mesajData, `Mesaj/sinyal data for FIRMA_KODU:${this.FIRMA_KODU}--PAGE:${params.PAGE} is null/undefined`);
+        assert_1.default(mesajData.length > 0, `There are no mesaj/sinyal for FIRMA_KODU:${this.FIRMA_KODU}--PAGE:${params.PAGE}`);
+        this.MESAJLAR[params.PAGE] = mesajData;
+        return mesajData;
     }
 }
 exports.default = Musteri;

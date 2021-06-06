@@ -1,0 +1,101 @@
+@layout('layouts/master')
+
+@section('content')
+<section class="text-gray-700 ">
+<div class="flex flex-col lg:flex-row min-h-full font-semibold text-blue-900 text-base subpixel-antialiased">
+
+
+
+
+	<div class="flex-1 flex flex-col bg-white py-4 lg:py-8 px-4 lg:px-6 xl:px-8 overflow-hidden">
+		<div class="container px-4 mx-auto">
+			<!-- Hoşgeldin -->
+			<section class="py-8 leading-7 text-gray-900 bg-white sm:py-12 md:py-16 lg:py-24">
+				<div class="max-w-6xl px-4 px-10 mx-auto border-solid lg:px-12">
+					<div class="flex flex-col items-start leading-7 text-gray-900 border-0 border-gray-200 lg:items-center lg:flex-row">
+						<div class="box-border flex-1 text-center border-solid sm:text-left">
+							<h2 class="m-0 text-4xl font-semibold leading-tight tracking-tight text-left text-black border-0 border-gray-200 sm:text-5xl">
+								Hoşgeldiniz,
+							</h2>
+							<p class="mt-2 text-xl text-left text-gray-900 border-0 border-gray-200 sm:text-2xl">
+								{{MUSTERI.FIRMA_ADI}}
+							</p>
+						</div>
+
+					</div>
+				</div>
+			</section>
+
+			<!-- main content -->
+			<div class="flex-1 py-4 lg:py-6">
+				<!-- recent orders -->
+				<div class="bg-white rounded-lg  py-4 lg:py-6 mt-8">
+					<h2 class="text-xl text-blue-900 font-bold mb-4 lg:mb-6">SİNYALLER</h2>
+					<div class="overflow-x-auto min-h-1/2">
+						<div class="align-middle inline-block min-w-full overflow-hidden">
+							<table class="min-w-full">
+							<thead class="text-left bg-blue-50">
+								<tr>
+								<!--th class="py-2 px-3">ID</th-->
+								<!--th class="py-2 px-3">FIRMA KODU</th-->
+								<th class="py-2 pr-8 w-auto">SİNYAL KODU</th>
+								<th class="py-2 pr-8">BOLGE</th>
+								<th class="py-2 pr-8 w-auto">MESAJ</th>
+								<th class="py-2 pr-8 w-auto">KULLANICI</th>
+								<th class="py-2 px-4">TARIH</th>
+								<th class="py-2 px-4">SAAT</th>
+								</tr>
+							</thead>
+							<tbody class="divide-y divide-blue-100 text-blue-900 text-opacity-80 whitespace-nowrap">
+								@each(mesaj in MUSTERI.MESAJLAR[state.PAGE])
+								<tr>
+									<td class="py-3 pr-8">
+										@set("mesaj_class", "transition duration-300 ease-out text-xs rounded-full px-4 py-2  w-20 inline-block text-center  uppercase")
+										<span
+										class="{{ mesaj.ALARMKODU === "E120" ? "bg-red-200 text-red-700" + mesaj_class : "bg-teal-200 text-teal-700" + mesaj_class}}">
+											{{mesaj.ALARMKODU}}
+										</span>
+									</td>
+								<td class="py-3 pr-8">{{ mesaj.BOLGE }}</td>
+								<td class="py-3 pr-8">{{ mesaj.MESAJ }}</td>
+								<td class="py-3 pr-8">{{ mesaj.KULLANICI }}</td>
+								<td class="py-3 pr-8">{{ mesaj.TARIH.toLocaleString("tr-TR", {weekday: "long", year: "numeric", month: "long", day: "2-digit"}) }}</td>
+								<td class="py-3 pr-8">{{ mesaj.TARIH.toLocaleString("tr-TR", {hour: "2-digit", minute: "2-digit", second: "2-digit"}) }}</td>
+								{{--
+								--}}
+
+								</tr>
+								@end
+
+							</tbody>
+							</table>
+						</div>
+					</div>
+					<div class="flex justify-between items-center w-full px-10 py-4 rounded-lg bg-teal-50 min-h-4">
+						<div class="min-w-4 min-h-2">
+							@if(PAGE > 1)
+								<a href="/company/{{ MUSTERI.GIRIS_KODU }}/{{ parseInt(state.PAGE)-1 }}" class="font-bold text-teal-700 inline-block hover:underline">Önceki</a>
+							@endif
+						</div>
+
+						<a href="/company/{{ MUSTERI.GIRIS_KODU }}/{{ parseInt(state.PAGE)+1 }}" class="font-bold text-teal-700 inline-block hover:underline">Sonraki</a>
+					</div>
+
+				</div>
+
+			</div>
+		</div>
+	  <!--/ main content -->
+	</div>
+  </div>
+
+
+
+
+
+</section>
+
+@endsection
+
+
+

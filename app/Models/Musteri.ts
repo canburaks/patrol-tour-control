@@ -5,15 +5,15 @@ import assert from 'assert'
 export default class Musteri {
 	public static prisma = new PrismaController()
 	public TYPE = 'abone'
-	public AUTH = false
-	public PAROLA
-	public ID
-	public FIRMA_KODU
-	public FIRMA_ADI
-	public BAYI_ID
-	public NAME
+	public AUTH: boolean = false
+	public PAROLA: string
+	public ID: number
+	public FIRMA_KODU: string
+	public FIRMA_ADI: string
+	public BAYI_ID: number // table BAYI
+	public NAME: string
 	public GIRIS_KODU
-	public MESAJLAR = []
+	public MESAJLAR = {}
 	public LATEST_MESAJLAR = []
 
 	constructor(F_KODU, MPAROLA) {
@@ -23,9 +23,9 @@ export default class Musteri {
 
 	public async authorize() {
 		const musteriData = await Musteri.prisma.queryMusteri(this.GIRIS_KODU, this.PAROLA)
-		console.log('query from Musteri: ', musteriData)
 		// IF PASSWORD IS CORRECT
 		if (musteriData) {
+			console.log('Musteri/Company is authenticated', musteriData)
 			this.AUTH = true
 			this.ID = musteriData.ID
 			this.NAME = musteriData.FIRMA_ADI
@@ -45,17 +45,18 @@ export default class Musteri {
 		this.LATEST_MESAJLAR = mesajData
 		return true
 	}
-	public async getMessagesbyPage(page: number) {
-		const mesajData = await Musteri.prisma.queryMesajlarByMuster(this.FIRMA_KODU, page)
+	public async getMessagesbyPage(params) {
+		const mesajData = await Musteri.prisma.queryMesajlar(params)
+		console.log('mesajdata', mesajData)
 		assert(
 			mesajData,
-			`Mesaj/sinyal data for FIRMA_KODU:${this.FIRMA_KODU}--PAGE:${page} is null/undefined`
+			`Mesaj/sinyal data for FIRMA_KODU:${this.FIRMA_KODU}--PAGE:${params.PAGE} is null/undefined`
 		)
 		assert(
 			mesajData.length > 0,
-			`There are no mesaj/sinyal for FIRMA_KODU:${this.FIRMA_KODU}--PAGE:${page}`
+			`There are no mesaj/sinyal for FIRMA_KODU:${this.FIRMA_KODU}--PAGE:${params.PAGE}`
 		)
-		this.MESAJLAR = mesajData
-		return true
+		this.MESAJLAR[params.PAGE] = mesajData
+		return mesajData
 	}
 }

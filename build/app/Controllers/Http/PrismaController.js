@@ -89,14 +89,36 @@ class PrismaController {
         const sessionValue = session.get(COOKIE_NAME);
         return view.render('dashboard', sessionValue);
     }
-    async queryMesajlarByMuster(F_KODU, PAGE) {
-        const TAKE = 100;
-        const SKIP = (PAGE - 1) * TAKE;
+    static addDateFiltering({ START, END }) {
+        if (START && END) {
+            return {
+                AND: [
+                    {
+                        TARIH: { lte: END }
+                    },
+                    {
+                        TARIH: { gte: START }
+                    }
+                ]
+            };
+        }
+        if (!START && END) {
+            return { TARIH: { lte: END } };
+        }
+        if (!START && !END) {
+            return { TARIH: { lte: new Date() } };
+        }
+    }
+    async queryMesajlar(params) {
+        const F_KODU = params.F_KODU || params.FIRMA_KODU;
+        const PAGE = params.PAGE || 1;
+        const SKIP = (PAGE - 1) * PrismaController.BATCH_SIZE;
+        const FILTER = {
+            F_KODU: F_KODU,
+            OR: [{ ALARMKODU: "E120" }, { ALARMKODU: "E130" }]
+        };
         return await PrismaController.client.mesajlar.findMany({
-            where: {
-                F_KODU: F_KODU,
-                OR: [{ ALARMKODU: 'E120' }, { ALARMKODU: 'E130' }]
-            },
+            where: FILTER,
             select: {
                 ALARMKODU: true,
                 BOLGE: true,
@@ -106,7 +128,7 @@ class PrismaController {
                 TARIH: true
             },
             orderBy: { TARIH: 'desc' },
-            take: TAKE,
+            take: PrismaController.BATCH_SIZE,
             skip: SKIP
         });
     }
@@ -200,4 +222,5 @@ class PrismaController {
     }
 }
 exports.default = PrismaController;
+PrismaController.BATCH_SIZE = 25;
 //# sourceMappingURL=PrismaController.js.map
