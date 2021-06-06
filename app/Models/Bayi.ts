@@ -12,7 +12,7 @@ export default class Bayi {
 	public NAME
 	public GIRIS_KODU
 	public MUSTERILER = []
-	public MUSTERI_FIRMA_CODES = []
+	public MUSTERI_FIRMA_CODES: string[] = []
 
 	constructor(OP_KODU, MPAROLA) {
 		this.PAROLA = MPAROLA

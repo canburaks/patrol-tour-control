@@ -2,8 +2,8 @@
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { PrismaClient } from '../../../prisma/client'
 import Application from '@ioc:Adonis/Core/Application'
-import { Bayi } from '../../Models/Bayi'
-import { Musteri } from '../../Models/Musteri'
+import Bayi from '../../Models/Bayi'
+import Musteri from '../../Models/Musteri'
 
 const COOKIE_NAME = Application.config.get('session.cookieName')
 export const prisma = new PrismaClient()
