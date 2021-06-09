@@ -14,10 +14,10 @@ const mailConfig = {
             auth: {
                 user: Env_1.default.get('SMTP_USERNAME'),
                 pass: Env_1.default.get('SMTP_PASSWORD'),
-                type: 'login',
-            },
-        },
-    },
+                type: 'login'
+            }
+        }
+    }
 };
 exports.default = mailConfig;
 //# sourceMappingURL=mail.js.map

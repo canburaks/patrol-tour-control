@@ -37,6 +37,6 @@ class MailController {
 }
 exports.default = MailController;
 MailController.SENDER = Env_1.default.get('SMTP_USERNAME');
-MailController.TARGET = 'info@filizguvenlik.com.tr';
+MailController.TARGET = Env_1.default.get('SMTP_TARGET');
 MailController.SUBJECT = 'ÖNEMLİ !!! Bir Ziyaretçi form doldurdu.';
 //# sourceMappingURL=MailController.js.map
