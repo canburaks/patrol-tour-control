@@ -1,6 +1,11 @@
 @layout('layouts/master')
 
 @section('content')
+
+
+<link href="https://unpkg.com/tabulator-tables@4.9.3/dist/css/tabulator.min.css" rel="stylesheet">
+<script type="text/javascript" src="https://unpkg.com/tabulator-tables@4.9.3/dist/js/tabulator.min.js"></script>
+
 <section class="text-gray-700 ">
 <div class="flex flex-col lg:flex-row min-h-full font-semibold text-blue-900 text-base subpixel-antialiased">
 
@@ -11,7 +16,7 @@
 		<div class="container px-4 mx-auto">
 			<!-- Hoşgeldin -->
 			<section class="py-8 leading-7 text-gray-900 bg-white sm:py-12 md:py-16 lg:py-24">
-				<div class="max-w-6xl px-4 px-10 mx-auto border-solid lg:px-12">
+				<div class="max-w-6xl px-4 mx-auto border-solid lg:px-12">
 					<div class="flex flex-col items-start leading-7 text-gray-900 border-0 border-gray-200 lg:items-center lg:flex-row">
 						<div class="box-border flex-1 text-center border-solid sm:text-left">
 							<h2 class="m-0 text-4xl font-semibold leading-tight tracking-tight text-left text-black border-0 border-gray-200 sm:text-5xl">
@@ -27,7 +32,16 @@
 			</section>
 
 			<!-- main content -->
+			<div class="flex-1 py-4 lg:py-6" id="#example-table">
+
+			</div>
+
+			<!-- main content -->
 			<div class="flex-1 py-4 lg:py-6">
+				@!component('components/date-input', {
+					text: 'Login',
+					type: 'submit'
+				  })
 				<!-- recent orders -->
 				<div class="bg-white rounded-lg  py-4 lg:py-6 mt-8">
 					<h2 class="text-xl text-blue-900 font-bold mb-4 lg:mb-6">SİNYALLER</h2>
@@ -38,7 +52,6 @@
 								<tr>
 								<!--th class="py-2 px-3">ID</th-->
 								<!--th class="py-2 px-3">FIRMA KODU</th-->
-								<th class="py-2 pr-8 w-auto">SİNYAL KODU</th>
 								<th class="py-2 pr-8">BOLGE</th>
 								<th class="py-2 pr-8 w-auto">MESAJ</th>
 								<th class="py-2 pr-8 w-auto">KULLANICI</th>
@@ -47,20 +60,14 @@
 								</tr>
 							</thead>
 							<tbody class="divide-y divide-blue-100 text-blue-900 text-opacity-80 whitespace-nowrap">
-								@each(mesaj in MUSTERI.MESAJLAR[state.PAGE])
+								@each(mesaj in MUSTERI.MESAJLAR[state.DATE])
 								<tr>
-									<td class="py-3 pr-8">
-										@set("mesaj_class", "transition duration-300 ease-out text-xs rounded-full px-4 py-2  w-20 inline-block text-center  uppercase")
-										<span
-										class="{{ mesaj.ALARMKODU === "E120" ? "bg-red-200 text-red-700" + mesaj_class : "bg-teal-200 text-teal-700" + mesaj_class}}">
-											{{mesaj.ALARMKODU}}
-										</span>
-									</td>
 								<td class="py-3 pr-8">{{ mesaj.BOLGE }}</td>
 								<td class="py-3 pr-8">{{ mesaj.MESAJ }}</td>
 								<td class="py-3 pr-8">{{ mesaj.KULLANICI }}</td>
-								<td class="py-3 pr-8">{{ mesaj.TARIH.toLocaleString("tr-TR", {weekday: "long", year: "numeric", month: "long", day: "2-digit"}) }}</td>
-								<td class="py-3 pr-8">{{ mesaj.TARIH.toLocaleString("tr-TR", {hour: "2-digit", minute: "2-digit", second: "2-digit"}) }}</td>
+								<td class="py-3 pr-8">{{ mesaj.DATE }}</td>
+								<td class="py-3 pr-8">{{ mesaj.HOUR }}</td>
+
 								{{--
 								--}}
 

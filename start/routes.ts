@@ -26,6 +26,7 @@ import MailController from '../app/Controllers/Http/MailController'
 import View from '@ioc:Adonis/Core/View'
 import Musteri from '../app/Models/Musteri'
 import Bayi from '../app/Models/Bayi'
+import { DateTime } from 'luxon'
 
 const COOKIE_NAME = Application.config.get('session.cookieName')
 
@@ -42,7 +43,7 @@ Route.post('/form-endpoint', async ctx => {
 /*-------------------------------------*/
 
 // COMPANY AND OPERATOR
-/* COMPANY */
+/* OPERATOR */
 Route.get(`/operator/:OP_KODU/:F_KODU?/:PAGE?`, async ctx => {
 	let { request, response, params, session, view } = ctx
 	// URL values
@@ -93,13 +94,45 @@ Route.get(`/operator/:OP_KODU/:F_KODU?/:PAGE?`, async ctx => {
 			console.log('Error: this is not client of this OPERATOR.')
 			return response.redirect().toPath(`/operator/${OP_KODU}/`)
 		}
+	} else {
 	}
 	console.log("Error: Session operator code and session operator code doesn't match.")
 	return response.redirect().toPath('/logout')
 })
 
 /* COMPANY */
-Route.get('/company/:F_KODU/:PAGE?', async ctx => {
+/* COMPANY */
+Route.get('/company/:F_KODU/:DATE?', async ctx => {
+	let { request, response, params, session, view } = ctx
+	console.log('params', params)
+	// URL values
+	const TARGET_FIRMA_KODU = params.F_KODU
+	const DATE = params.DATE
+	console.log('company route: ', params.F_KODU, params.DATE)
+	// Session values
+	const PAROLA = session.get('PAROLA')
+	const ACCOUNT_TYPE = session.get('ACCOUNT_TYPE')
+	const GIRIS_KODU = session.get('GIRIS_KODU')
+	console.log('company route values: ', TARGET_FIRMA_KODU, PAROLA, GIRIS_KODU, ACCOUNT_TYPE)
+	// musteri Object
+	if (parseInt(GIRIS_KODU) === parseInt(TARGET_FIRMA_KODU)) {
+		console.log("target and current company ID's are matched")
+		// Get MUSTERI FROM SESSION
+		const SESSION_MUSTERI = session.get('MUSTERI')
+		const NEW_MUSTERI_OBJECT = new Musteri(SESSION_MUSTERI.GIRIS_KODU, SESSION_MUSTERI.PAROLA)
+		//console.log('session müşteri: ', SESSION_MUSTERI)
+		let currentDateMesajlar = await NEW_MUSTERI_OBJECT.getMessagesbyDate({ DATE })
+		SESSION_MUSTERI.MESAJLAR[DATE] = currentDateMesajlar
+		//const UPDATED_MUSTERI = { ...SESSION_MUSTERI, ...NEW_MUSTERI_OBJECT }
+		session.put('MUSTERI', SESSION_MUSTERI)
+		response.cookie('MUSTERI', SESSION_MUSTERI)
+		//console.log('company mesajlar', SESSION_MUSTERI)
+		return view.render('company', { MUSTERI: SESSION_MUSTERI, DATE })
+	}
+	return response.redirect().toPath('/login')
+})
+
+Route.get('/_company/:F_KODU/:PAGE?', async ctx => {
 	let { request, response, params, session, view } = ctx
 	// URL values
 	const TARGET_FIRMA_KODU = params.F_KODU
@@ -132,8 +165,10 @@ Route.get('/company/:F_KODU/:PAGE?', async ctx => {
 Route.get('/login', async ctx => {
 	let { request, response, session, view } = ctx
 	let sessionValue = session.get(COOKIE_NAME, {})
-	//console.log('Login route session value: ', sessionValue)
-	return view.render('auth/login', { error: sessionValue.error && sessionValue.error })
+	let sessionError = session.get('Error')
+	console.log('login error: ', sessionError)
+	//console.log('Login route session value: ', sessionError)
+	return view.render('auth/login', { error: sessionError && sessionError })
 })
 
 Route.post('/login', async ctx => {
@@ -161,7 +196,8 @@ Route.post('/login', async ctx => {
 			return ctx.response.redirect().toPath(`/operator/${OPERATOR.GIRIS_KODU}`)
 		}
 		let ERROR = 'Lütfen parolanızı ve kullanıcı tipini tekrar kontrol ediniz.'
-		console.log("Error: Credentials doesn't match")
+		//console.log("Error: Credentials doesn't match")
+		//ctx.session.put('Error', ERROR)
 		return ctx.response.redirect().toPath('/login')
 	}
 	//ACCOUNT
