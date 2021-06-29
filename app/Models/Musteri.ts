@@ -1,6 +1,7 @@
-import PrismaController from '../Controllers/Http/PrismaController'
+import PrismaController, { prisma } from '../Controllers/Http/PrismaController'
 import Env from '@ioc:Adonis/Core/Env'
 import assert from 'assert'
+import { DateTime } from 'luxon'
 
 export default class Musteri {
 	public static prisma = new PrismaController()
@@ -58,5 +59,69 @@ export default class Musteri {
 		)
 		this.MESAJLAR[params.PAGE] = mesajData
 		return mesajData
+	}
+	public async getMessagesbyDate(params) {
+		let now
+		let today
+		let tomorrow
+		let START
+		let END
+		if (params.DATE.length === 8) {
+			today = DateTime.fromObject({
+				hour: 0,
+				day: params.DATE.slice(0, 2),
+				month: params.DATE.slice(2, 4),
+				year: params.DATE.slice(4, 8)
+			})
+			tomorrow = today.plus({ days: 1 })
+			START = today.toSQLDate()
+			END = tomorrow.toSQLDate()
+		}
+		if (!params.DATE || params.DATE.length !== 8) {
+			now = DateTime.now()
+			today = DateTime.fromObject({
+				hour: 0,
+				day: now.day,
+				month: now.month,
+				year: now.year
+			})
+			tomorrow = today.plus({ days: 1 })
+			START = today.toSQLDate()
+			END = tomorrow.toSQLDate()
+		}
+		const raw = `SELECT ALARMKODU, BOLGE, KULLANICI, MESAJTIPI, MESAJ, TARIH FROM mesajlar WHERE F_KODU = "${this.GIRIS_KODU}" AND TARIH BETWEEN "${START}" AND "${END} LIMIT = 5";`
+		console.log('raw', raw)
+		console.log('START END', START, END)
+		let rawMesajData = await prisma.$queryRaw(raw)
+		let mesajData = rawMesajData.map(r => ({
+			...r,
+			HOUR: new Date(r.TARIH).toLocaleString('tr-TR', {
+				hour: '2-digit',
+				minute: '2-digit',
+				second: '2-digit'
+			}),
+			DATE: new Date(r.TARIH).toLocaleString('tr-TR', {
+				weekday: 'long',
+				year: 'numeric',
+				month: 'long',
+				day: '2-digit'
+			})
+		}))
+
+		//const mesajData = await prisma.$queryRaw`SELECT * FROM mesajlar WHERE F_KODU = 4132 AND TARIH BETWEEN "2021-06-29" AND "2021-06-30"  LIMIT 5;`
+		this.MESAJLAR[START] = mesajData
+		console.log('mesajdata', mesajData)
+		console.log('mesajlar', this.MESAJLAR)
+
+		//console.log(
+		//	'raw: ',
+		//	`SELECT BOLGE, MESAJ, TARIH FROM mesajlar WHERE F_KODU = "${this.GIRIS_KODU}" AND TARIH BETWEEN "${START}" "${END}";`
+		//)
+		return mesajData
+	}
+	public generateRawQuery(F_KODU, START, END) {
+		const SELECT = 'SELECT BOLGE, MESAJ, TARIH FROM mesajlar '
+		const WHERE = `WHERE F_KODU = ${F_KODU} AND TARIH BETWEEN "${START}" "${END}";`
+		return SELECT + WHERE
 	}
 }

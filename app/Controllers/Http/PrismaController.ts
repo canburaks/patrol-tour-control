@@ -4,6 +4,7 @@ import { PrismaClient } from '../../../prisma/client'
 import Application from '@ioc:Adonis/Core/Application'
 import Bayi from '../../Models/Bayi'
 import Musteri from '../../Models/Musteri'
+import { DateTime } from 'luxon'
 
 const COOKIE_NAME = Application.config.get('session.cookieName')
 export const prisma = new PrismaClient()
