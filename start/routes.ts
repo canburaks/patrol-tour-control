@@ -122,10 +122,14 @@ Route.get('/company/:F_KODU/:DATE?', async ctx => {
 		const NEW_MUSTERI_OBJECT = new Musteri(SESSION_MUSTERI.GIRIS_KODU, SESSION_MUSTERI.PAROLA)
 		//console.log('session müşteri: ', SESSION_MUSTERI)
 		let currentDateMesajlar = await NEW_MUSTERI_OBJECT.getMessagesbyDate({ DATE })
+		NEW_MUSTERI_OBJECT.MESAJLAR = {
+			...SESSION_MUSTERI.MESAJLAR,
+			...NEW_MUSTERI_OBJECT.MESAJLAR
+		}
 		SESSION_MUSTERI.MESAJLAR[DATE] = currentDateMesajlar
 		//const UPDATED_MUSTERI = { ...SESSION_MUSTERI, ...NEW_MUSTERI_OBJECT }
-		session.put('MUSTERI', SESSION_MUSTERI)
-		response.cookie('MUSTERI', SESSION_MUSTERI)
+		session.put('MUSTERI', NEW_MUSTERI_OBJECT)
+		response.cookie('MUSTERI', NEW_MUSTERI_OBJECT)
 		//console.log('company mesajlar', SESSION_MUSTERI)
 		return view.render('company', { MUSTERI: SESSION_MUSTERI, DATE })
 	}

@@ -61,6 +61,7 @@ export default class Musteri {
 		return mesajData
 	}
 	public async getMessagesbyDate(params) {
+		this.authorize()
 		let now
 		let today
 		let tomorrow
@@ -107,6 +108,7 @@ export default class Musteri {
 				day: '2-digit'
 			})
 		}))
+		//.slice(0, 3)
 
 		//const mesajData = await prisma.$queryRaw`SELECT * FROM mesajlar WHERE F_KODU = 4132 AND TARIH BETWEEN "2021-06-29" AND "2021-06-30"  LIMIT 5;`
 		this.MESAJLAR[START] = mesajData
