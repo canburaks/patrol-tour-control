@@ -63,6 +63,7 @@ class Musteri {
         return mesajData;
     }
     async getMessagesbyDate(params) {
+        this.authorize();
         let now;
         let today;
         let tomorrow;

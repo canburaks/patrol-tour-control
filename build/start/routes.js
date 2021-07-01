@@ -81,9 +81,13 @@ Route_1.default.get('/company/:F_KODU/:DATE?', async (ctx) => {
         const SESSION_MUSTERI = session.get('MUSTERI');
         const NEW_MUSTERI_OBJECT = new Musteri_1.default(SESSION_MUSTERI.GIRIS_KODU, SESSION_MUSTERI.PAROLA);
         let currentDateMesajlar = await NEW_MUSTERI_OBJECT.getMessagesbyDate({ DATE });
+        NEW_MUSTERI_OBJECT.MESAJLAR = {
+            ...SESSION_MUSTERI.MESAJLAR,
+            ...NEW_MUSTERI_OBJECT.MESAJLAR
+        };
         SESSION_MUSTERI.MESAJLAR[DATE] = currentDateMesajlar;
-        session.put('MUSTERI', SESSION_MUSTERI);
-        response.cookie('MUSTERI', SESSION_MUSTERI);
+        session.put('MUSTERI', NEW_MUSTERI_OBJECT);
+        response.cookie('MUSTERI', NEW_MUSTERI_OBJECT);
         return view.render('company', { MUSTERI: SESSION_MUSTERI, DATE });
     }
     return response.redirect().toPath('/login');
