@@ -1,0 +1,1 @@
+import Vue from"vue";import App from"./App.vue";Vue.config.productionTip=!1,new Vue({render:p=>p(App)}).$mount("#app");

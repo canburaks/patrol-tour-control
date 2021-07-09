@@ -11,8 +11,8 @@ export default class Bayi {
 	public BAYI_ID
 	public NAME
 	public GIRIS_KODU
-	public MUSTERILER = []
-	public MUSTERI_FIRMA_CODES = []
+	public MUSTERILER: object[] = []
+	public MUSTERI_FIRMA_CODES: string[] = []
 
 	constructor(OP_KODU, MPAROLA) {
 		this.PAROLA = MPAROLA
@@ -66,7 +66,7 @@ export default class Bayi {
 
 	public async getMusteriler() {
 		const musteriData = await Bayi.prisma.queryMusteriByBayi(parseInt(this.BAYI_ID))
-		console.log('musteriData of Bayi', musteriData)
+		//console.log('musteriData of Bayi', musteriData)
 		if (musteriData && musteriData.length > 0) {
 			this.MUSTERILER = musteriData
 			this.MUSTERI_FIRMA_CODES = musteriData.map(m => m.F_KODU)

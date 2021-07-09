@@ -62,7 +62,14 @@ Encore.copyFiles({
 	from: './resources/img',
 	to: 'images/[path][name].[ext]'
 })
-
+Encore.copyFiles({
+	from: './resources/js/libs',
+	to: 'js/libs/[path][name].[ext]'
+})
+Encore.copyFiles({
+	from: './resources/css/libs',
+	to: 'css/libs/[path][name].[ext]'
+})
 /*
 |--------------------------------------------------------------------------
 | Split shared code
