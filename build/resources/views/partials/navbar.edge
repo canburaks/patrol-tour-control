@@ -13,10 +13,20 @@
             </a>
             <nav class="flex flex-wrap items-center mb-5 text-base md:mb-0 md:pl-8 md:ml-8 md:border-l md:border-gray-200">
                 <a href="/" class="mr-5 font-medium leading-6 text-gray-600 hover:text-gray-900">Anasayfa</a>
-				@if(session.get("filizguvenlik",{}).accountType === "bayi")
-	                <a href="/dashboard" class="mr-5 font-medium leading-6 text-gray-600 hover:text-gray-900">Panel</a>
-				@elseif(session.get("filizguvenlik",{}).accountType === "abone")
-					<a href="/account/{{ F_KODU }}" class="mr-5 font-medium leading-6 text-gray-600 hover:text-gray-900">Panel</a>
+				@if(session.get("OPERATOR") && session.get("OPERATOR").GIRIS_KODU)
+					<a
+						class="mr-5 font-medium leading-6 text-gray-600 hover:text-gray-900"
+						href="/operator/{{session.get("OPERATOR").GIRIS_KODU}}"
+						>
+						Panel
+					</a>
+					@elseif(session.get("MUSTERI") && session.get("MUSTERI").GIRIS_KODU)
+					<a
+						class="mr-5 font-medium leading-6 text-gray-600 hover:text-gray-900"
+						href="/company/{{session.get("MUSTERI").GIRIS_KODU}}/1"
+						>
+						Panel
+					</a>
 				@end
                 <!--a href="#_" class="mr-5 font-medium leading-6 text-gray-600 hover:text-gray-900">Pricing</a>
                 <a href="/form" class="mr-5 font-medium leading-6 text-gray-600 hover:text-gray-900">Mail test</a-->
@@ -24,15 +34,16 @@
         </div>
 
         <div class="inline-flex items-center ml-5 space-x-6 lg:justify-end">
-			@if(!session.get("filizguvenlik",{}).auth)
-            <a href="/login" class="text-teal-600 px-8 py-2 border-teal-600  font-medium leading-6 border-2 rounded-lg transition ease-out duration-300 hover:text-blueGray-100 hover:bg-teal-600">
-                Giriş yap
-            </a>
-			@elseif(session.get("filizguvenlik",{}).auth === true)
-            <a href="/logout" class="text-teal-600 px-8 py-2 border-teal-600  font-medium leading-6 border-2 rounded-lg transition ease-out duration-300 hover:text-blueGray-100 hover:bg-teal-600">
-                Çıkış yap
-            </a>
-			@endif
+			@if(session.get("OPERATOR") || session.get("MUSTERI"))
+				<a href="/logout" class="text-teal-600 px-8 py-2 border-teal-600  font-medium leading-6 border-2 rounded-lg transition ease-out duration-300 hover:text-blueGray-100 hover:bg-teal-600">
+					Çıkış yap
+				</a>
+			@else
+				<a href="/login" class="text-teal-600 px-8 py-2 border-teal-600  font-medium leading-6 border-2 rounded-lg transition ease-out duration-300 hover:text-blueGray-100 hover:bg-teal-600">
+					Giriş yap
+				</a>
+
+			@end
         </div>
     </div>
 </section>

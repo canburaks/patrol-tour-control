@@ -4,7 +4,7 @@ import Env from '@ioc:Adonis/Core/Env'
 
 export default class MailController {
 	public static SENDER = Env.get('SMTP_USERNAME')
-	public static TARGET = 'info@filizguvenlik.com.tr'
+	public static TARGET = Env.get('SMTP_TARGET')
 	public static SUBJECT = 'ÖNEMLİ !!! Bir Ziyaretçi form doldurdu.'
 
 	public async formHandler({ request, response, view }: HttpContextContract) {

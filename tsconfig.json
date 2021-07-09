@@ -1,6 +1,6 @@
 {
 	"extends": "./node_modules/adonis-preset-ts/tsconfig",
-	"include": ["**/*", "start/.routes copy.ts"],
+	"include": ["**/*", "start/.routes copy.ts", "resources/js/jquery.min.js", "resources/js/bootstrap-table.min.js", "resources/js/FileSaver.min.js"],
 	"exclude": ["node_modules", "build"],
 	"compilerOptions": {
 		"outDir": "build",

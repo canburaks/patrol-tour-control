@@ -1,0 +1,167 @@
+@layout('layouts/master')
+
+@section('scripts')
+@endsection
+
+@section('content')
+<section class="text-gray-700 ">
+	<div class="flex flex-col lg:flex-row min-h-full font-semibold text-blue-900 text-base subpixel-antialiased">
+
+
+
+		<div class="flex-1 flex flex-col bg-white py-4 lg:py-8 px-4 lg:px-6 xl:px-8 overflow-hidden">
+
+		  <!-- topbar -->
+		  <div class="max-w-screen-2xl w-full mx-auto flex justify-between">
+			<div class="hidden md:block">
+				@if(state.PAGE)
+
+				<h1 class="text-xl mb-1 font-bold text-blue-800">Müşterinizin sinyal bilgilerini görüntülüyorsunuz</h1>
+				<a
+					class="inline-block w-full mt-4 md:w-auto px-4 py-1 font-medium text-white bg-indigo-500 hover:bg-indigo-600 rounded transition duration-200"
+					href="/operator/{{OPERATOR.GIRIS_KODU}}">
+					Panel sayfanız
+				</a>
+
+
+				@else
+				<h1 class="text-2xl mb-1 font-bold text-blue-800">Hoşgeldiniz, {{OPERATOR.NAME}}.</h1>
+			  	<p class="text-lg text-blue-900 hidden font-normal lg:block">Müşterilerinize buradan erişebilirsiniz..</p>
+			  @end
+			</div>
+
+		  </div>
+		  <!--/ topbar -->
+
+		  <!-- main content -->
+		  <div class="flex-1 py-4 lg:py-10">
+			<div class="max-w-screen-2xl mx-auto">
+
+			  <!-- cards row -->
+			  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 2xl:gap-8">
+
+
+			  </div>
+			  <!--/ cards row -->
+			 	@if(state.PAGE)
+
+					<!-- OPERATOR IS LOOKING A CLIENT -->
+					<div class="flex-1 py-4 lg:py-6">
+						<!-- recent orders -->
+						<div class="bg-white rounded-lg  py-4 lg:py-6 mt-8">
+							<h2 class="text-xl text-blue-900  mb-4 lg:mb-6">SİNYALLER</h2>
+							<h3 class="text-xl text-blue-900 font-bold mb-4 lg:mb-6">{{MUSTERI.FIRMA_ADI}}</h2>
+
+							<div class="overflow-x-auto min-h-1/2">
+								<div class="align-middle inline-block min-w-full overflow-hidden">
+									<table class="min-w-full">
+									<thead class="text-left bg-blue-50">
+										<tr>
+										<!--th class="py-2 px-3">ID</th-->
+										<!--th class="py-2 px-3">FIRMA KODU</th-->
+										<th class="py-2 pr-8 w-auto">SİNYAL KODU</th>
+										<th class="py-2 pr-8">BOLGE</th>
+										<th class="py-2 pr-8 w-auto">MESAJ</th>
+										<th class="py-2 pr-8 w-auto">KULLANICI</th>
+										<th class="py-2 px-4">TARIH</th>
+										<th class="py-2 px-4">SAAT</th>
+										</tr>
+									</thead>
+									<tbody class="divide-y divide-blue-100 text-blue-900 text-opacity-80 whitespace-nowrap">
+										@each(mesaj in state.MUSTERI.MESAJLAR[state.PAGE])
+										<tr>
+											<td class="py-3 pr-8">
+												@set("mesaj_class", "transition duration-300 ease-out text-xs rounded-full px-4 py-2  w-20 inline-block text-center  uppercase")
+												<span
+												class="{{ mesaj.ALARMKODU === "E120" ? "bg-red-200 text-red-700" + mesaj_class : "bg-teal-200 text-teal-700" + mesaj_class}}">
+													{{mesaj.ALARMKODU}}
+												</span>
+											</td>
+										<td class="py-3 pr-8">{{ mesaj.BOLGE }}</td>
+										<td class="py-3 pr-8">{{ mesaj.MESAJ }}</td>
+										<td class="py-3 pr-8">{{ mesaj.KULLANICI }}</td>
+										<td class="py-3 pr-8">{{ mesaj.TARIH.toLocaleString("tr-TR", {weekday: "long", year: "numeric", month: "long", day: "2-digit"}) }}</td>
+										<td class="py-3 pr-8">{{ mesaj.TARIH.toLocaleString("tr-TR", {hour: "2-digit", minute: "2-digit", second: "2-digit"}) }}</td>
+										{{--
+										--}}
+
+										</tr>
+										@end
+									</tbody>
+									</table>
+								</div>
+							</div>
+							<div class="flex justify-between items-center w-full px-10 py-4 rounded-lg bg-teal-50 min-h-4">
+								<div class="min-w-4 min-h-2">
+									@if(PAGE > 1)
+										<a href="/operator/{{OPERATOR.GIRIS_KODU}}/{{ state.MUSTERI.F_KODU }}/{{ parseInt(state.PAGE)-1 }}" class="font-bold text-teal-700 inline-block hover:underline">Önceki</a>
+									@endif
+								</div>
+
+								<a href="/operator/{{OPERATOR.GIRIS_KODU}}/{{ state.MUSTERI.F_KODU }}/{{ parseInt(state.PAGE)+1 }}" class="font-bold text-teal-700 inline-block hover:underline">Sonraki</a>
+							</div>
+						</div>
+					</div>
+
+				@else
+
+					<!-- OPERATOR IS VIEWINF THE LIST OF ITS CLIENT -->
+					<div class="bg-white rounded-lg  py-4 lg:py-6 mt-8">
+						<h2 class="text-xl text-blue-900 font-bold mb-4 lg:mb-6">ABONELER</h2>
+						<div class="overflow-x-auto">
+						<div class="align-middle inline-block min-w-full overflow-hidden">
+							<table class="min-w-full">
+								<thead class="text-left bg-blue-50">
+									<tr>
+									<!--th class="py-2 px-3">ID</th-->
+									<!--th class="py-2 px-3">FIRMA KODU</th-->
+									<th class="py-2 pr-8">FIRMA&nbsp;ADI</th>
+									<th class="py-2 pr-8 w-auto">BAYI&nbsp;NO</th>
+									<th class="py-2 px-4">ERİŞİM</th>
+									</tr>
+								</thead>
+								<tbody class="divide-y divide-blue-100 text-blue-900 text-opacity-80 whitespace-nowrap">
+									@each(musteri in OPERATOR.MUSTERILER)
+										<tr>
+											<!--td class="py-3 px-3">{{ musteri.ID }}</td-->
+											<!--td class="py-3 px-3">{{ musteri.F_KODU }}</td-->
+											<td class="py-3 pr-8">{{ musteri.FIRMA_ADI }}</td>
+											<td class="py-3 pr-8">{{ musteri.BAYI }}</td>
+											<td class="py-3 pr-8">
+												<a href="/operator/{{session.get('GIRIS_KODU')}}/{{musteri.F_KODU}}/1" title="{{musteri.FIRMA_ADI}} verilerini incelemek için lütfen tıklayınız.">
+													<span class="bg-violet-200 hover:bg-violet-800 hover:text-violet-50 transition duration-300 ease-out text-violet-800 text-xs rounded-full px-4 py-2  w-20 inline-block text-center  uppercase cursor-pointer">
+														İNCELE
+													</span>
+												</a>
+											</td>
+										</tr>
+									@end
+								</tbody>
+							</table>
+						</div>
+						</div>
+					</div>
+
+				@end
+
+
+
+
+			</div>
+		  </div>
+		  <!--/ main content -->
+		</div>
+	  </div>
+	</section>
+
+
+
+
+
+
+@endsection
+
+@section('footer-scripts')
+
+
+@endsection

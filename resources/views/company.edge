@@ -1,0 +1,225 @@
+@layout('layouts/master')
+
+@section('scripts')
+<link rel="stylesheet" type="text/css" href="{{ asset('assets/css/libs/bootstrap-table.min.css') }}">
+<link rel="stylesheet" type="text/css" href="{{ asset('assets/css/libs/bootstrap.min.css') }}">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+
+@endsection
+
+@section('content')
+
+<!--link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+<link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.18.3/dist/bootstrap-table.min.css" -->
+
+
+<link href="https://unpkg.com/tabulator-tables@4.9.3/dist/css/tabulator.min.css" rel="stylesheet">
+<script type="text/javascript" src="https://unpkg.com/tabulator-tables@4.9.3/dist/js/tabulator.min.js"></script>
+
+<section class="text-gray-700 ">
+<div class="flex flex-col lg:flex-row min-h-full font-semibold text-blue-900 text-base subpixel-antialiased">
+
+
+
+
+
+	<div class="flex-1 flex flex-col bg-white py-4 lg:py-8 px-4 lg:px-6 xl:px-8 overflow-hidden">
+		<div class="container px-4 mx-auto">
+			<!-- Hoşgeldin -->
+			<section class="py-8 leading-7 text-gray-900 bg-white sm:py-12 md:py-16 lg:py-24">
+				<div class="max-w-6xl px-4 mx-auto border-solid lg:px-12">
+					<div class="flex flex-col items-start leading-7 text-gray-900 border-0 border-gray-200 lg:items-center lg:flex-row">
+						<div class="box-border flex-1 text-center border-solid sm:text-left">
+							<h2 class="m-0 text-4xl font-semibold leading-tight tracking-tight text-left text-black border-0 border-gray-200 sm:text-5xl">
+								Hoşgeldiniz,
+							</h2>
+							<p class="mt-2 text-xl text-left text-gray-900 border-0 border-gray-200 sm:text-2xl">
+								{{MUSTERI.FIRMA_ADI}}
+							</p>
+						</div>
+						@!component('components/date-input', {
+							text: 'Login',
+							type: 'submit'
+						  })
+					</div>
+				</div>
+			</section>
+
+			<!-- main content -->
+
+
+			<!-- main content -->
+			<div class="flex-1 py-4 lg:py-6">
+
+				<!-- recent orders -->
+				<div class="bg-white rounded-lg  py-4 lg:py-6 mt-8">
+					<h2 class="text-xl text-blue-900 font-bold mb-4 lg:mb-6">SİNYALLER</h2>
+					<div class="overflow-x-auto min-h-1/2">
+
+						<div class="align-middle inline-block min-w-full overflow-hidden">
+
+							<style>
+								#toolbar {
+								  margin: 0;
+								}
+								</style>
+
+
+								<div id="toolbar" class="flex flex-row items-end justify-between">
+								</div>
+								<table id="table"
+									data-show-export="true"
+									data-pagination="true"
+									data-side-pagination="server"
+									data-click-to-select="true"
+									data-toolbar="#toolbar"
+									data-show-toggle="false"
+									data-show-columns="true"
+									>
+									</table>
+							<!--table id="table" data-show-export="true" data-export-data-type></table>
+
+							<!--
+								<table id="tables"
+										data-show-export="true"
+										data-pagination="true"
+										data-side-pagination="server"
+										data-click-to-select="true"
+										data-toolbar="#toolbar"
+										data-show-toggle="true"
+										data-show-columns="true"
+										>
+								</table>
+								<div class="flex-1 py-4 lg:py-6" id="#example-table">
+
+								</div>
+							-->
+
+							{{-- <table class="min-w-full">
+							<thead class="text-left bg-blue-50">
+								<tr>
+								<!--th class="py-2 px-3">ID</th-->
+								<!--th class="py-2 px-3">FIRMA KODU</th-->
+								<th class="py-2 pr-8">BOLGE</th>
+								<th class="py-2 pr-8 w-auto">MESAJ</th>
+								<th class="py-2 pr-8 w-auto">KULLANICI</th>
+								<th class="py-2 px-4">TARIH</th>
+								<th class="py-2 px-4">SAAT</th>
+								</tr>
+							</thead>
+							<tbody class="divide-y divide-blue-100 text-blue-900 text-opacity-80 whitespace-nowrap">
+								@each(mesaj in MUSTERI.MESAJLAR[state.DATE])
+
+								<tr>
+								<td class="py-3 pr-8">{{ mesaj.BOLGE }}</td>
+								<td class="py-3 pr-8">{{ mesaj.MESAJ }}</td>
+								<td class="py-3 pr-8">{{ mesaj.KULLANICI }}</td>
+								<td class="py-3 pr-8">{{ mesaj.DATE }}</td>
+								<td class="py-3 pr-8">{{ mesaj.HOUR }}</td>
+
+
+
+								</tr>
+								@end
+
+							</tbody>
+							</table>
+							--}}
+						</div>
+					</div>
+					{{--
+						<div class="flex justify-between items-center w-full px-10 py-4 rounded-lg bg-teal-50 min-h-4">
+							<div class="min-w-4 min-h-2">
+								@if(PAGE > 1)
+									<a href="/company/{{ MUSTERI.GIRIS_KODU }}/{{ parseInt(state.PAGE)-1 }}" class="font-bold text-teal-700 inline-block hover:underline">Önceki</a>
+								@endif
+							</div>
+
+							<a href="/company/{{ MUSTERI.GIRIS_KODU }}/{{ parseInt(state.PAGE)+1 }}" class="font-bold text-teal-700 inline-block hover:underline">Sonraki</a>
+						</div>
+					--}}
+				</div>
+
+			</div>
+		</div>
+	  <!--/ main content -->
+	</div>
+  </div>
+
+
+
+</section>
+
+@endsection
+
+@section('footer-scripts')
+<script src="{{ asset('assets/js/libs/jquery.slim.min.js') }}"></script>
+<script src="{{ asset('assets/js/libs/jquery.slim.min.js') }}"></script>
+
+<script src="{{ asset('assets/js/libs/tableExport.min.js') }}"></script>
+<script src="{{ asset('assets/js/libs/FileSaver.min.js') }}"></script>
+<script src="{{ asset('assets/js/libs/xlsx.core.min.js') }}"></script>
+<script src="{{ asset('assets/js/libs/jspdf.min.js') }}"></script>
+<script src="{{ asset('assets/js/libs/jspdf.plugin.autotable.js') }}"></script>
+<script src="{{ asset('assets/js/libs/bootstrap.bundle.min.js') }}"></script>
+<script src="{{ asset('assets/js/libs/bootstrap-table.min.js') }}"></script>
+<script src="{{ asset('assets/js/libs/bootstrap-table-export.min.js') }}"></script>
+<script>
+
+	// EXPORT
+	var $table = $('#table')
+
+	$(function() {
+		$table.bootstrapTable('destroy').bootstrapTable({
+		exportDataType: "all",
+		exportTypes: [ 'excel', 'pdf'],
+		columns: [
+			{
+			field: 'BOLGE',
+			title: 'BOLGE'
+			},
+			{
+			field: 'MESAJ',
+			title: 'MESAJ'
+			},
+			{
+			field: 'KULLANICI',
+			title: 'KULLANICI'
+			},
+			{
+			field: 'DATE',
+			title: 'DATE'
+			},
+			{
+			field: 'HOUR',
+			title: 'HOUR'
+			}
+		],
+		data: [
+
+		@each(mesaj in MUSTERI.MESAJLAR[state.DATE])
+		{
+			BOLGE: "{{ mesaj.BOLGE }}",
+			MESAJ: "{{ mesaj.MESAJ }}",
+			KULLANICI: "{{ mesaj.KULLANICI }}",
+			DATE: "{{ mesaj.DATE }}",
+			HOUR: "{{ mesaj.HOUR }}"
+		},
+		@end
+
+		]
+		})
+	});
+</script>
+
+
+
+
+<script>
+
+</script>
+
+
+@endsection
+
