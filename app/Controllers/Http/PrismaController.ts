@@ -1,6 +1,8 @@
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { PrismaClient } from '../../../prisma/client'
 import Application from '@ioc:Adonis/Core/Application'
+import { Bayi } from '../../Models/Bayi'
+import { Musteri } from '../../Models/Musteri'
 
 const COOKIE_NAME = Application.config.get('session.cookieName')
 export const prisma = new PrismaClient()
@@ -10,6 +12,8 @@ export default class PrismaController {
 		PrismaController.client = prisma
 	}
 	public static client
+
+	public static BATCH_SIZE = 3
 
 	public async index(ctx: HttpContextContract) {}
 
@@ -115,15 +119,44 @@ export default class PrismaController {
 		return view.render('dashboard', sessionValue)
 	}
 
-	public async queryMesajlarByMuster(F_KODU: string, PAGE: number) {
-		const TAKE = 100
-		const SKIP = (PAGE - 1) * TAKE
+	public addDateFiltering({ START, END }) {
+		const DATE_FILTER = {}
+		if (!END) {
+			const END = new Date().toLocaleString()
+		}
+		if (!START) {
+			DATE_FILTER.TARIH = { lte: END }
+		} else if (START) {
+			DATE_FILTER.AND = [
+				{
+					TARIH: { lte: END }
+				},
+				{
+					TARIH: { gte: START }
+				}
+			]
+		}
+		console.log('DATE FILTER"s final value: ', DATE_FILTER)
+		return DATE_FILTER
+	}
+
+	public async queryMesajlar(params: {
+		FIRMA_KODU: string
+		PAGE?: number | null
+		START?: string | null
+		END?: string | null
+	}) {
+		const { FIRMA_KODU: F_KODU, PAGE = 1, START = null, END = new Date() } = params
+		const SKIP = (PAGE - 1) * PrismaController.BATCH_SIZE
+
+		// Filtering
+		const FILTER = {
+			F_KODU: F_KODU,
+			...this.addDateFiltering({ START, END })
+		}
 
 		return await PrismaController.client.mesajlar.findMany({
-			where: {
-				F_KODU: F_KODU,
-				OR: [{ ALARMKODU: 'E120' }, { ALARMKODU: 'E130' }]
-			},
+			where: FILTER,
 			select: {
 				ALARMKODU: true,
 				BOLGE: true,
@@ -133,10 +166,11 @@ export default class PrismaController {
 				TARIH: true
 			},
 			orderBy: { TARIH: 'desc' },
-			take: TAKE,
+			take: PrismaController.BATCH_SIZE,
 			skip: SKIP
 		})
 	}
+
 	public async queryLatestMessageByMuster(F_KODU: string) {
 		return await PrismaController.client.mesajlar.findMany({
 			where: {

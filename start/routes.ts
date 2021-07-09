@@ -29,33 +29,42 @@ import Musteri from '../app/Models/Musteri'
 
 const COOKIE_NAME = Application.config.get('session.cookieName')
 
-Route.get('/login', async ({ response, session, request, view }) => {
-	return response.redirect().toPath('/')
+// FORM ENDPOINT
+Route.post('/form-endpoint', async ctx => {
+	return new MailController().formHandler(ctx)
 })
 
+// TEST FORM
+Route.get('/form', async ctx => {
+	return ctx.view.render('emails/form')
+})
+
+/// APP ROUTING
+
+// LOGIN (POST)
 Route.post('/login', async ctx => {
 	const GIRIS_KODU = ctx.request.input('username')
 	const PAROLA = ctx.request.input('password')
 	const ACCOUNT_TYPE = ctx.request.input('accountType')
 
+	// OPERATOR
 	if (ACCOUNT_TYPE === 'bayi') {
-		const bayi = new Bayi(GIRIS_KODU, PAROLA)
-		const isAuthorized = await bayi.authorize()
-		if (isAuthorized) {
-			console.log('Searching authorized bayi data')
-			const bayiData = await bayi.getBayiData()
-			const bayiMusteriler = await bayi.getMusteriler()
+		const bayi = await new Bayi(GIRIS_KODU, PAROLA).init()
+		if (bayi.AUTH) {
+			console.log('Successfully logging...')
 			ctx.response.cookie(COOKIE_NAME, bayi)
 			ctx.session.put(COOKIE_NAME, bayi)
 			return {
-				...bayi,
+				data: bayi,
 				error: null
 			}
-		} else
-			return {
-				error: 'Lütfen giriş kodunuzu veya parolanızı kontrol ediniz.'
-			}
-	} else if (ACCOUNT_TYPE === 'abone') {
+		}
+		console.log("Error: Credentials doesn't match")
+		return {
+			error: 'Lütfen giriş kodunuzu veya parolanızı kontrol ediniz.'
+		}
+	} //ACCOUNT
+	else if (ACCOUNT_TYPE === 'abone') {
 		const musteri = new Musteri(GIRIS_KODU, PAROLA)
 		const isAuthorized = await musteri.authorize()
 		if (isAuthorized) {
@@ -66,7 +75,7 @@ Route.post('/login', async ctx => {
 			ctx.response.cookie(COOKIE_NAME, musteri)
 			ctx.session.put(COOKIE_NAME, musteri)
 			return {
-				...musteri,
+				data: musteri,
 				error: null
 			}
 		}
@@ -78,21 +87,12 @@ Route.post('/login', async ctx => {
 	return ctx.view.render('app')
 })
 
-/* LOGOUT */
+// LOGOUT
 Route.get('/logout', async ctx => {
 	let { request, response, session, view } = ctx
 	const sessionValue = ctx.session.put(COOKIE_NAME, {})
+	const cookieValue = ctx.response.cookie(COOKIE_NAME, {})
 	return response.redirect().toPath('/')
-})
-
-// TEST FORM
-Route.get('/form', async ctx => {
-	return ctx.view.render('emails/form')
-})
-
-// FORM ENDPOINT
-Route.post('/form-endpoint', async ctx => {
-	return new MailController().formHandler(ctx)
 })
 
 Route.get('/', async ({ request, response, session, view }) => {
@@ -103,63 +103,70 @@ Route.get('/', async ({ request, response, session, view }) => {
 })
 
 /* ABONE/Müşteri */
-Route.get('/account/:F_KODU/:PAGE?', async ({ params, request, response, view, session }) => {
-	let cookieValue = request.cookie(COOKIE_NAME)
+Route.get('/resources/:TYPE/:ID/:OPTION/:PAGE?', async ctx => {
+	const { params, request, response, view, session } = ctx
 	const sessionValue = session.get(COOKIE_NAME, {})
 
-	const URL_PARAMS = params.F_KODU
-	const PAGE = params.PAGE || 1
-	//console.log('params page:', PAGE)
-	//console.log('account route params: route params:', URL_PARAMS, 'sessionValue:', sessionValue)
 	// IF NOT AUTHORIZED
 	if (!sessionValue.AUTH) {
 		session.put(COOKIE_NAME, { ...sessionValue, error: 'Lütfen giriş yapınız.' })
-		return response.redirect().toPath('/login')
-	}
-	// IF ACCOUNT IS BAYİ
-	if (sessionValue.accountType === 'bayi') {
-		const allowedFirmaCodes = sessionValue.MUSTERILER.map(m => m.F_KODU)
-		//console.log('allowed firma codes', allowedFirmaCodes)
-		// IF NOT CURRENT URL IS BAYI'S MUSTERI
-		if (!allowedFirmaCodes.includes(URL_PARAMS)) {
-			return response.redirect().toPath('/dashboard')
+		return {
+			error: 'Not authorized'
 		}
-		// IF CURRENT URL IS BAYI'S MUSTERI
-		if (allowedFirmaCodes.includes(URL_PARAMS)) {
-			const MESAJLAR = await new PrismaController().queryMesajlarByMuster(URL_PARAMS, PAGE)
-			const CURRENT_MUSTERI = sessionValue.MUSTERILER.filter(m => m.F_KODU === URL_PARAMS)[0]
-			const updatedSessionValue = {
-				...sessionValue,
-				F_KODU: CURRENT_MUSTERI.F_KODU,
-				FIRMA_ADI: CURRENT_MUSTERI.FIRMA_ADI,
-				PAGE,
-				MESAJLAR
+	}
+	// IF TARGET RESOURCE IS ABONE RESOURCE
+	if (params.TYPE === ('abone' || 'account')) {
+		const TARGET_FIRMA_KODU = params.ID
+		const OPTION = params.OPTION
+		const PAGE = params.PAGE || 1
+
+		// IF ACCOUNT IS BAYİ
+		if (sessionValue.TYPE === 'bayi') {
+			// Check if querying account number is in BAYI's MUSTERI_FIRMA_CODES
+			let hasBayiPermissionToView = sessionValue.MUSTERI_FIRMA_CODES.includes(
+				TARGET_FIRMA_KODU
+			)
+			// NO PERMISSION
+			if (!hasBayiPermissionToView) {
+				console.log('Bayi has no permission to view target account: ', TARGET_FIRMA_KODU)
+				return response.redirect().toPath(`/operator/${sessionValue.GIRIS_KODU}`)
+			} // HAVE PERMISSION
+			else if (hasBayiPermissionToView) {
+				console.log('Starting to query mesajlar of FIRMA_KODU: ', TARGET_FIRMA_KODU)
+				const mesajlar = await new PrismaController().queryMesajlar({ FIRMA_KODU, PAGE })
+				console.log('The query response: ', mesajlar)
+				return {
+					data: mesajlar,
+					error: null
+				}
 			}
-			//console.log('updated session values: ', updatedSessionValue)
-			return view.render('account', updatedSessionValue)
+		}
+		// IF ACCOUNT IS ABONE
+		if (sessionValue.TYPE === ('abone' || 'account')) {
+			console.log(
+				'Abone Mesajlar requested for ',
+				TARGET_FIRMA_KODU,
+				sessionValue.GIRIS_KODU,
+				sessionValue.TYPE
+			)
+			// IF NOT CORRECT ABONE
+			if (sessionValue.GIRIS_KODU !== TARGET_FIRMA_KODU) {
+				return response.redirect().toPath(`/`)
+			}
+			// IF CORRECT ABONE
+			else if (sessionValue.GIRIS_KODU === TARGET_FIRMA_KODU) {
+				const mesajlar = await new PrismaController().queryMesajlar(params)
+				console.log('Requested mesajlar arrived: ', mesajlar)
+				return {
+					data: mesajlar,
+					error: null
+				}
+			}
 		}
 	}
-
-	// IF ACCOUNT IS MUSTERI/ABONE
-	if (sessionValue.accountType === 'abone') {
-		// IF URL IS NOT CURRENT USER'S ACCOUNT PAGE
-		if (sessionValue.F_KODU !== URL_PARAMS) {
-			return response.redirect().toPath(`/accounts/${sessionValue.F_KODU}`)
-		}
-		if (sessionValue.F_KODU === URL_PARAMS) {
-			const MESAJLAR = await new PrismaController().queryMesajlarByMuster(URL_PARAMS, PAGE)
-			const updatedSessionValue = { ...sessionValue, PAGE, MESAJLAR }
-			//console.log('updated session values: ', updatedSessionValue)
-			return view.render('account', updatedSessionValue)
-		}
-	}
-
-	// AUTHORIZED
-	else if (sessionValue.AUTH) {
-		return view.render('dashboard', sessionValue)
-	}
-	return `Viewing post with id ${params.F_KODU}`
 })
+
+function getMesajlar() {}
 
 Route.get('*', async ({ request, response, session, view }) => {
 	const sessionValue = session.get(COOKIE_NAME, {})

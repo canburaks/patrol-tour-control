@@ -5,7 +5,8 @@ import Navbar from './components/navbar'
 import Footer from './components/footer'
 import LoginForm from './forms/login'
 import LandingPage from './landingpage'
-import Dashboard from './dashboard'
+import Operator from './operator'
+import Account from './account'
 
 const App = props => {
 	console.log('app props', props)
@@ -16,8 +17,14 @@ const App = props => {
 			<Navbar />
 			<main className="relative m-0 p-0 justify-start flex items-stretch h-auto">
 				<Switch>
-					<Route path="/dashboard">
-						<Dashboard />
+					<Route path="/operator/:girisKodu">
+						<Operator />
+					</Route>
+					<Route path="/account/:FIRMA_KODU/signals/:PAGE">
+						<Account />
+					</Route>
+					<Route path="/account/:FIRMA_KODU">
+						<Account />
 					</Route>
 					<Route path="/">
 						<LandingPage />

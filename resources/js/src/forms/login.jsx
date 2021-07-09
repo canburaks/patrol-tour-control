@@ -9,6 +9,7 @@ const LoginForm = props => {
 	const [username, setUsername] = useState(null)
 	const [password, setPassword] = useState(null)
 	const [accountType, setAccountType] = useState(null)
+	const [error, setError] = useState('')
 	const [showPassword, setShowPassword] = useState(false)
 
 	const setBayiAccount = () => setAccountType('bayi')
@@ -23,19 +24,33 @@ const LoginForm = props => {
 	const mutation = useMutation(newAuthUser => axios.post('/login', newAuthUser))
 	console.log('mutation: ', mutation)
 
-	function handleSuccess(sessionValue) {
+	const Redirect = ({ path, state }) => <Redirect to={{ path, state }} />
+
+	function handleSuccess(data) {
+		const sessionValue = data.data
 		console.log('session value', sessionValue)
 		localStorage.setItem('GIRIS_KODU', sessionValue.GIRIS_KODU)
 		localStorage.setItem('PAROLA', sessionValue.PAROLA)
 		localStorage.setItem('DATA', JSON.stringify(sessionValue))
 
-		history.push('/dashboard')
+		if (sessionValue.TYPE === 'bayi') {
+			return (
+				<Redirect
+					to={{ path: `/operator/${sessionValue.GIRIS_KODU}/`, state: sessionValue }}
+				/>
+			)
+		} else if (sessionValue.TYPE === 'abone') {
+			return (
+				<Redirect
+					to={{
+						path: `/account/${sessionValue.GIRIS_KODU}/signal/1`,
+						state: sessionValue
+					}}
+				/>
+			)
+		}
 	}
-
-	const RedirectDashboard = ({ state }) => (
-		<Redirect to={{ pathname: '/dashboard', state: state }} />
-	)
-
+	/*
 	useEffect(() => {
 		if (mutation.data) {
 			if (mutation.data.data.AUTH === true) {
@@ -45,6 +60,7 @@ const LoginForm = props => {
 		}
 		;() => handleSuccess()
 	}, [mutation])
+	*/
 
 	return (
 		<form
@@ -107,7 +123,9 @@ const LoginForm = props => {
 							<div>An error occurred: {mutation.error.message}</div>
 						) : null}
 
-						{mutation.isSuccess ? 'Başarılı' : null}
+						{mutation.isSuccess && mutation.data.data
+							? handleSuccess(mutation.data.data)
+							: 'Bir hata oluştu. Lütfen parolanızı ve hesap tipini kontrol ediniz.'}
 						<button
 							className="mb-2 w-full py-4 bg-purple-600 hover:bg-purple-700 rounded text-sm font-bold text-gray-50"
 							type="submit">

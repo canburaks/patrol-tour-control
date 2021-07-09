@@ -1,3 +1,4 @@
+import 'regenerator-runtime/runtime.js'
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom'
@@ -11,7 +12,7 @@ const root = document.getElementById('root')
 ReactDOM.render(
 	<QueryClientProvider client={queryClient}>
 		<Router>
-			<App  />
+			<App />
 		</Router>
 	</QueryClientProvider>,
 	root

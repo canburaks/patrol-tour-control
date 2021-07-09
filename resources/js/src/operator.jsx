@@ -11,7 +11,7 @@ import { _ } from 'gridjs-react'
 import { useMutation } from 'react-query'
 import axios from 'axios'
 
-const Dashboard = props => {
+const Operator = props => {
 	const ACCOUNT_DATA = JSON.parse(localStorage.getItem('DATA'))
 	const gridRef = useRef(null)
 	console.log('dashboard props', props, ACCOUNT_DATA)
@@ -142,4 +142,4 @@ const Dashboard = props => {
 	)
 }
 
-export default Dashboard
+export default Operator
