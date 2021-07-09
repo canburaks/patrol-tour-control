@@ -12,6 +12,7 @@ const Navbar = props => {
 		localStorage.removeItem('PAROLA')
 		setTimeout(function () {
 			history.push('/')
+			window.location.reload()
 		}, 500)
 	}
 	return (

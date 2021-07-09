@@ -1,9 +1,9 @@
 {
-  "assets/app.css": "/assets/app.7b8e0a5f.css",
-  "assets/app.js": "/assets/app.430ade6c.js",
-  "assets/images/feature-graphic.png": "/assets/images/feature-graphic.png",
-  "assets/images/filiz-guvenlik-sistemleri.png": "/assets/images/filiz-guvenlik-sistemleri.png",
-  "assets/images/favicon.ico": "/assets/images/favicon.ico",
-  "assets/images/favicon2.ico": "/assets/images/favicon2.ico",
-  "assets/images/cbs-logo.png": "/assets/images/cbs-logo.png"
+  "assets/app.css": "http://localhost:8080/assets/app.css",
+  "assets/app.js": "http://localhost:8080/assets/app.js",
+  "assets/images/feature-graphic.png": "http://localhost:8080/assets/images/feature-graphic.png",
+  "assets/images/filiz-guvenlik-sistemleri.png": "http://localhost:8080/assets/images/filiz-guvenlik-sistemleri.png",
+  "assets/images/favicon.ico": "http://localhost:8080/assets/images/favicon.ico",
+  "assets/images/favicon2.ico": "http://localhost:8080/assets/images/favicon2.ico",
+  "assets/images/cbs-logo.png": "http://localhost:8080/assets/images/cbs-logo.png"
 }

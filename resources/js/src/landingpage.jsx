@@ -78,7 +78,7 @@ const LandingPage = props => {
 						<div className="w-full sm:px-3 mb-12 lg:w-1/2 order-0 lg:order-1 lg:mb-0 relative">
 							<div className="w-full px-4 z-10 relative ">
 								<div className="max-w-sm text-center mx-auto ">
-									<div className="mb-4 px-2 sm:px-6 py-8 bg-white rounded-xl shadow-2xl">
+									<div className="mb-4 px-2 sm:px-6 py-16 bg-white rounded-xl shadow-2xl">
 										<div className="mb-6">
 											<h3 className="text-2xl font-bold">
 												{ACCOUNT_DATA && ACCOUNT_DATA.NAME
@@ -96,19 +96,6 @@ const LandingPage = props => {
 											<LoginForm />
 										)}
 									</div>
-									<p className="text-xs text-gray-500">
-										<Link
-											className="underline text-purple-600 hover:text-purple-700"
-											to="#">
-											Gizlilik politikamız
-										</Link>{' '}
-										and{' '}
-										<Link
-											className="underline text-purple-600 hover:text-purple-700"
-											to="#">
-											Kullanım koşulları.
-										</Link>
-									</p>
 								</div>
 							</div>
 							<img

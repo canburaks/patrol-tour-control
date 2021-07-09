@@ -5,14 +5,14 @@ import assert from 'assert'
 export default class Musteri {
 	public static prisma = new PrismaController()
 	public TYPE = 'abone'
-	public AUTH = false
-	public PAROLA
-	public ID
-	public FIRMA_KODU
-	public FIRMA_ADI
-	public BAYI_ID
-	public NAME
-	public GIRIS_KODU
+	public AUTH: boolean = false
+	public PAROLA: string
+	public ID: number
+	public FIRMA_KODU: string
+	public FIRMA_ADI: string
+	public BAYI_ID: number // table BAYI
+	public NAME: string
+	public GIRIS_KODU: string
 	public MESAJLAR = []
 	public LATEST_MESAJLAR = []
 
@@ -22,7 +22,10 @@ export default class Musteri {
 	}
 
 	public async authorize() {
-		const musteriData = await Musteri.prisma.queryMusteri(this.GIRIS_KODU, this.PAROLA)
+		const musteriData = await Musteri.prisma.queryMusteri(
+			this.GIRIS_KODU.toString(),
+			this.PAROLA
+		)
 		console.log('query from Musteri: ', musteriData)
 		// IF PASSWORD IS CORRECT
 		if (musteriData) {
