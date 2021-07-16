@@ -11,6 +11,6 @@ exports.default = Env_1.default.rules({
     APP_NAME: Env_1.default.schema.string(),
     CACHE_VIEWS: Env_1.default.schema.boolean(),
     SESSION_DRIVER: Env_1.default.schema.string(),
-    NODE_ENV: Env_1.default.schema.enum(['development', 'production', 'testing']),
+    NODE_ENV: Env_1.default.schema.enum(['development', 'production', 'testing'])
 });
 //# sourceMappingURL=env.js.map
