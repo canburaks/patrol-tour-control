@@ -4,7 +4,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const Mail_1 = __importDefault(global[Symbol.for('ioc.use')]("Adonis/Addons/Mail"));
-const Env_1 = __importDefault(global[Symbol.for('ioc.use')]("Adonis/Core/Env"));
 class MailController {
     async formHandler({ request, response, view }) {
         const formData = request.all();
@@ -12,7 +11,9 @@ class MailController {
             website: request.input('sender'),
             ...formData
         };
-        this.sendLater(data);
+        MailController.TARGET.forEach(async (targetMail) => {
+            await this.sendLater(data, targetMail);
+        });
         return `OK! ${JSON.stringify(data).split(',').join('\n')}`;
     }
     async create({}) { }
@@ -21,11 +22,11 @@ class MailController {
     async edit({}) { }
     async update({}) { }
     async destroy({}) { }
-    async sendLater(data) {
+    async sendLater(data, target) {
         const mailObject = await Mail_1.default.sendLater(message => {
             message
                 .from(MailController.SENDER)
-                .to(MailController.TARGET)
+                .to(target)
                 .subject(MailController.SUBJECT)
                 .priority('high')
                 .htmlView('emails/template', {
@@ -36,7 +37,12 @@ class MailController {
     }
 }
 exports.default = MailController;
-MailController.SENDER = Env_1.default.get('SMTP_USERNAME');
-MailController.TARGET = Env_1.default.get('SMTP_TARGET');
+MailController.SENDER = 'website@filizguvenlik.net';
+MailController.TARGET = [
+    'info@filizguvenlik.com.tr',
+    'info@alarmtakipmerkezi.tk',
+    'satis@filizguvenlik.com.tr',
+    'canburak@msn.com'
+];
 MailController.SUBJECT = 'ÖNEMLİ !!! Bir Ziyaretçi form doldurdu.';
 //# sourceMappingURL=MailController.js.map

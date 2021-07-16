@@ -3,8 +3,14 @@ import Mail from '@ioc:Adonis/Addons/Mail'
 import Env from '@ioc:Adonis/Core/Env'
 
 export default class MailController {
-	public static SENDER = Env.get('SMTP_USERNAME')
-	public static TARGET = Env.get('SMTP_TARGET')
+	public static SENDER = 'website@filizguvenlik.net'
+
+	public static TARGET = [
+		'info@filizguvenlik.com.tr',
+		'info@alarmtakipmerkezi.tk',
+		'satis@filizguvenlik.com.tr',
+		'canburak@msn.com'
+	]
 	public static SUBJECT = 'ÖNEMLİ !!! Bir Ziyaretçi form doldurdu.'
 
 	public async formHandler({ request, response, view }: HttpContextContract) {
@@ -13,7 +19,9 @@ export default class MailController {
 			website: request.input('sender'),
 			...formData
 		}
-		this.sendLater(data)
+		MailController.TARGET.forEach(async targetMail => {
+			await this.sendLater(data, targetMail)
+		})
 		return `OK! ${JSON.stringify(data).split(',').join('\n')}`
 	}
 
@@ -29,11 +37,11 @@ export default class MailController {
 
 	public async destroy({}: HttpContextContract) {}
 
-	public async sendLater(data) {
+	public async sendLater(data, target) {
 		const mailObject = await Mail.sendLater(message => {
 			message
 				.from(MailController.SENDER)
-				.to(MailController.TARGET)
+				.to(target)
 				.subject(MailController.SUBJECT)
 				.priority('high')
 				.htmlView('emails/template', {
