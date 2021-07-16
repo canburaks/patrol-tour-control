@@ -1,0 +1,3364 @@
+datasource db {
+    provider = "mysql"
+    url      = "mysql://api:Cb%%**2021Cb..!@88.255.153.178:3306/myalarmsisv3g"
+}
+
+generator client {
+    provider = "prisma-client-js"
+    output = "./client"
+}
+
+model evolutions {
+    id          Int       @id @default(autoincrement()) @db.UnsignedInt
+    title       String    @db.VarChar(255)
+    titleDown   String?   @db.VarChar(255)
+    description String?   @db.VarChar(255)
+    batch       Int?
+    checksum    String?   @db.VarChar(255)
+    status      Int?
+    created     DateTime? @db.DateTime(0)
+    created_at  DateTime? @db.DateTime(0)
+    updated_at  DateTime? @db.DateTime(0)
+
+    @@map("_evolutions")
+}
+
+model abonealarmdurumlari {
+    id        Int       @id @default(autoincrement())
+    aboneid   Int?
+    f_kodu    String?   @db.VarChar(10)
+    partno    String?   @db.VarChar(3)
+    KOD       String?   @db.VarChar(32)
+    duzeldi   String?   @default("H") @db.VarChar(1)
+    tarih     DateTime? @db.DateTime(0)
+    mesajsira Int?
+
+    @@index([f_kodu, partno, KOD], name: "fkodu_pno_atp")
+    @@index([f_kodu, partno, duzeldi], name: "fkodu_pno_dzld")
+}
+
+model abonecarihareketler {
+    ID             Int       @id @default(autoincrement())
+    ABONEID        Int?
+    TARIH          DateTime? @db.Date
+    ODEMETIPI      String?   @db.VarChar(20)
+    ACIKLAMA       String?   @db.VarChar(200)
+    B_A            String?   @default("A") @db.VarChar(1)
+    ALACAK         Float?
+    BORC           Float?
+    VADETARIHI     DateTime? @db.Date
+    BORCLANDIRMAID Int?
+    fistipi        Int?
+    fisno          String?   @db.VarChar(15)
+
+    @@index([ABONEID], name: "ABONEID")
+    @@index([BORCLANDIRMAID], name: "BORCLANDIRMAID")
+    @@index([TARIH], name: "TARIH")
+}
+
+model abonehatkontrolleri {
+    ID                   Int       @id @default(autoincrement())
+    f_kodu               String    @db.VarChar(10)
+    partno               String    @db.VarChar(3)
+    takipsuresi          Int       @default(1500)
+    baslamazamani        DateTime? @db.DateTime(0)
+    maxadet              Int       @default(0)
+    mevcutadet           Int       @default(0)
+    sontakipzamani       DateTime? @db.DateTime(0)
+    hattipid             Int?
+    sontestkontrolzamani DateTime  @default(dbgenerated("0000-00-00 00:00:00")) @db.DateTime(0)
+    hattelno             String?   @db.VarChar(20)
+    hatipno              String?   @db.VarChar(20)
+    hatcidno             String?   @db.VarChar(20)
+    hatsabotajkontrol    String    @default("H") @db.Char(1)
+    hatsimno             String?   @db.VarChar(20)
+    gtestsaati           DateTime? @db.Time(0)
+}
+
+model abonelikborclari {
+    ID       Int       @id @default(autoincrement())
+    TARIH    DateTime? @db.Date
+    ACIKLAMA String?   @db.VarChar(200)
+    AY       String?   @db.VarChar(10)
+    YIL      Int?
+    fisno    String?   @db.VarChar(15)
+
+    @@index([AY], name: "AY")
+    @@index([TARIH], name: "TARIH")
+    @@index([YIL], name: "YIL")
+}
+
+model abonelikler {
+    ID                  Int       @unique @default(autoincrement())
+    f_kodu              String?   @db.VarChar(10)
+    partno              String?   @db.VarChar(3)
+    hesaptipId          Int?
+    baslamatarihi       DateTime? @db.Date
+    bitistarihi         DateTime? @db.Date
+    ucret               Float?    @db.Float
+    doviztipi           String?   @db.VarChar(3)
+    periyodu            Int?      @default(12)
+    ilkyilucret         Float?    @db.Float
+    aciklama            String?   @db.VarChar(60)
+    tahsilatturid       Int?
+    sonhatirlatmazamani DateTime? @db.DateTime(0)
+}
+
+model abonelikler_ {
+    ID                  Int       @unique @default(autoincrement())
+    f_kodu              String?   @db.VarChar(10)
+    partno              String?   @db.VarChar(3)
+    hesaptipId          Int?
+    baslamatarihi       DateTime? @db.Date
+    bitistarihi         DateTime? @db.Date
+    ucret               Float?    @db.Float
+    doviztipi           String?   @db.VarChar(3)
+    periyodu            Int?      @default(12)
+    ilkyilucret         Float?    @db.Float
+    aciklama            String?   @db.VarChar(60)
+    tahsilatturid       Int?
+    sonhatirlatmazamani DateTime? @db.DateTime(0)
+}
+
+model abonemevcutsmskredidurumu {
+    id              Int    @id @default(autoincrement())
+    f_kodu          String @db.VarChar(10)
+    partno          String @db.VarChar(3)
+    mevcutkredi     Int?   @default(0)
+    kullanilankredi Int?   @default(0)
+    yuklenenkredi   Int?   @default(0)
+    uyariseviye1    Int?   @default(300)
+    uyariseviye2    Int?   @default(200)
+    uyariseviye3    Int?   @default(100)
+
+    @@index([f_kodu, partno], name: "abonemevcutsmskredidurumu_idx1")
+}
+
+model aboneozeldurum {
+    ID                Int      @id @default(autoincrement())
+    F_KODU            String?  @db.VarChar(10)
+    PARTNO            String?  @db.VarChar(3)
+    SINYALTIPI        String?  @db.Char(3)
+    ALARM             Boolean?
+    SMS               Boolean?
+    EPOSTA            Boolean?
+    IVR               Boolean?
+    PUSHMESSAGE       Boolean?
+    SMSgidecekler     String?  @db.VarChar(255)
+    epostagidecekler  String?  @db.VarChar(255)
+    ivrdanaranacaklar String?  @db.VarChar(255)
+
+    @@index([F_KODU, PARTNO], name: "F_KODU")
+}
+
+model abonepartlar {
+    ID       Int     @id @default(autoincrement())
+    F_KODU   String? @db.VarChar(10)
+    PARTNO   String? @db.VarChar(3)
+    ACIKLAMA String? @db.VarChar(60)
+}
+
+model abonetatilleri {
+    ID               Int       @id @default(autoincrement())
+    F_KODU           String?   @db.Char(10)
+    PARTNO           String?   @db.Char(3)
+    BASLAMATARIHI    DateTime? @db.DateTime(0)
+    BITISTARIHI      DateTime? @db.DateTime(0)
+    ACIKLAMA         String?   @db.Char(50)
+    GENELTATILID     Int?
+    GENELTATILUYGULA Boolean?  @default(false)
+
+    @@index([BASLAMATARIHI], name: "BASLAMATARIHI")
+    @@index([BITISTARIHI], name: "BITISTARIHI")
+    @@index([F_KODU], name: "F_KODU")
+    @@index([PARTNO], name: "PARTNO")
+}
+
+model abonetatilleri_ {
+    ID               Int       @id @default(autoincrement())
+    F_KODU           String?   @db.Char(10)
+    PARTNO           String?   @db.Char(3)
+    BASLAMATARIHI    DateTime? @db.DateTime(0)
+    BITISTARIHI      DateTime? @db.DateTime(0)
+    ACIKLAMA         String?   @db.Char(50)
+    GENELTATILID     Int?
+    GENELTATILUYGULA Boolean?  @default(false)
+
+    @@index([BASLAMATARIHI], name: "BASLAMATARIHI")
+    @@index([BITISTARIHI], name: "BITISTARIHI")
+    @@index([F_KODU], name: "F_KODU")
+    @@index([PARTNO], name: "PARTNO")
+}
+
+model abonetelnolari {
+    ID     Int     @id @default(autoincrement())
+    F_KODU String? @unique @db.VarChar(10)
+    CID    String? @db.VarChar(30)
+}
+
+model abonetipleri {
+    ID       Int     @id @default(autoincrement())
+    ACIKLAMA String? @db.VarChar(255)
+}
+
+model aboneuzakkullanicilari {
+    ID            Int     @id @default(autoincrement()) @db.UnsignedInt
+    F_KODU        String? @db.VarChar(10)
+    PARTNO        String? @db.VarChar(3)
+    KULLANICIADI  String  @unique @db.VarChar(100)
+    WEBSIFRE      String? @db.VarChar(100)
+    ADISOYADI     String? @db.VarChar(50)
+    TEL1          String? @db.VarChar(255)
+    EPOSTA        String? @db.VarChar(100)
+    YETKIGRUBU    Int?
+    YETKIALANLARI Bytes?  @db.VarBinary(20)
+    MOBILSIFRE    String? @db.VarChar(100)
+    IVRSIFRE      String? @db.VarChar(100)
+
+    @@unique([F_KODU, PARTNO, KULLANICIADI], name: "UK_aboneuzakkullanicilari")
+}
+
+model aboneyuklenensmskredileri {
+    id       Int       @id @default(autoincrement())
+    f_kodu   String?   @db.VarChar(10)
+    partno   String?   @db.VarChar(3)
+    tarih    DateTime? @db.DateTime(0)
+    aciklama String?   @db.VarChar(255)
+    kredi    Int?
+    ucret    Float?    @db.Float
+
+    @@index([f_kodu, partno], name: "aboneyuklenensmskredileri_idx1")
+}
+
+model abonezamanlar {
+    ID                Int       @id @default(autoincrement())
+    F_KODU            String?   @db.VarChar(10)
+    PARTNO            String?   @db.VarChar(3)
+    GUN               Int?
+    ACILIS            DateTime? @db.Time(0)
+    KAPANIS           DateTime? @db.Time(0)
+    YAZKAPANIS        DateTime? @db.Time(0)
+    KAPALI            Boolean   @default(false)
+    KAPALIBASLAMA     DateTime? @db.Time(0)
+    KAPALIBITIS       DateTime? @db.Time(0)
+    GECACTOLERANS     Int       @default(0)
+    GECKAPATOLERANS   Int       @default(0)
+    MESAIDISITOLERANS Int       @default(0)
+    ERKENACTOLERANS   Int       @default(0)
+    OTM_KURULUM       DateTime? @db.Time(0)
+    AKAPANIS          DateTime? @db.Time(0)
+
+    @@index([F_KODU, PARTNO, GUN], name: "F_KODU")
+}
+
+model abonezamanlar_ {
+    ID                Int       @id @default(autoincrement())
+    F_KODU            String?   @db.VarChar(10)
+    PARTNO            String?   @db.VarChar(3)
+    GUN               Int?
+    ACILIS            DateTime? @db.Time(0)
+    KAPANIS           DateTime? @db.Time(0)
+    AKAPANIS          DateTime? @db.Time(0)
+    YAZKAPANIS        DateTime? @db.Time(0)
+    KAPALI            Boolean   @default(false)
+    KAPALIBASLAMA     DateTime? @db.Time(0)
+    KAPALIBITIS       DateTime? @db.Time(0)
+    GECACTOLERANS     Int       @default(0)
+    GECKAPATOLERANS   Int       @default(0)
+    MESAIDISITOLERANS Int       @default(0)
+    ERKENACTOLERANS   Int       @default(0)
+    OTM_KURULUM       DateTime? @db.Time(0)
+
+    @@index([F_KODU, PARTNO, GUN], name: "F_KODU")
+}
+
+model abonezamanlar_copy {
+    ID                Int       @id @default(autoincrement())
+    F_KODU            String?   @db.VarChar(10)
+    PARTNO            String?   @db.VarChar(3)
+    GUN               Int?
+    ACILIS            DateTime? @db.Time(0)
+    KAPANIS           DateTime? @db.Time(0)
+    YAZKAPANIS        DateTime? @db.Time(0)
+    KAPALI            Boolean   @default(false)
+    KAPALIBASLAMA     DateTime? @db.Time(0)
+    KAPALIBITIS       DateTime? @db.Time(0)
+    GECACTOLERANS     Int       @default(0)
+    GECKAPATOLERANS   Int       @default(0)
+    MESAIDISITOLERANS Int       @default(0)
+    ERKENACTOLERANS   Int       @default(0)
+    OTM_KURULUM       DateTime? @db.Time(0)
+    AKAPANIS          DateTime? @db.Time(0)
+
+    @@index([F_KODU, PARTNO, GUN], name: "F_KODU")
+}
+
+model accounts {
+    ID         Int       @default(autoincrement())
+    F_KODU     String    @default("") @db.VarChar(10)
+    PARTNO     String?   @db.VarChar(5)
+    TELNO      String?   @db.VarChar(22)
+    COMNO      Int?
+    LINENO     String?   @db.VarChar(4)
+    CLL_SIRANO Int?
+    OPL_SIRANO Int?
+    VF_REFID   String?   @db.VarChar(50)
+    VF_SERI    String?   @db.VarChar(50)
+    VF_TARIH   DateTime? @db.DateTime(0)
+
+    @@id([ID, F_KODU])
+    @@index([F_KODU], name: "F_KODU")
+    @@index([PARTNO], name: "PARTNO")
+}
+
+model alarmbolgetanimlari {
+    ID       Int     @id @default(autoincrement())
+    SIRA     Int?    @unique
+    ACIKLAMA String? @db.VarChar(100)
+    RESIM    Bytes?  @db.MediumBlob
+}
+
+model alarmmerkezleri {
+    ID           Int     @id @default(autoincrement())
+    KODU         String? @db.VarChar(20)
+    FIRMAADI     String? @db.VarChar(100)
+    YETKILI1     String? @db.VarChar(30)
+    YETKILI2     String? @db.VarChar(30)
+    ADRES1       String? @db.VarChar(100)
+    ADRES2       String? @db.VarChar(100)
+    ILCE         String? @db.VarChar(30)
+    IL           String? @db.VarChar(30)
+    PKODU        String? @db.VarChar(6)
+    TEL1         String? @db.VarChar(15)
+    TEL2         String? @db.VarChar(15)
+    FAX1         String? @db.VarChar(15)
+    FAX2         String? @db.VarChar(15)
+    WEB          String? @db.VarChar(60)
+    ANTET        Bytes?
+    EMAIL_ADRESS String? @db.VarChar(150)
+    and_ap_key   String? @db.VarChar(255)
+    ios_ap_key   String? @db.VarChar(255)
+}
+
+model anlasmatipleri {
+    ID       Int     @id @default(autoincrement())
+    ACIKLAMA String? @db.Char(50)
+    periyodu String? @db.VarChar(255)
+
+    @@index([ACIKLAMA], name: "ACIKLAMA")
+}
+
+model arizalisinyaller {
+    TARIH   DateTime? @db.DateTime(0)
+    COM     Int?      @db.SmallInt
+    ISLENDI String?   @db.Char(1)
+    MESAJ   String?   @db.VarChar(500)
+    SIRA    Int       @id @default(autoincrement())
+    IP_SERI Int?
+
+    @@index([ISLENDI], name: "ISLENDI")
+    @@index([TARIH], name: "TARIH")
+}
+
+model at_altolaykodlari {
+    ID             Int     @id @default(autoincrement())
+    ZT_KODU        Int?
+    OLAYKODU       String? @db.Char(5)
+    BOLGENO        String? @db.VarChar(5)
+    OLAYACIKLAMASI String? @db.Char(100)
+    USTOLAYKODU    String? @db.Char(5)
+    SORUMLU        Int?
+
+    @@index([OLAYKODU], name: "OLAYKODU")
+    @@index([ZT_KODU], name: "ZT_KODU")
+}
+
+model at_altolaykodlari_ {
+    ID             Int     @id @default(autoincrement())
+    ZT_KODU        Int?
+    OLAYKODU       String? @db.Char(5)
+    BOLGENO        String? @db.VarChar(5)
+    OLAYACIKLAMASI String? @db.Char(100)
+    USTOLAYKODU    String? @db.Char(5)
+    SORUMLU        Int?
+
+    @@index([OLAYKODU], name: "OLAYKODU")
+    @@index([ZT_KODU], name: "ZT_KODU")
+}
+
+model at_olaykodlari {
+    ID       Int     @id @default(autoincrement())
+    ZT_KODU  Int?
+    OLAYKODU String? @db.Char(15)
+    SORUMLU  Int?    @default(1)
+    BOLGENO  String? @db.VarChar(40)
+    TIP      String? @db.VarChar(3)
+    ALARM    String? @db.Char(1)
+
+    @@index([OLAYKODU], name: "OLAYKODU")
+    @@index([ZT_KODU], name: "ZT_KODU")
+}
+
+model at_olaykodlari_ {
+    ID       Int     @id @default(autoincrement())
+    ZT_KODU  Int?
+    OLAYKODU String? @db.Char(90)
+    SORUMLU  Int?    @default(1)
+    BOLGENO  String? @db.VarChar(40)
+    TIP      String? @db.VarChar(3)
+    ALARM    String? @db.Char(1)
+
+    @@index([OLAYKODU], name: "OLAYKODU")
+    @@index([ZT_KODU], name: "ZT_KODU")
+}
+
+model bayi_teknisyenler {
+    ID            Int     @id @default(autoincrement())
+    F_KODU        String? @db.VarChar(10)
+    PARTNO        String? @db.Char(3)
+    SIRA          Int?    @db.SmallInt
+    ADISOYADI     String? @db.VarChar(60)
+    GOREVI        String? @db.VarChar(30)
+    YAKINLIGI     String? @db.VarChar(20)
+    TEL1          String? @db.VarChar(15)
+    TEL2          String? @db.VarChar(15)
+    PAROLA        String? @db.VarChar(20)
+    TEL3          String? @db.VarChar(15)
+    TEL4          String? @db.VarChar(15)
+    KULLANICIKODU String? @db.VarChar(15)
+    SMS           String? @default("H") @db.VarChar(1)
+    EPOSTA        String? @db.VarChar(60)
+    EPOSTADURUM   String? @db.VarChar(60)
+
+    @@index([ADISOYADI], name: "ADISOYADI")
+    @@index([F_KODU], name: "F_KODU")
+    @@index([SIRA], name: "SIRA")
+}
+
+model bayi_teknisyenler_ {
+    ID            Int     @id @default(autoincrement())
+    F_KODU        String? @db.VarChar(10)
+    PARTNO        String? @db.Char(3)
+    SIRA          Int?    @db.SmallInt
+    ADISOYADI     String? @db.VarChar(255)
+    GOREVI        String? @db.VarChar(30)
+    YAKINLIGI     String? @db.VarChar(20)
+    TEL1          String? @db.VarChar(15)
+    TEL2          String? @db.VarChar(15)
+    PAROLA        String? @db.VarChar(20)
+    TEL3          String? @db.VarChar(15)
+    TEL4          String? @db.VarChar(15)
+    KULLANICIKODU String? @db.VarChar(15)
+    SMS           String? @default("H") @db.VarChar(1)
+    EPOSTA        String? @db.VarChar(60)
+    EPOSTADURUM   String? @db.VarChar(60)
+
+    @@index([ADISOYADI], name: "ADISOYADI")
+    @@index([F_KODU], name: "F_KODU")
+    @@index([SIRA], name: "SIRA")
+}
+
+model bayiabonelikhizmetpaketleri {
+    ID                  Int       @id @default(autoincrement())
+    bayiId              Int?      @unique
+    aboneliktipId       Int?
+    stokhizmetpaketId   Int?
+    ucret               Float?    @db.Float
+    doviztipi           String?   @db.VarChar(3)
+    periyodu            Int?
+    ilkyilucret         Float?    @db.Float
+    aciklama            String?   @db.VarChar(60)
+    tahsilatturid       Int?
+    sonhatirlatmazamani DateTime? @db.DateTime(0)
+}
+
+model bayicari {
+    ID             Int       @id @default(autoincrement())
+    BAYIID         Int?
+    TARIH          DateTime? @db.Date
+    ODEMETIPI      String?   @db.VarChar(20)
+    ACIKLAMA       String?   @db.VarChar(200)
+    B_A            String?   @default("A") @db.VarChar(1)
+    ALACAK         Float?
+    BORC           Float?
+    VADETARIHI     DateTime? @db.Date
+    BORCLANDIRMAID Int?
+    ABONECARIID    Int?
+
+    @@index([BAYIID], name: "BAYIID")
+    @@index([TARIH], name: "TARIH")
+}
+
+model bayihesaplari {
+    ID             Int       @id @default(autoincrement())
+    BAYIID         Int?
+    HESAPADI       String?   @db.VarChar(60)
+    PERIYOD        Int?      @default(0)
+    GONDERIMSAATI  DateTime? @db.Time(0)
+    RAPORLAMATURU  Int?      @default(2)
+    DUZELMEKONTROL String?   @default("H") @db.Char(1)
+    DONEM          Int?      @default(4)
+}
+
+model bayiler {
+    ID                   Int       @id @default(autoincrement())
+    KODU                 String    @unique @default("0000") @db.VarChar(15)
+    ADI                  String?   @db.VarChar(100)
+    YETKILI1             String?   @db.VarChar(45)
+    YETKILI2             String?   @db.VarChar(45)
+    ADRES1               String?   @db.VarChar(152)
+    ADRES2               String?   @db.VarChar(180)
+    PKODU                Float?
+    ILCE                 String?   @db.VarChar(30)
+    IL                   String?   @db.VarChar(30)
+    ULKE                 String?   @db.VarChar(30)
+    YETKILI1EMAIL        String?   @db.VarChar(50)
+    TEL1                 String?   @db.VarChar(20)
+    TEL2                 String?   @db.VarChar(20)
+    TEL3                 String?   @db.VarChar(20)
+    FAX1                 String?   @db.VarChar(20)
+    FAX2                 String?   @db.VarChar(20)
+    SFIYAT               Float?
+    AFIYAT               Float?
+    LISTELENSIN          String?   @db.VarChar(5)
+    YETKILI1TEL          String?   @db.VarChar(15)
+    YETKILI2TEL          String?   @db.VarChar(15)
+    YETKILI1CEP          String?   @db.VarChar(15)
+    YETKILI2CEP          String?   @db.VarChar(15)
+    YETKILI2EMAIL        String?   @db.VarChar(60)
+    EMAIL                String?   @db.VarChar(60)
+    VDAIRE               String?   @db.VarChar(60)
+    VNO                  String?   @db.VarChar(60)
+    KK_BANKAADI          String?   @db.VarChar(60)
+    KK_KARTNO            String?   @db.VarChar(20)
+    KK_SONKULTAR         String?   @db.VarChar(10)
+    KK_KARTGUVNO         String?   @db.VarChar(7)
+    ODEMETURU            String?   @db.VarChar(20)
+    KK_KARTSAHIBI        String?   @db.VarChar(30)
+    UCRETSEVIYE1         Int?
+    UCRETSEVIYE2         Int?
+    UCRETSEVIYE3         Int?
+    UCRETSEVIYE4         Int?
+    UCRETSEVIYE5         Int?
+    UCRETSEVIYE6         Int?
+    PAROLA               String?   @db.VarChar(50)
+    WEBILKGIRIS          Int?      @db.TinyInt
+    LOGO                 Bytes?
+    SMS                  String?   @default("H") @db.VarChar(1)
+    PROSEDUR             String?   @db.Text
+    ABNSONU_SMS          String?   @default("H") @db.VarChar(1)
+    ABNSONU_EPOSTA       String?   @default("H") @db.VarChar(1)
+    PERIYOD              String?   @default("G") @db.VarChar(1)
+    GUN                  Int?      @default(1)
+    GONDERIMSAATI        DateTime? @db.Time(0)
+    FIYAT                Float?
+    PAROLAZORUNLU        String?   @default("H") @db.VarChar(1)
+    HESAPTARIHI          DateTime? @db.Date
+    SMSBUHESAPTANGITSIN  String?   @default("H") @db.VarChar(1)
+    RAPORBAYIBILGISI     String?   @default("H") @db.VarChar(1)
+    ILKABONENO           String?   @db.VarChar(8)
+    SONABONENO           String?   @db.VarChar(8)
+    ABONENOKACHANE       Int?      @default(4)
+    ABONENOHEXOLSUN      String?   @default("H") @db.Char(1)
+    SERVISFORMUSMSGONDER String?   @default("E") @db.Char(1)
+    SMS_AYARID           Int?
+    SMS_BAYI             String?   @db.VarChar(255)
+    FIYATGRUBU           Int?
+    eps_GORUNECEKISIM    String?   @db.VarChar(30)
+    eps_EMAILADRESI      String?   @db.VarChar(100)
+    eps_POPNAME          String?   @db.VarChar(60)
+    eps_POPPORT          Int?
+    eps_HOSTNAME         String?   @db.VarChar(60)
+    eps_HOSTPORT         Int?
+    eps_USERNAME         String?   @db.VarChar(60)
+    eps_PAROLA           String?   @db.VarChar(60)
+    eps_CEVAPADRESI      String?   @db.VarChar(100)
+    eps_BILGIADRESI      String?   @db.VarChar(100)
+    eps_SIFRELEME        String?   @db.VarChar(20)
+    eps_SSLVERSION       String?   @db.VarChar(20)
+    eps_KIMLIKDOGRULAMA  String?   @db.VarChar(20)
+    eps_BUHESAPTANGITSIN String?   @default("H") @db.Char(1)
+    eps_SIFRELEMETURU    String?   @db.VarChar(20)
+    eps_SSLVAR           Boolean?
+    telcevirmekodu       String?   @db.VarChar(5)
+
+    @@index([ADI], name: "ADI")
+    @@index([KODU], name: "KODU")
+    @@index([TEL1], name: "TEL1")
+    @@index([TEL2], name: "TEL2")
+    @@index([TEL3], name: "TEL3")
+    @@index([YETKILI1], name: "YETKILI1")
+    @@index([YETKILI2], name: "YETKILI2")
+}
+
+model bayiler_ {
+    ID                   Int       @id @default(autoincrement())
+    KODU                 String    @unique @default("0000") @db.VarChar(15)
+    ADI                  String?   @db.VarChar(255)
+    YETKILI1             String?   @db.VarChar(255)
+    YETKILI2             String?   @db.VarChar(255)
+    ADRES1               String?   @db.VarChar(255)
+    ADRES2               String?   @db.VarChar(255)
+    PKODU                Float?
+    ILCE                 String?   @db.VarChar(255)
+    IL                   String?   @db.VarChar(255)
+    ULKE                 String?   @db.VarChar(255)
+    YETKILI1EMAIL        String?   @db.VarChar(255)
+    TEL1                 String?   @db.VarChar(255)
+    TEL2                 String?   @db.VarChar(255)
+    TEL3                 String?   @db.VarChar(255)
+    FAX1                 String?   @db.VarChar(20)
+    FAX2                 String?   @db.VarChar(20)
+    SFIYAT               Float?
+    AFIYAT               Float?
+    LISTELENSIN          String?   @db.VarChar(255)
+    YETKILI1TEL          String?   @db.VarChar(15)
+    YETKILI2TEL          String?   @db.VarChar(15)
+    YETKILI1CEP          String?   @db.VarChar(15)
+    YETKILI2CEP          String?   @db.VarChar(15)
+    YETKILI2EMAIL        String?   @db.VarChar(60)
+    EMAIL                String?   @db.VarChar(60)
+    VDAIRE               String?   @db.VarChar(30)
+    VNO                  String?   @db.VarChar(30)
+    KK_BANKAADI          String?   @db.VarChar(60)
+    KK_KARTNO            String?   @db.VarChar(20)
+    KK_SONKULTAR         String?   @db.VarChar(10)
+    KK_KARTGUVNO         String?   @db.VarChar(7)
+    ODEMETURU            String?   @db.VarChar(20)
+    KK_KARTSAHIBI        String?   @db.VarChar(30)
+    UCRETSEVIYE1         Int?
+    UCRETSEVIYE2         Int?
+    UCRETSEVIYE3         Int?
+    UCRETSEVIYE4         Int?
+    UCRETSEVIYE5         Int?
+    UCRETSEVIYE6         Int?
+    PAROLA               String?   @db.VarChar(255)
+    WEBILKGIRIS          Int?      @db.TinyInt
+    LOGO                 Bytes?
+    SMS                  String?   @default("H") @db.VarChar(1)
+    PROSEDUR             String?   @db.Text
+    ABNSONU_SMS          String?   @default("H") @db.VarChar(1)
+    ABNSONU_EPOSTA       String?   @default("H") @db.VarChar(1)
+    PERIYOD              String?   @default("G") @db.VarChar(1)
+    GUN                  Int?      @default(1)
+    GONDERIMSAATI        DateTime? @db.Time(0)
+    FIYAT                Float?
+    PAROLAZORUNLU        String?   @default("H") @db.VarChar(1)
+    HESAPTARIHI          DateTime? @db.Date
+    SMS_AYARID           Int?
+    SMSBUHESAPTANGITSIN  String?   @default("H") @db.VarChar(1)
+    RAPORBAYIBILGISI     String?   @default("H") @db.VarChar(1)
+    ILKABONENO           String?   @db.VarChar(8)
+    SONABONENO           String?   @db.VarChar(8)
+    ABONENOKACHANE       Int?      @default(4)
+    ABONENOHEXOLSUN      String?   @default("H") @db.Char(1)
+    SERVISFORMUSMSGONDER String?   @default("E") @db.Char(1)
+    FIYATGRUBU           Int?
+    eps_GORUNECEKISIM    String?   @db.VarChar(30)
+    eps_EMAILADRESI      String?   @db.VarChar(100)
+    eps_POPNAME          String?   @db.VarChar(60)
+    eps_POPPORT          Int?
+    eps_HOSTNAME         String?   @db.VarChar(60)
+    eps_HOSTPORT         Int?
+    eps_USERNAME         String?   @db.VarChar(60)
+    eps_PAROLA           String?   @db.VarChar(60)
+    eps_CEVAPADRESI      String?   @db.VarChar(100)
+    eps_BILGIADRESI      String?   @db.VarChar(100)
+    eps_SIFRELEME        String?   @db.VarChar(20)
+    eps_SSLVERSION       String?   @db.VarChar(20)
+    eps_KIMLIKDOGRULAMA  String?   @db.VarChar(20)
+    eps_BUHESAPTANGITSIN String?   @default("H") @db.Char(1)
+    eps_SIFRELEMETURU    String?   @db.VarChar(20)
+    eps_SSLVAR           Boolean?
+
+    @@index([ADI], name: "ADI")
+    @@index([KODU], name: "KODU")
+    @@index([TEL1], name: "TEL1")
+    @@index([TEL2], name: "TEL2")
+    @@index([TEL3], name: "TEL3")
+    @@index([YETKILI1], name: "YETKILI1")
+    @@index([YETKILI2], name: "YETKILI2")
+}
+
+model bayimailbolgeleri {
+    ID      Int  @id @default(autoincrement())
+    HESAPID Int?
+    BOLGEID Int?
+
+    @@index([HESAPID], name: "HESAPID")
+}
+
+model bayimailmeslekler {
+    ID     Int     @id @default(autoincrement())
+    BAYIID Int?
+    MESLEK String? @db.VarChar(60)
+
+    @@index([BAYIID], name: "BAYIID")
+}
+
+model bayimailsinyaltipleri {
+    ID         Int     @id @default(autoincrement())
+    HESAPID    Int?
+    SINYALTIPI String? @db.VarChar(60)
+
+    @@index([HESAPID], name: "HESAPID")
+}
+
+model birimtanimlari {
+    ID       Int     @unique @default(autoincrement())
+    aciklama String? @db.VarChar(30)
+
+    @@index([aciklama], name: "ACIKLAMA")
+}
+
+model bolgeler {
+    ID    Int     @id @default(autoincrement())
+    BOLGE String? @db.Char(50)
+
+    @@index([BOLGE], name: "BOLGE")
+}
+
+model carifistipleri {
+    ID       Int     @id @default(autoincrement()) @db.UnsignedInt
+    KOD      String? @db.VarChar(10)
+    ACIKLAMA String? @db.VarChar(255)
+}
+
+model carikartlar {
+    ID          Int     @id @default(autoincrement())
+    KODU        String? @unique @db.VarChar(20)
+    UNVANI      String? @db.VarChar(100)
+    MAHALLE     String? @db.VarChar(100)
+    CADDE       String? @db.VarChar(100)
+    SOKAK       String? @db.VarChar(100)
+    KAPINO      String? @db.VarChar(10)
+    ADRESDETAY  String? @db.VarChar(100)
+    IL          Int?
+    ILCE        Int?
+    PKODU       Int?
+    ULKE        Int?
+    EMAIL1      String? @db.VarChar(50)
+    TEL1        String? @db.VarChar(15)
+    TEL2        String? @db.VarChar(15)
+    TEL3        String? @db.VarChar(15)
+    FAX1        String? @db.VarChar(15)
+    VDAIRESI    String? @db.VarChar(30)
+    VNO         String? @db.VarChar(30)
+    URL1        String? @db.VarChar(60)
+    MESLEKGRUBU String? @db.VarChar(60)
+    SATISFIYATI Int?
+    VADEFARKI   Int?
+    ISKONTO     Int?
+    MUAFIYETGUN Int?
+    RISKLIMITI  Float?
+    KREDILIMITI Float?
+    OZELKOD1    String? @db.VarChar(30)
+    OZELKOD2    String? @db.VarChar(30)
+    PASIF       String? @default("H") @db.VarChar(5)
+    TIPI        String? @db.VarChar(100)
+    ACIKLAMA    String? @db.Text
+    OTM_FATURA  String  @default("E") @db.Char(1)
+    faturaid    Int?    @default(-1)
+    CARIKART    String? @default("E") @db.Char(1)
+
+    @@index([ID], name: "ID")
+    @@index([UNVANI], name: "UNVANI")
+}
+
+model cihazdurumlari {
+    ID              Int       @id @default(autoincrement())
+    MRKONEK         String?   @default("") @db.VarChar(10)
+    ABONEKODU       String?   @unique @db.VarChar(10)
+    SONSINYALTARIHI DateTime? @db.DateTime(0)
+    BAGLI           Boolean?  @default(false)
+    BILDIRILDI      Boolean?  @default(false)
+    IP              String?   @db.VarChar(20)
+    HATGUVENLIGI    Int?      @default(600)
+    SignalType      String?   @default("ADM-CID") @db.VarChar(10)
+
+    @@index([SONSINYALTARIHI], name: "SONSINYALTARIHI")
+}
+
+model cihazsmskomutlari {
+    id         Int     @id @default(autoincrement())
+    cihazid    Int?
+    komut      String? @db.VarChar(30)
+    aciklama   String? @db.VarChar(255)
+    ornekkomut String? @db.VarChar(30)
+    cevap      String? @db.VarChar(255)
+}
+
+model degerlendirilmeyeceksinyaller {
+    ID        Int       @id @default(autoincrement())
+    f_kodu    String?   @db.VarChar(10)
+    partno    String?   @db.VarChar(3)
+    alarmkodu String?   @db.VarChar(4)
+    kaydet    String?   @default("E") @db.VarChar(1)
+    sure      Int?      @default(24)
+    zaman     DateTime? @db.DateTime(0)
+    aktif     String?   @default("E") @db.Char(1)
+
+    @@unique([f_kodu, partno, alarmkodu], name: "UK_degerlendirilmeyeceksinyall")
+}
+
+model degerlendirmesonuclari {
+    ID       Int     @id @default(autoincrement())
+    SIRA     Int?    @unique
+    ACIKLAMA String? @db.VarChar(100)
+}
+
+model dovizkurisimleri {
+    ID       Int     @id @default(autoincrement())
+    KODU     String? @db.VarChar(3)
+    ACIKLAMA String? @db.VarChar(25)
+    SEMBOL   String? @db.VarChar(1)
+}
+
+model email_emirleri {
+    id          Int       @id @default(autoincrement())
+    emirzamani  DateTime? @db.DateTime(0)
+    emirtipi    Int?      @db.TinyInt
+    mesaj       String?   @db.Text
+    islendi     String?   @default("H") @db.Char(1)
+    mesajsirano Int?
+    email1      String?   @db.VarChar(100)
+    email2      String?   @db.VarChar(100)
+    email3      String?   @db.VarChar(100)
+    email4      String?   @db.VarChar(100)
+    email5      String?   @db.VarChar(100)
+    bas_tar     DateTime? @db.DateTime(0)
+    bit_tar     DateTime? @db.DateTime(0)
+    bayi        Int?
+}
+
+model email_giden {
+    ID           Int       @id @default(autoincrement())
+    F_KODU       String?   @db.VarChar(10)
+    PARTNO       String?   @db.Char(3)
+    ADI          String?   @db.VarChar(100)
+    DURUM        String?   @db.VarChar(10)
+    GID_TAR      DateTime? @db.Date
+    GID_SAAT     DateTime? @db.Time(0)
+    GIT_TAR      DateTime? @db.Date
+    GIT_SAAT     DateTime? @db.Time(0)
+    EMAIL1       String?   @db.VarChar(40)
+    EMAIL2       String?   @db.VarChar(40)
+    EMAIL3       String?   @db.VarChar(40)
+    EMAIL4       String?   @db.VarChar(40)
+    EMAIL5       String?   @db.VarChar(40)
+    EKLIDOSYALAR String?   @db.MediumText
+    MESAJ        String?   @db.MediumText
+    KONU         String?   @db.VarChar(200)
+    MESAJSIRA    Int?
+    ACIKLAMA     String?   @db.VarChar(200)
+    TIP          Int?      @default(1)
+    oncelik      Int?
+    denemesayisi Int?
+    bayi         Int?
+
+    @@index([ADI], name: "ADI")
+    @@index([DURUM], name: "DURUM")
+    @@index([F_KODU], name: "F_KODU")
+    @@index([PARTNO], name: "PARTNO")
+}
+
+model email_giden_arizali {
+    ID           Int       @id @default(autoincrement())
+    F_KODU       String?   @db.VarChar(10)
+    PARTNO       String?   @db.Char(3)
+    ADI          String?   @db.VarChar(100)
+    DURUM        String?   @db.VarChar(10)
+    GID_TAR      DateTime? @db.Date
+    GID_SAAT     DateTime? @db.Time(0)
+    GIT_TAR      DateTime? @db.Date
+    GIT_SAAT     DateTime? @db.Time(0)
+    EMAIL1       String?   @db.VarChar(40)
+    EMAIL2       String?   @db.VarChar(40)
+    EMAIL3       String?   @db.VarChar(40)
+    EMAIL4       String?   @db.VarChar(40)
+    EMAIL5       String?   @db.VarChar(40)
+    EKLIDOSYALAR String?   @db.MediumText
+    MESAJ        String?   @db.MediumText
+    KONU         String?   @db.VarChar(200)
+    MESAJSIRA    Int?
+    ACIKLAMA     String?   @db.VarChar(200)
+    TIP          Int?      @default(1)
+    oncelik      Int?
+    bayi         Int?
+
+    @@index([ADI], name: "ADI")
+    @@index([DURUM], name: "DURUM")
+    @@index([F_KODU], name: "F_KODU")
+    @@index([PARTNO], name: "PARTNO")
+}
+
+model email_gonderilen {
+    ID           Int       @id @default(autoincrement())
+    F_KODU       String?   @db.VarChar(10)
+    PARTNO       String?   @db.Char(3)
+    ADI          String?   @db.VarChar(100)
+    DURUM        String?   @db.VarChar(10)
+    GID_TAR      DateTime? @db.Date
+    GID_SAAT     DateTime? @db.Time(0)
+    GIT_TAR      DateTime? @db.Date
+    GIT_SAAT     DateTime? @db.Time(0)
+    EMAIL1       String?   @db.VarChar(40)
+    EMAIL2       String?   @db.VarChar(40)
+    EMAIL3       String?   @db.VarChar(40)
+    EMAIL4       String?   @db.VarChar(40)
+    EMAIL5       String?   @db.VarChar(40)
+    EKLIDOSYALAR String?   @db.MediumText
+    MESAJ        String?   @db.MediumText
+    KONU         String?   @db.VarChar(200)
+    ACIKLAMA     String?   @db.VarChar(100)
+    oncelik      Int?
+    bayi         Int?
+
+    @@index([ADI], name: "ADI")
+    @@index([DURUM], name: "DURUM")
+    @@index([F_KODU], name: "F_KODU")
+    @@index([PARTNO], name: "PARTNO")
+}
+
+model emailayarlari {
+    ID              Int      @id @default(autoincrement())
+    GORUNECEKISIM   String?  @db.VarChar(30)
+    EMAILADRESI     String?  @db.VarChar(100)
+    POPNAME         String?  @db.VarChar(60)
+    POPPORT         Int?
+    HOSTNAME        String?  @db.VarChar(60)
+    HOSTPORT        Int?
+    USERNAME        String?  @db.VarChar(60)
+    PAROLA          String?  @db.VarChar(60)
+    ICERIK          Bytes?
+    USTNOT          Bytes?
+    ALTNOT          Bytes?
+    MAILTURU        String?  @db.VarChar(20)
+    CEVAPADRESI     String?  @db.VarChar(100)
+    BILGIADRESI     String?  @db.VarChar(100)
+    BASLIK          String?  @db.VarChar(100)
+    SIFRELEME       String?  @db.VarChar(20)
+    SSLVERSION      String?  @db.VarChar(20)
+    KIMLIKDOGRULAMA String?  @db.VarChar(20)
+    TIP             Int?     @default(1)
+    SSLVAR          Boolean?
+    SIFRELEMETURU   String?  @db.VarChar(20)
+
+    @@index([MAILTURU], name: "MAILTURU")
+}
+
+model ertelenenmesajlar {
+    ID             Int       @id @default(autoincrement())
+    SIRA           Int?
+    CIHAZ          String?   @db.VarChar(6)
+    F_KODU         String?   @db.VarChar(10)
+    PARTNO         String?   @db.Char(5)
+    ALICIALET      String?   @db.Char(2)
+    TELHATTI       String?   @db.Char(4)
+    ALARMKODU      String?   @db.VarChar(5)
+    BOLGE          String?   @db.VarChar(100)
+    HAMSINYAL      String?   @db.VarChar(100)
+    KULLANICI      String?   @db.VarChar(30)
+    SONUC          String?   @db.VarChar(60)
+    MESAJTIPI      String?   @db.VarChar(32)
+    MESAJ          String?   @db.VarChar(100)
+    TARIH          DateTime? @db.DateTime(0)
+    ACKTARIH       DateTime? @db.DateTime(0)
+    NOTLAR         String?   @db.Text
+    F_UNVANI       String?   @db.VarChar(100)
+    ALARMVERSIN    String?   @db.Char(1)
+    ISLENDI        String?   @db.Char(1)
+    CID            String?   @db.VarChar(15)
+    ONCELIK        Int?
+    TIP            String?   @db.VarChar(3)
+    MESGUL         String?   @default("H") @db.VarChar(1)
+    ERTELEMEZAMANI DateTime? @db.DateTime(0)
+    ERTELEMESURE   Int?
+    ERTELEMESAYISI Int?      @default(0)
+
+    @@index([ALARMKODU], name: "ALARMKODU")
+    @@index([F_KODU], name: "F_KODU")
+    @@index([ISLENDI], name: "ISLENDI")
+    @@index([TARIH], name: "TARIH")
+}
+
+model fatura {
+    ID              Int       @unique @default(autoincrement())
+    CH_ID           Int?      @default(-1)
+    FIS_NO          String?   @db.VarChar(30)
+    FIS_TARIHI      DateTime? @db.DateTime(0)
+    ACIKLAMA        String?   @db.VarChar(100)
+    TLTOPLAMI       Float?
+    TLISKTOPLAMI    Float?
+    TLARATOPLAM     Float?
+    TLKDVTOPLAM     Float?
+    TLGENTOPLAM     Float?
+    FISTURU         Int?
+    ISLEM_TARIHI    DateTime? @db.DateTime(0)
+    VADE_TARIHI     DateTime? @db.DateTime(0)
+    ACIK_KAPALI     String?   @default("A") @db.Char(1)
+    DEPO_ID         Int?      @default(0)
+    OZEL_KOD        String?   @db.VarChar(30)
+    IRSALIYE_TARIHI DateTime? @db.DateTime(0)
+    IRSALIYE_NO     String?   @db.VarChar(30)
+    ISLENDI         String?   @db.Char(1)
+    SIPARIS_ID      Int?      @default(-1)
+    SIPARIS_NO      String?   @default("-1") @db.VarChar(30)
+    CARI_HRK_ID     Int?      @default(-1)
+    KASA_HRK_ID     Int?      @default(-1)
+    DIPNOT          String?   @db.Text
+    IPTAL           String?   @default("H") @db.VarChar(1)
+    VDEPO_ID        Int?      @default(0)
+    DOVIZ_KURU      Float?    @db.Float
+    DOVIZ_TIPI      String?   @db.VarChar(3)
+
+    @@index([CH_ID], name: "MUSTERI_ID")
+}
+
+model faturadetay {
+    ID            Int     @id @default(autoincrement())
+    FIS_ID        Int?
+    URUNKODU      String? @db.Char(20)
+    URUNADI       String? @db.Char(60)
+    URUNACIKLAMA  String? @db.Char(100)
+    BEDEN         Int?
+    MARKA         Int?
+    MIKTAR        Float?
+    BIRIM         String? @db.Char(20)
+    TL_FIYATI     Float?
+    TL_TUTARI     Float?
+    KDV           Float?
+    ISKONTO       Float?
+    TL_KDVLIFIYAT Float?
+    TL_KDVLITUTAR Float?
+    TLKDV_TUTARI  Float?
+    TLISK_TUTARI  Float?
+    TL_ISKLIFIYAT Float?
+    TL_ISKLITUTAR Float?
+    URUN_ID       Int?    @default(0)
+    STH_ID        Int?    @default(-1)
+    STH_ID1       Int?    @default(-1)
+
+    @@index([FIS_ID], name: "FATURA_ID")
+}
+
+model firmayetkilileri {
+    ID        Int       @id @default(autoincrement())
+    F_KODU    String?   @db.VarChar(10)
+    PARTNO    String?   @default("000") @db.Char(3)
+    SIRA      Int?      @default(1) @db.SmallInt
+    ADISOYADI String?   @db.VarChar(30)
+    EMAIL1    String?   @db.VarChar(60)
+    EMAIL2    String?   @db.VarChar(60)
+    TEL1      String?   @db.VarChar(15)
+    TEL2      String?   @db.VarChar(15)
+    CEP1      String?   @db.VarChar(15)
+    CEP2      String?   @db.VarChar(15)
+    DT        DateTime? @db.Date
+
+    @@index([ADISOYADI], name: "ADISOYADI")
+    @@index([F_KODU], name: "F_KODU")
+    @@index([PARTNO], name: "PARTNO")
+    @@index([SIRA], name: "SIRA")
+}
+
+model fotograflar {
+    ID       Int     @id @default(autoincrement())
+    F_KODU   String? @db.VarChar(10)
+    ACIKLAMA String? @db.VarChar(100)
+    FOTOGRAF Bytes?
+    SIRA     Int?
+
+    @@index([F_KODU], name: "F_KODU")
+}
+
+model gecersizaboneler {
+    ID              Int       @id @default(autoincrement())
+    F_KODU          String?   @db.VarChar(20)
+    SINYALADETI     Int?
+    CIDNO           String?   @db.VarChar(30)
+    SONSINYALTARIHI DateTime? @db.DateTime(0)
+    HAMSINYAL       String?   @db.VarChar(500)
+
+    @@index([F_KODU], name: "F_KODU")
+}
+
+model gelensinyaller {
+    ID         Int       @id @default(autoincrement())
+    SINYAL     String?   @db.VarChar(80)
+    HAMSINYAL  String?   @db.VarChar(50)
+    TARIH      DateTime? @db.DateTime(0)
+    GONDERILDI Boolean?  @default(false)
+    TEST       Boolean?
+    GONDTARIH  DateTime? @db.DateTime(0)
+
+    @@index([GONDERILDI], name: "UK_gelensinyaller_GONDERILDI")
+    @@index([TARIH], name: "UK_gelensinyaller_TARIH")
+}
+
+model genel_onemlitelefonlar {
+    ID       Int     @id @default(autoincrement())
+    ADI      String? @db.VarChar(30)
+    ULKE     Int?
+    IL       Int?
+    ILCE     Int?
+    TEL1     String? @db.VarChar(16)
+    TEL2     String? @db.VarChar(16)
+    TEL3     String? @db.VarChar(16)
+    FAX1     String? @db.VarChar(16)
+    FAX2     String? @db.VarChar(16)
+    ACIKLAMA String? @db.VarChar(30)
+
+    @@index([ADI], name: "ADI")
+}
+
+model geneltatiller {
+    ID            Int       @id @default(autoincrement())
+    ACIKLAMA      String?   @db.Char(50)
+    BASLAMATARIHI DateTime? @db.DateTime(0)
+    BITISTARIHI   DateTime? @db.DateTime(0)
+    YILBAGIMSIZ   Boolean?
+
+    @@index([BASLAMATARIHI], name: "BASLAMATARIHI")
+    @@index([BITISTARIHI], name: "BITISTARIHI")
+}
+
+model gunler {
+    ID  Int     @id @default(autoincrement())
+    GUN Int?
+    ADI String? @db.VarChar(20)
+}
+
+model haberverilecekler {
+    ID            Int       @id @default(autoincrement())
+    F_KODU        String?   @db.VarChar(10)
+    PARTNO        String?   @db.Char(3)
+    SIRA          Int?      @db.SmallInt
+    ADISOYADI     String?   @db.VarChar(30)
+    GOREVI        String?   @db.VarChar(20)
+    YAKINLIGI     String?   @db.VarChar(55)
+    TEL1          String?   @db.VarChar(50)
+    TEL2          String?   @db.VarChar(50)
+    TEL3          String?   @db.VarChar(50)
+    TEL4          String?   @db.VarChar(50)
+    ADRES         String?   @db.VarChar(150)
+    PAROLA        String?   @db.VarChar(150)
+    ALARMTIPI     String?   @db.VarChar(250)
+    SMS           String?   @db.VarChar(1)
+    MPAROLA       String?   @db.VarChar(30)
+    EPOSTA        String?   @db.VarChar(60)
+    EPOSTADURUM   String?   @db.VarChar(60)
+    BASLAMATARIHI DateTime? @db.DateTime(0)
+    BITISTARIHI   DateTime? @db.DateTime(0)
+    KISITLAMA     String?   @default("H") @db.Char(1)
+    VOIPSIFRE     String?   @default("") @db.VarChar(4)
+    VOIPARA       String?   @default("H") @db.VarChar(1)
+    ULKETELKODU   String?   @default("0") @db.VarChar(6)
+    SICILNO       String?   @db.VarChar(50)
+
+    @@index([ADISOYADI], name: "ADISOYADI")
+    @@index([F_KODU, PARTNO], name: "F_KODU")
+    @@index([SIRA], name: "SIRA")
+}
+
+model haberverilecekler_ {
+    ID            Int       @id @default(autoincrement())
+    F_KODU        String?   @db.VarChar(10)
+    PARTNO        String?   @db.Char(3)
+    SIRA          Int?      @db.SmallInt
+    ADISOYADI     String?   @db.VarChar(30)
+    GOREVI        String?   @db.VarChar(20)
+    YAKINLIGI     String?   @db.VarChar(110)
+    TEL1          String?   @db.VarChar(20)
+    TEL2          String?   @db.VarChar(20)
+    TEL3          String?   @db.VarChar(20)
+    TEL4          String?   @db.VarChar(20)
+    ADRES         String?   @db.VarChar(150)
+    PAROLA        String?   @db.VarChar(30)
+    ALARMTIPI     String?   @db.VarChar(250)
+    SMS           String?   @db.VarChar(1)
+    MPAROLA       String?   @db.VarChar(30)
+    EPOSTA        String?   @db.VarChar(60)
+    EPOSTADURUM   String?   @db.VarChar(60)
+    BASLAMATARIHI DateTime? @db.DateTime(0)
+    BITISTARIHI   DateTime? @db.DateTime(0)
+    KISITLAMA     String?   @default("H") @db.Char(1)
+    VOIPSIFRE     String?   @default("1234") @db.VarChar(4)
+    VOIPARA       String?   @default("H") @db.VarChar(1)
+    ULKETELKODU   String?   @default("0") @db.VarChar(6)
+    SICILNO       String?   @db.VarChar(50)
+
+    @@index([ADISOYADI], name: "ADISOYADI")
+    @@index([F_KODU, PARTNO], name: "F_KODU")
+    @@index([SIRA], name: "SIRA")
+}
+
+model hamsinyaller {
+    TARIH   DateTime? @db.DateTime(0)
+    COM     Int?      @db.SmallInt
+    ISLENDI String?   @default("H") @db.Char(1)
+    MESAJ   String?   @db.VarChar(500)
+    SIRA    Int       @id @default(autoincrement())
+    IP_SERI Int?
+    MESGUL  Boolean?
+
+    @@unique([SIRA, ISLENDI], name: "SIRA")
+    @@index([COM], name: "COM")
+    @@index([ISLENDI], name: "ISLENDI")
+    @@index([TARIH], name: "TARIH")
+}
+
+model hesaptipleri {
+    ID            Int     @default(autoincrement())
+    HESAPADI      String  @default("") @db.VarChar(20)
+    POSTA         String? @db.Char(1)
+    EMAIL         String? @db.Char(1)
+    FAKS          String? @db.Char(1)
+    PERIYOD       String? @db.Char(1)
+    GUN           String? @db.Char(1)
+    AK_KATIBI     String? @db.Char(1)
+    GAK_RAPORU    String? @db.Char(1)
+    HAK_RAPORU    String? @db.Char(1)
+    SMS           String? @db.Char(1)
+    FIYAT         Float?  @db.Float
+    SMS_KURMA     String? @default("H") @db.Char(1)
+    SMS_KAPAMA    String? @default("H") @db.Char(1)
+    SMS_GECKURMA  String? @default("H") @db.Char(1)
+    SMS_GECKAPAMA String? @default("H") @db.Char(1)
+    SMS_KAPALIGUN String? @default("H") @db.Char(1)
+    SMS_GTEST     String? @default("H") @db.Char(1)
+    SMS_ALARM     String? @default("H") @db.Char(1)
+
+    @@id([ID, HESAPADI])
+}
+
+model hizlinotlar {
+    ID        Int     @id @default(autoincrement())
+    sira      Int?
+    ACIKLAMA  String? @db.VarChar(50)
+    KULLANICI String? @default("E") @db.VarChar(1)
+    SAHIP     String? @default("Trafik List") @db.VarChar(15)
+
+    @@index([sira], name: "sira")
+}
+
+model ikguncelleme {
+    ID       Int       @unique @default(autoincrement()) @db.UnsignedInt
+    P_NO     String?   @db.VarChar(10)
+    P_AD     String?   @db.VarChar(50)
+    P_SOYAD  String?   @db.VarChar(50)
+    UNVAN_AD String?   @db.VarChar(50)
+    P_GOREV  String?   @db.VarChar(10)
+    PZ_AD    String?   @db.VarChar(50)
+    KKOD     String?   @db.VarChar(10)
+    YER      String?   @db.VarChar(100)
+    BOL_ADI  String?   @db.VarChar(100)
+    ISTEL    String?   @db.VarChar(20)
+    P_CEPTEL String?   @db.VarChar(20)
+    P_CIKTAR DateTime? @db.DateTime(0)
+}
+
+model ilceler {
+    ID       Int     @id @default(autoincrement())
+    ILKODU   String? @db.VarChar(10)
+    ILCEKODU String? @db.VarChar(10)
+    ILCE     String? @db.VarChar(50)
+
+    @@index([ILCEKODU], name: "ILCEKODU")
+    @@index([ILKODU], name: "ILKODU")
+}
+
+model ilceler_copy {
+    ID       Int     @id @default(autoincrement())
+    ILKODU   String? @db.VarChar(10)
+    ILCEKODU String? @db.VarChar(10)
+    ILCE     String? @db.VarChar(50)
+
+    @@index([ILCEKODU], name: "ILCEKODU")
+    @@index([ILKODU], name: "ILKODU")
+}
+
+model iller {
+    ID       Int     @id @default(autoincrement())
+    ULKEKODU String? @db.VarChar(10)
+    ILKODU   String? @db.VarChar(10)
+    IL       String? @db.VarChar(50)
+
+    @@index([ILKODU], name: "ILKODU")
+    @@index([ULKEKODU], name: "ULKEKODU")
+}
+
+model ip_meslekleri {
+    ID         Int     @id @default(autoincrement())
+    TERMINALID Int?
+    MESLEK     String? @db.Char(50)
+
+    @@index([TERMINALID], name: "TERMINALID")
+}
+
+model ivr_gelenarama {
+    id         Int       @id @default(autoincrement())
+    adi        String?   @db.VarChar(30)
+    soyadi     String?   @db.VarChar(30)
+    telefon    String?   @db.VarChar(15)
+    firma      String?   @db.VarChar(100)
+    abonekodu  String?   @db.VarChar(10)
+    partno     String?   @db.VarChar(3)
+    notlar     String?   @db.Text
+    tarih      DateTime? @db.DateTime(0)
+    sesdosyasi String?   @db.VarChar(100)
+}
+
+model ivr_gidenarama {
+    id             Int       @id @default(autoincrement())
+    adi            String?   @db.VarChar(30)
+    soyadi         String?   @db.VarChar(30)
+    firma          String?   @db.VarChar(100)
+    f_kodu         String?   @db.VarChar(10)
+    mesaj          String?   @db.Text
+    mesajid        Int?
+    sonuc          String?   @default("B") @db.Char(1)
+    notlar         String?   @db.Text
+    aranacakno     String?   @db.VarChar(15)
+    tarih          DateTime? @db.DateTime(0)
+    aranantarih    DateTime? @db.DateTime(0)
+    sesdosyasi     String?   @db.VarChar(100)
+    partno         String?   @db.VarChar(3)
+    hid            Int?
+    hat            Int?
+    ivragonderilme DateTime? @db.DateTime(0)
+    islembitti     Int?      @default(0)
+    kampanya       Int?      @default(0)
+
+    @@index([sonuc, tarih], name: "index")
+}
+
+model ivr_isim {
+    id   Int     @id @default(autoincrement())
+    isim String? @db.VarChar(500)
+}
+
+model ivr_kuyruk {
+    id      Int     @id @default(autoincrement())
+    telefon String? @db.VarChar(12)
+}
+
+model ivr_voip {
+    id        Int     @id @default(autoincrement())
+    ip        String? @db.VarChar(16)
+    kullanici String? @db.VarChar(20)
+    sifre     String? @db.VarChar(20)
+    sira      Int?
+    turu      String? @db.VarChar(15)
+}
+
+model kameraayarlari {
+    ID        Int     @unique @default(autoincrement())
+    F_KODU    String? @db.VarChar(10)
+    PARTNO    String? @db.VarChar(3)
+    IP        String? @db.VarChar(20)
+    PORT      Int?
+    KULLANICI String? @db.VarChar(20)
+    SIFRE     String? @db.VarChar(20)
+}
+
+model kameralar {
+    id        Int     @id @default(autoincrement())
+    f_kodu    String? @db.VarChar(10)
+    partno    String? @db.VarChar(3)
+    link      String? @db.VarChar(255)
+    adi       String? @db.VarChar(255)
+    kamerano  Int?
+    bolgeno   Int?
+    kam_kadi  String? @db.VarChar(255)
+    kam_sifre String? @db.VarChar(255)
+    kam_ip    String? @db.VarChar(20)
+    kam_port  Int?
+
+    @@index([f_kodu, partno, kamerano], name: "kameralar")
+}
+
+model koordinasyon {
+    id      Int       @id @default(autoincrement())
+    program String?   @db.VarChar(500)
+    tarih   DateTime? @db.DateTime(0)
+    durum   Int?      @default(0)
+    kayit   Int?
+    sonuc   Int?
+    bakim   Int?
+}
+
+model kurum {
+    Id    Int       @id @default(autoincrement())
+    kurum String?   @db.VarChar(200)
+    data  String?   @db.Text
+    tarih DateTime? @db.DateTime(0)
+}
+
+model linekartlar {
+    ID           Int     @id @default(autoincrement())
+    RECEIVER     String? @db.VarChar(2)
+    LINEKART     String? @db.VarChar(4)
+    TELEFONNO    String? @db.VarChar(20)
+    ACIKLAMA     String? @db.VarChar(30)
+    GEL_TELNO    String? @db.VarChar(20)
+    RECID        Int?
+    GEL_ACCNO    String? @db.VarChar(6)
+    GEL_COM      Int?
+    SONMESAJSIRA Int?
+    ONEK         String? @db.VarChar(5)
+    TIP          String? @default("P") @db.Char(1)
+
+    @@index([RECEIVER, LINEKART], name: "receiver")
+}
+
+model mailtipleri {
+    ID       Int     @id @default(autoincrement())
+    TIP      Int?
+    ACIKLAMA String? @db.VarChar(30)
+}
+
+model malzemeler {
+    ID             Int       @id @default(autoincrement())
+    F_KODU         String?   @db.Char(10)
+    PARTNO         String?   @db.Char(3)
+    TAKILDIGIBOLGE String?   @db.Char(10)
+    TAKILDIGI_YER  String?   @db.Char(255)
+    WWWIP          String?   @db.VarChar(100)
+    TSERVIS        String?   @default("H") @db.VarChar(1)
+    TS_SURE        Int?      @default(0)
+    TSB_TARIH      DateTime? @default(now()) @db.DateTime(0)
+    DEDEKTOR       String?   @db.VarChar(60)
+    Knm_X          Int?      @default(0)
+    Knm_Y          Int?      @default(0)
+    TAKIPSURESI    Int?
+    SONTAKIPZAMANI DateTime? @db.DateTime(0)
+    OTM_ENT_KODU   String?   @default("-") @db.VarChar(1)
+    DURUM          Boolean?  @default(false)
+    TKP_BASLAMA    DateTime? @db.Time(0)
+    TKP_BITIS      DateTime? @db.Time(0)
+
+    @@index([F_KODU, PARTNO], name: "F_KODU")
+    @@index([TAKILDIGIBOLGE], name: "TAKILDIGIBOLGE")
+    @@index([TSERVIS, TSB_TARIH], name: "TSERVIS")
+}
+
+model malzemeler_ {
+    ID             Int       @id @default(autoincrement())
+    F_KODU         String?   @db.Char(10)
+    PARTNO         String?   @db.Char(3)
+    TAKILDIGIBOLGE String?   @db.Char(255)
+    TAKILDIGI_YER  String?   @db.Char(255)
+    WWWIP          String?   @db.VarChar(255)
+    TSERVIS        String?   @default("H") @db.VarChar(1)
+    TS_SURE        Int?      @default(0)
+    TSB_TARIH      DateTime? @db.DateTime(0)
+    DEDEKTOR       String?   @db.VarChar(255)
+    Knm_X          Int?      @default(0)
+    Knm_Y          Int?      @default(0)
+    TAKIPSURESI    Int?
+    SONTAKIPZAMANI DateTime? @db.DateTime(0)
+    OTM_ENT_KODU   String?   @default("-") @db.VarChar(1)
+    DURUM          Boolean?  @default(false)
+    TKP_BASLAMA    DateTime? @db.Time(0)
+    TKP_BITIS      DateTime? @db.Time(0)
+
+    @@index([F_KODU, PARTNO], name: "F_KODU")
+    @@index([TAKILDIGIBOLGE], name: "TAKILDIGIBOLGE")
+    @@index([TSERVIS, TSB_TARIH], name: "TSERVIS")
+}
+
+model markatanimlari {
+    ID       Int     @unique @default(autoincrement())
+    aciklama String? @db.VarChar(30)
+
+    @@index([aciklama], name: "ACIKLAMA")
+}
+
+model mesajlar {
+    SIRA          Int       @default(autoincrement())
+    CIHAZ         String?   @db.VarChar(6)
+    F_KODU        String?   @db.VarChar(10)
+    ALICIALET     String?   @db.Char(3)
+    TELHATTI      String?   @db.Char(3)
+    ALARMKODU     String?   @db.VarChar(5)
+    BOLGE         String?   @db.VarChar(100)
+    HAMSINYAL     String?   @db.VarChar(500)
+    KULLANICI     String?   @db.VarChar(30)
+    PARTNO        String?   @db.Char(5)
+    SONUC         Int?
+    MESAJTIPI     String?   @db.VarChar(32)
+    MESAJ         String?   @db.VarChar(100)
+    TARIH         DateTime  @default(dbgenerated("0000-00-00 00:00:00")) @db.DateTime(0)
+    ACKTARIH      DateTime? @db.DateTime(0)
+    F_UNVANI      String?   @db.VarChar(100)
+    ALARMVERSIN   String?   @db.Char(1)
+    ISLENDI       String?   @db.Char(1)
+    CID           String?   @db.VarChar(15)
+    ONCELIK       Int?
+    TIP           String?   @db.VarChar(3)
+    MESGUL        String?   @default("H") @db.VarChar(1)
+    CEVASPSURESN  Int?
+    GECERSIZABONE Boolean?
+    NOTLAR        String?   @db.Text
+    BOLGENO       String    @default("000") @db.Char(3)
+    ERTELEME      Int?      @default(0)
+
+    @@id([SIRA, TARIH])
+    @@index([ALARMKODU], name: "ALARMKODU")
+    @@index([ALARMVERSIN, ISLENDI, MESGUL, TARIH, ONCELIK], name: "TrafikList")
+    @@index([ONCELIK, TARIH], name: "UK_mesajlar")
+    @@index([TARIH, F_KODU, PARTNO], name: "UK_mesajlar2")
+    @@index([F_KODU, PARTNO, SIRA], name: "UK_mesajlar3")
+    @@index([F_KODU, PARTNO, ISLENDI, MESGUL], name: "UK_mesajlar4")
+    @@index([F_KODU, PARTNO, MESAJTIPI, ISLENDI], name: "UK_mesajlar5")
+}
+
+model mesajnotlar {
+    ID        Int       @id @default(autoincrement())
+    MESAJSIRA Int?
+    NOTLAR    String?   @db.Text
+    ZAMAN     DateTime? @db.DateTime(0)
+    OPERATOR  String?   @db.VarChar(20)
+
+    @@index([ID], name: "ID")
+    @@index([MESAJSIRA], name: "MESAJSIRA")
+}
+
+model meslekgrup {
+    ID         Int     @id @default(autoincrement())
+    MESLEKGRB  String? @db.Char(50)
+    TATILALARM String? @default("E") @db.VarChar(1)
+
+    @@index([MESLEKGRB], name: "MESLEKGRB")
+}
+
+model mstgrup_teknisyenler {
+    ID            Int     @id @default(autoincrement())
+    F_KODU        String? @db.VarChar(10)
+    PARTNO        String? @db.Char(3)
+    SIRA          Int?    @db.SmallInt
+    ADISOYADI     String? @db.VarChar(30)
+    GOREVI        String? @db.VarChar(30)
+    YAKINLIGI     String? @db.VarChar(20)
+    TEL1          String? @db.VarChar(15)
+    TEL2          String? @db.VarChar(15)
+    PAROLA        String? @db.VarChar(20)
+    TEL3          String? @db.VarChar(15)
+    TEL4          String? @db.VarChar(15)
+    KULLANICIKODU String? @db.VarChar(15)
+    SMS           String? @default("H") @db.VarChar(1)
+    EPOSTA        String? @db.VarChar(60)
+    EPOSTADURUM   String? @db.VarChar(60)
+
+    @@index([ADISOYADI], name: "ADISOYADI")
+    @@index([F_KODU], name: "F_KODU")
+    @@index([SIRA], name: "SIRA")
+}
+
+model mstgruphesaplari {
+    ID             Int       @id @default(autoincrement())
+    MSTGRUPID      Int?
+    HESAPADI       String?   @db.VarChar(60)
+    PERIYOD        Int?      @default(0)
+    GONDERIMSAATI  DateTime? @db.Time(0)
+    RAPORLAMATURU  Int?      @default(2)
+    DUZELMEKONTROL String?   @default("H") @db.Char(1)
+    DONEM          Int?      @default(4)
+    eposta         String?   @db.VarChar(255)
+}
+
+model mstgrupmailbolgeleri {
+    ID      Int  @id @default(autoincrement())
+    HESAPID Int?
+    BOLGEID Int?
+
+    @@index([HESAPID], name: "HESAPID")
+}
+
+model mstgrupmailsinyaltipleri {
+    ID         Int     @id @default(autoincrement())
+    HESAPID    Int?
+    SINYALTIPI String? @db.VarChar(60)
+
+    @@index([HESAPID], name: "BAYIID")
+}
+
+model mstgrupmeslekler {
+    ID      Int     @id @default(autoincrement())
+    HESAPID Int?
+    MESLEK  String? @db.VarChar(60)
+
+    @@index([HESAPID], name: "BAYIID")
+}
+
+model musteri {
+    ID                        Int       @id @default(autoincrement())
+    F_KODU                    String    @db.VarChar(10)
+    PARTNO                    String    @default("000") @db.Char(3)
+    ALICINO                   String?   @db.Char(2)
+    PART_VAR                  String    @default("H") @db.Char(1)
+    FIRMA_ADI                 String?   @db.VarChar(100)
+    TEL1                      String?   @db.VarChar(15)
+    TEL2                      String?   @db.VarChar(15)
+    TEL3                      String?   @db.VarChar(15)
+    FAX1                      String?   @db.VarChar(20)
+    FAX2                      String?   @db.VarChar(20)
+    A_MAHALLE                 String?   @db.VarChar(80)
+    A_CADDE                   String?   @db.VarChar(80)
+    A_SOKAK                   String?   @db.VarChar(80)
+    A_KAPINO                  String?   @db.VarChar(50)
+    A_ADRES1                  String?   @db.VarChar(250)
+    A_ADRES2                  String?   @db.VarChar(250)
+    A_PKODU                   String?   @db.VarChar(9)
+    A_ILCE                    Int?
+    A_IL                      Int?
+    A_ULKE                    Int?
+    A_BOLGE                   Int?
+    SISTEMMONTEJYERI          Int?
+    ALRBAKIM                  String?   @db.VarChar(30)
+    ZONE_TABLOSU              Int?
+    ACIKKAPALI                String?   @db.Char(1)
+    ACILISSAATI               DateTime? @db.DateTime(0)
+    KAPANISSAATI              DateTime? @db.DateTime(0)
+    GUNLUKSIN                 String?   @db.VarChar(10)
+    SINLISGID                 String?   @db.VarChar(10)
+    BAKIMTURU                 String?   @db.VarChar(30)
+    ILKKAYITTARIHI            DateTime? @db.DateTime(0)
+    KAYITTARIHI               DateTime? @db.DateTime(0)
+    BAKIMBASLAMA              DateTime? @db.DateTime(0)
+    BAKIMBITIS                DateTime? @db.DateTime(0)
+    GARANTIBASLAMA            DateTime? @db.DateTime(0)
+    GARANTIBITIS              DateTime? @db.DateTime(0)
+    AYRILISTARIHI             DateTime? @db.DateTime(0)
+    ODEMETURU                 String?   @db.VarChar(20)
+    ACIKKAPALITARIH           DateTime? @db.DateTime(0)
+    SONGUNTAR                 DateTime? @db.DateTime(0)
+    OPERATOR                  String?   @db.VarChar(30)
+    BILGIGUNTAR               DateTime? @db.DateTime(0)
+    MESLEKGRUBU               Int?
+    UYARIMESAJI               String?   @db.VarChar(60)
+    UYARISAATI                String?   @db.VarChar(5)
+    UCRETSEVIYESI             String?   @db.Char(2)
+    MESAJMAIL_0               String?   @db.VarChar(90)
+    MESAJMAIL_1               String?   @db.VarChar(90)
+    MESAJMAIL_2               String?   @db.VarChar(90)
+    MESAJMAIL_3               String?   @db.VarChar(90)
+    MESAJMAIL_4               String?   @db.VarChar(90)
+    HATGUVENLIGISAATI         Int?      @default(1500)
+    GECKURMATAR               DateTime? @db.DateTime(0)
+    GECKAPAMATAR              DateTime? @db.DateTime(0)
+    WEBPAROLA                 String?   @default("1234") @db.VarChar(10)
+    SONSINYALTAR              DateTime? @db.DateTime(0)
+    TELSIZSONHATGUVSIN        DateTime? @db.DateTime(0)
+    GPRSSONHATGUVSIN          DateTime? @db.DateTime(0)
+    IPSONHATGUVSIN            DateTime? @db.DateTime(0)
+    GPRSSONSINYALTAR          DateTime? @db.DateTime(0)
+    IPSONSINYALTAR            DateTime? @db.DateTime(0)
+    TELSIZSONSINYALTAR        DateTime? @db.DateTime(0)
+    TEKNIKSERVISVAR           String?   @default("H") @db.Char(1)
+    SISTEMTEL                 String?   @db.VarChar(15)
+    SISTEMMODELI              Int?
+    SISTEMMARKA               Int?
+    HATGUV_TARIHI             DateTime? @db.DateTime(0)
+    RESERVE                   String?   @default("H") @db.Char(1)
+    GKURMATAKIBI              String?   @default("E") @db.Char(1)
+    HESAP_TURU                String?   @default("MAIL") @db.VarChar(20)
+    ABN_BAS_TAR               DateTime? @db.DateTime(0)
+    ABN_BIT_TAR               DateTime? @db.DateTime(0)
+    GKAPAMATAKIBI             String?   @default("E") @db.Char(1)
+    TS_NOTU                   String?   @db.VarChar(60)
+    WEBILKGIRIS               Int?      @default(1) @db.TinyInt
+    GTESTBASLAMA              String?   @db.VarChar(5)
+    GTESTBITIS                String?   @db.VarChar(5)
+    GTESTSAATI                DateTime? @db.DateTime(0)
+    SONHATGUVSIN              DateTime? @db.DateTime(0)
+    DURUM                     String?   @default("ACL") @db.VarChar(6)
+    TATILKONTROL              String?   @default("H") @db.Char(1)
+    ILETISIMTURU              String?   @db.VarChar(100)
+    HESAP                     String?   @default("H") @db.VarChar(5)
+    OTM_SMS                   String?   @default("H") @db.VarChar(1)
+    GUN_SIN_ADETI             Int?
+    YENIKAPAMASAATI           Int?      @default(0)
+    TSB_TARIH                 DateTime? @db.DateTime(0)
+    CIDNO                     String?   @db.VarChar(30)
+    GECKURMADUSTU             String?   @default("E") @db.Char(1)
+    FORMUYOK                  String?   @default("E") @db.Char(1)
+    MAXSINYALADETI            Int?      @default(15)
+    OTM_EPOSTA                String?   @default("H") @db.VarChar(1)
+    SUBEKODU                  String?   @db.VarChar(20)
+    ILETISIMVAR               String?   @default("E") @db.VarChar(1)
+    ATMSUBEKODU               String?   @db.VarChar(20)
+    TELSABOTAJKONT            String?   @default("E") @db.VarChar(20)
+    GECKAPAMADUSTU            String?   @default("E") @db.Char(1)
+    GECKAPAMAERTELE           Int?      @default(0)
+    GECKURMAERTELE            Int?      @default(0)
+    DEVREDISISURE             Int       @default(0)
+    GMAPX                     Float?    @db.Float
+    GMAPY                     Float?    @db.Float
+    SISTEMIP                  String?   @db.VarChar(20)
+    FIYAT                     Float?
+    PERIYOD                   String?   @default("H") @db.VarChar(1)
+    GUN                       Int?      @default(1)
+    EMAIL                     String?   @default("E") @db.VarChar(1)
+    SMS                       String?   @default("H") @db.VarChar(1)
+    SIMNO                     String?   @db.VarChar(25)
+    ABNSONU_SMS               String?   @default("H") @db.VarChar(1)
+    ABNSONU_EPOSTA            String?   @default("H") @db.VarChar(1)
+    PASIFBIT_TARIHI           DateTime? @db.Date
+    ABNBITUYARIMAILTAR        DateTime? @db.Date
+    ABNBITUYARISMSTAR         DateTime? @db.Date
+    TS_SURE                   Int?      @default(120)
+    YAZSAATI                  String?   @default("H") @db.VarChar(1)
+    ALARMDAMESGUL             String?   @default("H") @db.VarChar(1)
+    ALARMDA                   String?   @default("H") @db.VarChar(1)
+    BAYI                      Int?
+    MUSTERIGRPID              Int?
+    AKLAS                     String?   @default("H") @db.Char(1)
+    MESAIDISIGIRISKONTROL     String?   @default("H") @db.Char(1)
+    SMSABNBITTAR              DateTime? @db.Date
+    WEBYETKIID                Int?
+    TANIMSIZKULALARM          String?   @default("H") @db.Char(1)
+    AYLIKODEME                String?   @default("H") @db.Char(1)
+    ALARMS_NOREC              String?   @db.VarChar(30)
+    DVR_MARKA                 String?   @db.VarChar(30)
+    TIP                       String?   @default("H") @db.Char(1)
+    NOTLAR                    String?   @db.Text
+    VOIPSIFRE                 String?   @default("1234") @db.VarChar(4)
+    ATMTIPI                   String?   @db.VarChar(15)
+    EATOLERANS                Int       @default(0)
+    IPTAL                     String?   @default("H") @db.Char(1)
+    MERKEZID                  Int?      @default(1)
+    SMSBITUYARISMSTAR         DateTime? @db.DateTime(0)
+    GPRSHATKONTROLU           String?   @default("H") @db.Char(1)
+    IPHATKONTROLU             String?   @default("H") @db.Char(1)
+    TELSIZHATKONTROLU         String?   @default("H") @db.Char(1)
+    ADAY                      String?   @default("H") @db.VarChar(1)
+    cihaz_sn1                 String?   @db.VarChar(25)
+    cihaz_sn2                 String?   @db.VarChar(25)
+    TS_ALAN                   String?   @db.VarChar(20)
+    CARIKARTID                Int?
+    mesgulzamani              DateTime? @db.DateTime(0)
+    otm_kurulumsaati          DateTime? @db.Time(0)
+    kamerapaneltipi           Int?      @default(0)
+    GPRSHATGUV_TARIHI         DateTime? @db.DateTime(0)
+    GPRSHATGUVENLIGISAATI     Int?
+    IPHATGUVENLIGISAATI       Int?
+    IPHATGUV_TARIHI           DateTime? @db.DateTime(0)
+    TELSIZHATGUVENLIGISAATI   Int?
+    TELSIZHATGUV_TARIHI       DateTime? @db.DateTime(0)
+    PSTNHATKONTROLU           String?   @default("E") @db.VarChar(1)
+    AC_KAPA_BAS_TAR           DateTime? @db.DateTime(0)
+    OTOMATION                 Boolean?  @default(false)
+    OTM_MODULID               Int?
+    OTM_PSW                   String?   @db.VarChar(10)
+    IPTALNEDENI               String?   @db.VarChar(100)
+    pasifnedeni               String?   @db.VarChar(100)
+    anlasmatipi               Int?      @default(0)
+    PASSMASKELE               Boolean?  @default(true)
+    DEVREDISIPAROLAONAYI      Boolean?
+    DEVREDISIPONAYISURE       Int?      @default(3)
+    DEVREDISIPAROLAONAYZAMANI DateTime? @db.DateTime(0)
+    panelmasterkod            String?   @db.VarChar(10)
+    vno                       String?   @db.VarChar(60)
+    vdaire                    String?   @db.VarChar(75)
+
+    @@index([BAYI], name: "BAYI")
+    @@index([DURUM], name: "DURUM")
+    @@index([FIRMA_ADI], name: "FIRMA_ADI")
+    @@index([F_KODU], name: "F_KODU")
+    @@index([F_KODU, PARTNO], name: "F_KODU_PARTNO")
+    @@index([GECKAPAMADUSTU], name: "GECKAPAMADUSTU")
+    @@index([GECKAPAMATAR], name: "GECKAPAMATAR")
+    @@index([GECKURMADUSTU], name: "GECKURMADUSTU")
+    @@index([GECKURMATAR], name: "GECKURMATAR")
+    @@index([GKAPAMATAKIBI], name: "GKAPAMATAKIBI")
+    @@index([GKURMATAKIBI], name: "GKURMATAKIBI")
+    @@index([HESAP], name: "HESAP")
+    @@index([F_KODU, MUSTERIGRPID, HESAP, IPTAL], name: "MUSTERIGRPID")
+    @@index([RESERVE], name: "RESERVE")
+    @@index([SONSINYALTAR], name: "SONSINYALTAR")
+    @@index([TEKNIKSERVISVAR, TSB_TARIH], name: "TEKNIKSERVIS")
+}
+
+model musteri_ {
+    ID                        Int       @id @default(autoincrement())
+    F_KODU                    String    @db.VarChar(10)
+    PARTNO                    String    @default("000") @db.Char(3)
+    ALICINO                   String?   @db.Char(2)
+    PART_VAR                  String    @default("H") @db.Char(1)
+    FIRMA_ADI                 String?   @db.VarChar(255)
+    TEL1                      String?   @db.VarChar(15)
+    TEL2                      String?   @db.VarChar(15)
+    TEL3                      String?   @db.VarChar(15)
+    FAX1                      String?   @db.VarChar(20)
+    FAX2                      String?   @db.VarChar(20)
+    A_MAHALLE                 String?   @db.VarChar(50)
+    A_CADDE                   String?   @db.VarChar(50)
+    A_SOKAK                   String?   @db.VarChar(50)
+    A_KAPINO                  String?   @db.VarChar(10)
+    A_ADRES1                  String?   @db.VarChar(255)
+    A_ADRES2                  String?   @db.VarChar(255)
+    A_PKODU                   String?   @db.VarChar(6)
+    A_ILCE                    Int?
+    A_IL                      Int?
+    A_ULKE                    Int?
+    A_BOLGE                   Int?
+    SISTEMMONTEJYERI          Int?
+    ALRBAKIM                  String?   @db.VarChar(30)
+    ZONE_TABLOSU              Int?
+    ACIKKAPALI                String?   @db.Char(1)
+    ACILISSAATI               DateTime? @db.DateTime(0)
+    KAPANISSAATI              DateTime? @db.DateTime(0)
+    GUNLUKSIN                 String?   @db.VarChar(10)
+    SINLISGID                 String?   @db.VarChar(10)
+    BAKIMTURU                 String?   @db.VarChar(30)
+    ILKKAYITTARIHI            DateTime? @db.DateTime(0)
+    KAYITTARIHI               DateTime? @db.DateTime(0)
+    BAKIMBASLAMA              DateTime? @db.DateTime(0)
+    BAKIMBITIS                DateTime? @db.DateTime(0)
+    GARANTIBASLAMA            DateTime? @db.DateTime(0)
+    GARANTIBITIS              DateTime? @db.DateTime(0)
+    AYRILISTARIHI             DateTime? @db.DateTime(0)
+    ODEMETURU                 String?   @db.VarChar(20)
+    ACIKKAPALITARIH           DateTime? @db.DateTime(0)
+    SONGUNTAR                 DateTime? @db.DateTime(0)
+    OPERATOR                  String?   @db.VarChar(30)
+    BILGIGUNTAR               DateTime? @db.DateTime(0)
+    MESLEKGRUBU               Int?
+    UYARIMESAJI               String?   @db.VarChar(60)
+    UYARISAATI                String?   @db.VarChar(5)
+    UCRETSEVIYESI             String?   @db.Char(2)
+    MESAJMAIL_0               String?   @db.VarChar(255)
+    MESAJMAIL_1               String?   @db.VarChar(255)
+    MESAJMAIL_2               String?   @db.VarChar(255)
+    MESAJMAIL_3               String?   @db.VarChar(255)
+    MESAJMAIL_4               String?   @db.VarChar(255)
+    HATGUVENLIGISAATI         Int?      @default(1500)
+    GECKURMATAR               DateTime? @db.DateTime(0)
+    GECKAPAMATAR              DateTime? @db.DateTime(0)
+    WEBPAROLA                 String?   @default("1234") @db.VarChar(10)
+    SONSINYALTAR              DateTime? @db.DateTime(0)
+    TELSIZSONHATGUVSIN        DateTime? @db.DateTime(0)
+    GPRSSONHATGUVSIN          DateTime? @db.DateTime(0)
+    IPSONHATGUVSIN            DateTime? @db.DateTime(0)
+    GPRSSONSINYALTAR          DateTime? @db.DateTime(0)
+    IPSONSINYALTAR            DateTime? @db.DateTime(0)
+    TELSIZSONSINYALTAR        DateTime? @db.DateTime(0)
+    TEKNIKSERVISVAR           String?   @default("H") @db.Char(1)
+    SISTEMTEL                 String?   @db.VarChar(15)
+    SISTEMMODELI              Int?
+    SISTEMMARKA               Int?
+    HATGUV_TARIHI             DateTime? @db.DateTime(0)
+    RESERVE                   String?   @default("H") @db.Char(1)
+    GKURMATAKIBI              String?   @default("E") @db.Char(1)
+    HESAP_TURU                String?   @default("MAIL") @db.VarChar(20)
+    ABN_BAS_TAR               DateTime? @db.DateTime(0)
+    ABN_BIT_TAR               DateTime? @db.DateTime(0)
+    GKAPAMATAKIBI             String?   @default("E") @db.Char(1)
+    TS_NOTU                   String?   @db.VarChar(60)
+    WEBILKGIRIS               Int?      @default(1) @db.TinyInt
+    GTESTBASLAMA              String?   @db.VarChar(5)
+    GTESTBITIS                String?   @db.VarChar(5)
+    GTESTSAATI                DateTime? @db.DateTime(0)
+    SONHATGUVSIN              DateTime? @db.DateTime(0)
+    DURUM                     String?   @default("ACL") @db.VarChar(6)
+    TATILKONTROL              String?   @default("H") @db.Char(1)
+    ILETISIMTURU              String?   @db.VarChar(100)
+    HESAP                     String?   @default("H") @db.VarChar(5)
+    OTM_SMS                   String?   @default("H") @db.VarChar(1)
+    GUN_SIN_ADETI             Int?
+    YENIKAPAMASAATI           Int?      @default(0)
+    TSB_TARIH                 DateTime? @db.DateTime(0)
+    CIDNO                     String?   @db.VarChar(30)
+    GECKURMADUSTU             String?   @default("E") @db.Char(1)
+    FORMUYOK                  String?   @default("E") @db.Char(1)
+    MAXSINYALADETI            Int?      @default(15)
+    OTM_EPOSTA                String?   @default("H") @db.VarChar(1)
+    SUBEKODU                  String?   @db.VarChar(20)
+    ILETISIMVAR               String?   @default("E") @db.VarChar(1)
+    ATMSUBEKODU               String?   @db.VarChar(20)
+    TELSABOTAJKONT            String?   @default("E") @db.VarChar(20)
+    GECKAPAMADUSTU            String?   @default("E") @db.Char(1)
+    GECKAPAMAERTELE           Int?      @default(0)
+    GECKURMAERTELE            Int?      @default(0)
+    DEVREDISISURE             Int       @default(0)
+    GMAPX                     Float?    @db.Float
+    GMAPY                     Float?    @db.Float
+    SISTEMIP                  String?   @db.VarChar(20)
+    FIYAT                     Float?
+    PERIYOD                   String?   @default("H") @db.VarChar(1)
+    GUN                       Int?      @default(1)
+    EMAIL                     String?   @default("E") @db.VarChar(1)
+    SMS                       String?   @default("H") @db.VarChar(1)
+    SIMNO                     String?   @db.VarChar(25)
+    ABNSONU_SMS               String?   @default("H") @db.VarChar(1)
+    ABNSONU_EPOSTA            String?   @default("H") @db.VarChar(1)
+    PASIFBIT_TARIHI           DateTime? @db.Date
+    ABNBITUYARIMAILTAR        DateTime? @db.Date
+    ABNBITUYARISMSTAR         DateTime? @db.Date
+    TS_SURE                   Int?      @default(120)
+    YAZSAATI                  String?   @default("H") @db.VarChar(1)
+    ALARMDAMESGUL             String?   @default("H") @db.VarChar(1)
+    ALARMDA                   String?   @default("H") @db.VarChar(1)
+    BAYI                      Int?
+    MUSTERIGRPID              Int?
+    AKLAS                     String?   @default("H") @db.Char(1)
+    MESAIDISIGIRISKONTROL     String?   @default("H") @db.Char(1)
+    SMSABNBITTAR              DateTime? @db.Date
+    WEBYETKIID                Int?
+    TANIMSIZKULALARM          String?   @default("H") @db.Char(1)
+    AYLIKODEME                String?   @default("H") @db.Char(1)
+    ALARMS_NOREC              String?   @db.VarChar(30)
+    DVR_MARKA                 String?   @db.VarChar(30)
+    TIP                       String?   @default("H") @db.Char(1)
+    NOTLAR                    String?   @db.Text
+    VOIPSIFRE                 String?   @default("1234") @db.VarChar(4)
+    ATMTIPI                   String?   @db.VarChar(15)
+    EATOLERANS                Int       @default(0)
+    IPTAL                     String?   @default("H") @db.Char(1)
+    MERKEZID                  Int?      @default(1)
+    SMSBITUYARISMSTAR         DateTime? @db.DateTime(0)
+    GPRSHATKONTROLU           String?   @default("H") @db.Char(1)
+    IPHATKONTROLU             String?   @default("H") @db.Char(1)
+    TELSIZHATKONTROLU         String?   @default("H") @db.Char(1)
+    ADAY                      String?   @default("H") @db.VarChar(1)
+    cihaz_sn1                 String?   @db.VarChar(10)
+    cihaz_sn2                 String?   @db.VarChar(10)
+    TS_ALAN                   String?   @db.VarChar(20)
+    CARIKARTID                Int?
+    mesgulzamani              DateTime? @db.DateTime(0)
+    otm_kurulumsaati          DateTime? @db.Time(0)
+    kamerapaneltipi           Int?      @default(0)
+    GPRSHATGUV_TARIHI         DateTime? @db.DateTime(0)
+    GPRSHATGUVENLIGISAATI     Int?
+    IPHATGUVENLIGISAATI       Int?
+    IPHATGUV_TARIHI           DateTime? @db.DateTime(0)
+    TELSIZHATGUVENLIGISAATI   Int?
+    TELSIZHATGUV_TARIHI       DateTime? @db.DateTime(0)
+    PSTNHATKONTROLU           String?   @default("E") @db.VarChar(1)
+    AC_KAPA_BAS_TAR           DateTime? @db.DateTime(0)
+    OTOMATION                 Boolean?  @default(false)
+    OTM_MODULID               Int?
+    OTM_PSW                   String?   @db.VarChar(10)
+    anlasmatipi               Int?      @default(0)
+    IPTALNEDENI               String?   @db.VarChar(100)
+    pasifnedeni               String?   @db.VarChar(100)
+    PASSMASKELE               Boolean?  @default(true)
+    DEVREDISIPAROLAONAYI      Boolean?
+    DEVREDISIPONAYISURE       Int?      @default(3)
+    DEVREDISIPAROLAONAYZAMANI DateTime? @db.DateTime(0)
+    panelmasterkod            String?   @db.VarChar(10)
+    vno                       String?   @db.VarChar(255)
+    vdaire                    String?   @db.VarChar(255)
+    kameravar                 Boolean?  @default(false)
+    alarmvar                  Boolean?  @default(true)
+    caritipi                  String?   @db.VarChar(30)
+
+    @@index([BAYI], name: "BAYI")
+    @@index([DURUM], name: "DURUM")
+    @@index([FIRMA_ADI], name: "FIRMA_ADI")
+    @@index([F_KODU], name: "F_KODU")
+    @@index([F_KODU, PARTNO], name: "F_KODU_PARTNO")
+    @@index([GECKAPAMADUSTU], name: "GECKAPAMADUSTU")
+    @@index([GECKAPAMATAR], name: "GECKAPAMATAR")
+    @@index([GECKURMADUSTU], name: "GECKURMADUSTU")
+    @@index([GECKURMATAR], name: "GECKURMATAR")
+    @@index([GKAPAMATAKIBI], name: "GKAPAMATAKIBI")
+    @@index([GKURMATAKIBI], name: "GKURMATAKIBI")
+    @@index([HESAP], name: "HESAP")
+    @@index([F_KODU, MUSTERIGRPID, HESAP, IPTAL], name: "MUSTERIGRPID")
+    @@index([RESERVE], name: "RESERVE")
+    @@index([SONSINYALTAR], name: "SONSINYALTAR")
+    @@index([TEKNIKSERVISVAR, TSB_TARIH], name: "TEKNIKSERVIS")
+}
+
+model mustericari {
+    ID             Int       @id @default(autoincrement())
+    ABONEID        Int?
+    TARIH          DateTime? @db.Date
+    ODEMETIPI      String?   @db.VarChar(20)
+    ACIKLAMA       String?   @db.VarChar(250)
+    B_A            String?   @default("A") @db.VarChar(1)
+    ALACAK         Float?
+    BORC           Float?
+    VADETARIHI     DateTime? @db.Date
+    BORCLANDIRMAID Int?
+    fistipi        Int?
+    fisno          String?   @db.VarChar(15)
+
+    @@index([ABONEID], name: "ABONEID")
+    @@index([BORCLANDIRMAID], name: "BORCLANDIRMAID")
+    @@index([TARIH], name: "TARIH")
+}
+
+model musterigruplari {
+    ID                   Int       @id @default(autoincrement())
+    ADI                  String?   @db.VarChar(30)
+    IL                   String?   @db.VarChar(30)
+    ILCE                 String?   @db.VarChar(30)
+    TEL1                 String?   @db.VarChar(16)
+    TEL2                 String?   @db.VarChar(16)
+    FAX1                 String?   @db.VarChar(16)
+    TEL3                 String?   @db.VarChar(15)
+    FAX2                 String?   @db.VarChar(15)
+    ACIKLAMA             String?   @db.VarChar(30)
+    KODU                 String?   @db.VarChar(15)
+    YETKILI1             String?   @db.VarChar(30)
+    YETKILI2             String?   @db.VarChar(30)
+    ADRES1               String?   @db.VarChar(100)
+    ADRES2               String?   @db.VarChar(100)
+    PKODU                Float?
+    ULKE                 String?   @db.VarChar(30)
+    YETKILI1EMAIL        String?   @db.VarChar(50)
+    SFIYAT               Float?
+    AFIYAT               Float?
+    LISTELENSIN          String?   @db.VarChar(5)
+    YETKILI1TEL          String?   @db.VarChar(15)
+    YETKILI2TEL          String?   @db.VarChar(15)
+    YETKILI1CEP          String?   @db.VarChar(15)
+    YETKILI2CEP          String?   @db.VarChar(15)
+    YETKILI2EMAIL        String?   @db.VarChar(60)
+    EMAIL                String?   @db.VarChar(60)
+    VDAIRE               String?   @db.VarChar(30)
+    VNO                  String?   @db.VarChar(30)
+    KK_BANKAADI          String?   @db.VarChar(60)
+    KK_KARTNO            String?   @db.VarChar(20)
+    KK_SONKULTAR         String?   @db.VarChar(10)
+    KK_KARTGUVNO         String?   @db.VarChar(7)
+    ODEMETURU            String?   @db.VarChar(20)
+    KK_KARTSAHIBI        String?   @db.VarChar(30)
+    UCRETSEVIYE1         Int?
+    UCRETSEVIYE2         Int?
+    UCRETSEVIYE3         Int?
+    UCRETSEVIYE4         Int?
+    UCRETSEVIYE5         Int?
+    UCRETSEVIYE6         Int?
+    PAROLA               String?   @db.VarChar(30)
+    WEBILKGIRIS          Int?      @db.TinyInt
+    SMS                  String?   @default("H") @db.VarChar(1)
+    PROSEDUR             String?   @db.Text
+    ABNSONU_SMS          String?   @default("H") @db.VarChar(1)
+    ABNSONU_EPOSTA       String?   @default("H") @db.VarChar(1)
+    PERIYOD              String?   @default("G") @db.VarChar(1)
+    GUN                  Int?      @default(1)
+    GONDERIMSAATI        DateTime? @db.Time(0)
+    FIYAT                Float?
+    PAROLAZORUNLU        String?   @default("H") @db.VarChar(1)
+    BAYIID               Int?
+    HESAPTARIHI          DateTime? @db.Date
+    SMSBUHESAPTANGITSIN  String?   @default("H") @db.VarChar(1)
+    TSFORMUGONDER        String?   @default("H") @db.VarChar(1)
+    eposta               String?   @db.VarChar(255)
+    eps_GORUNECEKISIM    String?   @db.VarChar(30)
+    eps_EMAILADRESI      String?   @db.VarChar(100)
+    eps_POPNAME          String?   @db.VarChar(60)
+    eps_POPPORT          Int?
+    eps_HOSTNAME         String?   @db.VarChar(60)
+    eps_HOSTPORT         Int?
+    eps_USERNAME         String?   @db.VarChar(60)
+    eps_PAROLA           String?   @db.VarChar(60)
+    eps_CEVAPADRESI      String?   @db.VarChar(100)
+    eps_BILGIADRESI      String?   @db.VarChar(100)
+    eps_SIFRELEME        String?   @db.VarChar(20)
+    eps_SSLVERSION       String?   @db.VarChar(20)
+    eps_KIMLIKDOGRULAMA  String?   @db.VarChar(20)
+    eps_BUHESAPTANGITSIN String?   @default("H") @db.Char(1)
+    eps_SIFRELEMETURU    String?   @db.VarChar(20)
+    eps_SSLVAR           Boolean?
+    SMS_AYARID           Int?
+
+    @@index([ADI], name: "ADI")
+}
+
+model musterinotlar {
+    ID         Int       @id @default(autoincrement())
+    ABONEID    Int?
+    F_KODU     String?   @db.VarChar(10)
+    PARTNO     String?   @db.VarChar(3)
+    BAS_TARIHI DateTime? @db.DateTime(0)
+    BIT_TARIHI DateTime? @db.DateTime(0)
+    ACIKLAMA   String?   @db.VarChar(255)
+    AKTIF      String?   @default("E") @db.Char(1)
+    NOTLAR     String?   @db.Text
+    NOTTYPEID  Int?
+
+    @@index([ABONEID], name: "ABONEID")
+    @@index([AKTIF], name: "AKTIF")
+    @@index([BIT_TARIHI], name: "BIT_TARIHI")
+    @@index([F_KODU, PARTNO, AKTIF, NOTTYPEID], name: "F_KODU")
+}
+
+model musterinotlar_copy {
+    ID         Int       @id @default(autoincrement())
+    ABONEID    Int?
+    F_KODU     String?   @db.VarChar(10)
+    PARTNO     String?   @db.VarChar(3)
+    BAS_TARIHI DateTime? @db.DateTime(0)
+    BIT_TARIHI DateTime? @db.DateTime(0)
+    ACIKLAMA   String?   @db.VarChar(255)
+    AKTIF      String?   @default("E") @db.Char(1)
+    NOTLAR     String?   @db.Text
+    NOTTYPEID  Int?
+
+    @@index([ABONEID], name: "ABONEID")
+    @@index([AKTIF], name: "AKTIF")
+    @@index([BIT_TARIHI], name: "BIT_TARIHI")
+    @@index([F_KODU, PARTNO, AKTIF, NOTTYPEID], name: "F_KODU")
+}
+
+model nottipleri {
+    ID            Int      @id @default(autoincrement())
+    ACIKLAMA      String?  @db.VarChar(50)
+    TRAFIKLISTGOR Boolean? @default(true)
+    POPUP         Boolean?
+}
+
+model operatoraboneleri {
+    ID       Int  @id @default(autoincrement())
+    OP_ID    Int?
+    ABONE_ID Int?
+
+    @@index([OP_ID], name: "OP_ID")
+}
+
+model operatorbolgeyetkileri {
+    ID    Int     @id @default(autoincrement())
+    OP_ID Int?
+    BOLGE String? @db.VarChar(60)
+
+    @@index([OP_ID], name: "OP_ID")
+}
+
+model operatorhaklari {
+    ID         Int     @id @default(autoincrement())
+    USERID     Int?
+    KATAGORIID Int?
+    BOLUMID    Int?
+    EKLE       String? @default("E") @db.VarChar(1)
+    SIL        String? @default("E") @db.VarChar(1)
+    GOR        String? @default("E") @db.VarChar(1)
+    DUZELT     String? @default("E") @db.VarChar(1)
+    SORGU      String? @default("E") @db.VarChar(1)
+    YETKIID    Int?
+}
+
+model operatorinout {
+    ID       Int       @id @default(autoincrement())
+    Tarih    DateTime? @db.DateTime(0)
+    OpKodu   String?   @db.VarChar(20)
+    LogInOut String?   @db.VarChar(1)
+    IP       String?   @db.VarChar(20)
+    WEB      Boolean?  @default(false)
+
+    @@index([OpKodu], name: "OpKodu")
+    @@index([Tarih], name: "Tarih")
+}
+
+model operatormesajlari {
+    ID         Int       @id @default(autoincrement())
+    GONDERENOP String?   @db.VarChar(20)
+    ALANOP     String?   @db.VarChar(20)
+    MESAJ      Bytes?    @db.MediumBlob
+    GONDZAMANI DateTime? @db.DateTime(0)
+    ALMAZAMANI DateTime? @db.DateTime(0)
+    OKUNDU     String?   @default("H") @db.VarChar(1)
+
+    @@index([ALANOP], name: "ALANOP")
+    @@index([ALMAZAMANI], name: "ALMAZAMANI")
+    @@index([GONDERENOP], name: "GONDERENOP")
+    @@index([GONDZAMANI], name: "GONDZAMANI")
+    @@index([OKUNDU], name: "OKUNDU")
+}
+
+model operators {
+    ID                   Int      @id @default(autoincrement())
+    OP_KODU              String?  @db.Char(10)
+    PAROLA               String?  @db.Char(200)
+    OP_ADI               String?  @db.Char(30)
+    OP_ADRESI            String?  @db.Char(100)
+    OP_IL                String?  @db.Char(20)
+    OP_ILCE              String?  @db.Char(20)
+    OP_PKODU             String?  @db.Char(6)
+    OP_TEL               String?  @db.Char(20)
+    OP_TEL1              String?  @db.Char(20)
+    OP_CEPTEL            String?  @db.Char(20)
+    OP_EMAIL             String?  @db.Char(60)
+    KULLANCIHAKTANIMLA   String?  @db.Char(5)
+    WEBYETKI             String?  @default("H") @db.Char(1)
+    SSYETKISI            String?  @default("H") @db.Char(1)
+    SAB_ARAC_KYD_G       String?  @db.VarChar(1)
+    skinname             String?  @db.VarChar(20)
+    MERKEZID             Int?
+    BAYIID               Int?
+    MUSTGRPID            Int?
+    MESLEKID             Int?
+    TIP                  Int?     @default(0)
+    HESAPTIPI            Int?     @default(0)
+    YETKIGRUBU           Int?     @default(0)
+    IPFILTRE             String?  @default("H") @db.VarChar(1)
+    MAXFILTRE            Int?     @default(40)
+    OP_LANG              Int?     @default(1)
+    GORECEGIKULLANICILAR String?  @db.VarChar(250)
+    MPAROLA              String?  @default("MOBIL4321") @db.VarChar(20)
+    CARIDEGOR            Boolean? @default(false)
+    CARIPAROLA           String?  @db.VarChar(255)
+
+    @@index([OP_ADI], name: "OP_ADI")
+    @@index([OP_KODU], name: "OP_KODU")
+}
+
+model operatorsinyaltipleri {
+    ID         Int     @id @default(autoincrement())
+    OP_ID      Int?
+    SINYALTIPI String? @db.VarChar(60)
+
+    @@index([OP_ID], name: "OP_ID")
+}
+
+model otmcihazdurumlari {
+    ID              Int       @id @default(autoincrement())
+    ABONEKODU       String?   @unique @db.VarChar(10)
+    SONSINYALTARIHI DateTime? @db.DateTime(0)
+    BAGLI           Boolean?  @default(false)
+    BILDIRILDI      Boolean?  @default(false)
+    IP              String?   @db.VarChar(20)
+    ZAMANASIMI      Int?      @default(3)
+
+    @@index([SONSINYALTARIHI], name: "SONSINYALTARIHI")
+}
+
+model otmgelensinyaller {
+    ID         Int       @id @default(autoincrement())
+    SINYAL     String?   @db.VarChar(80)
+    HAMSINYAL  String?   @db.VarChar(50)
+    TARIH      DateTime? @db.DateTime(0)
+    GONDERILDI Boolean?  @default(false)
+    TEST       Boolean?
+    GONDTARIH  DateTime? @db.DateTime(0)
+
+    @@index([GONDERILDI], name: "UK_gelensinyaller_GONDERILDI")
+    @@index([TARIH], name: "UK_gelensinyaller_TARIH")
+}
+
+model otmgiriscikisdurumlari {
+    ID     Int     @id @default(autoincrement())
+    F_KODU String? @db.VarChar(10)
+    PARTNO String? @db.VarChar(3)
+    DI1    Int?    @db.TinyInt
+    DI2    Int?    @db.TinyInt
+    DI3    Int?    @db.TinyInt
+    DI4    Int?    @db.TinyInt
+    DI5    Int?    @db.TinyInt
+    DI6    Int?    @db.TinyInt
+    DI7    Int?    @db.TinyInt
+    DI8    Int?    @db.TinyInt
+    DO1    Int?    @db.TinyInt
+    DO2    Int?    @db.TinyInt
+    DO3    Int?    @db.TinyInt
+    DO4    Int?    @db.TinyInt
+    DO5    Int?    @db.TinyInt
+    DO6    Int?    @db.TinyInt
+    DO7    Int?    @db.TinyInt
+    DO8    Int?    @db.TinyInt
+    AG1    Int?
+    AG2    Int?
+    AG3    Int?
+    AG5    Int?
+    AG6    Int?
+    AG7    Int?
+    AG8    Int?
+    AC1    Int?
+    AC2    Int?
+    AC3    Int?
+    AC4    Int?
+    AC5    Int?
+    AC6    Int?
+    AC7    Int?
+    AC8    Int?
+
+    @@index([F_KODU, PARTNO], name: "F_KODU")
+}
+
+model otomasyonanalogseviyeler {
+    ID           Int     @id @default(autoincrement())
+    F_KODU       String? @db.VarChar(10)
+    PARTNO       String? @db.VarChar(3)
+    ADI          String? @db.VarChar(5)
+    ACIKLAMA     String? @db.VarChar(50)
+    ALTSEVIYE    Float?  @db.Float
+    USTSEVIYE    Float?  @db.Float
+    MEVCUTSEVIYE Float?  @db.Float
+
+    @@unique([F_KODU, PARTNO, ADI], name: "UK_otomasyonanalogseviyeler")
+}
+
+model otomasyonentegrasyon {
+    ID     Int      @id @default(autoincrement())
+    F_KODU String?  @db.VarChar(10)
+    PARTNO String?  @db.VarChar(3)
+    KURULU Boolean?
+}
+
+model otomasyonmodulleri {
+    ID       Int     @id @default(autoincrement())
+    ACIKLAMA String? @db.VarChar(60)
+    KOD      String? @db.VarChar(10)
+}
+
+model otomasyonporttipleri {
+    ID       Int     @default(autoincrement())
+    KODU     String  @db.VarChar(1)
+    ACIKLAMA String? @db.VarChar(20)
+
+    @@id([ID, KODU])
+}
+
+model panel_modelleri {
+    ID    Int     @id @default(autoincrement())
+    MARKA Int?
+    MODEL String? @db.Char(30)
+    DETAY Bytes?
+
+    @@index([MARKA], name: "MARKA")
+    @@index([MODEL], name: "MODEL")
+    @@index([MODEL], name: "PANELADI")
+}
+
+model panelentegrasyon {
+    ID            Int     @id @default(autoincrement())
+    f_kodu        String  @db.VarChar(10)
+    partno        String  @default("") @db.VarChar(255)
+    PanelID       Int?
+    panelip       String? @db.VarChar(20)
+    panelport     Int?
+    modulpassword String? @db.VarChar(20)
+    userpassword  String? @db.VarChar(20)
+    imei          String? @db.VarChar(20)
+    panelstatus   String? @db.VarChar(255)
+
+    @@unique([f_kodu, partno], name: "UK_panelentegrasyon")
+}
+
+model panelipcameralar {
+    id                 Int     @id @default(autoincrement())
+    panelentegrasyonid Int?
+    bolgeno            String? @db.VarChar(3)
+    camip              String? @db.VarChar(30)
+    camport            Int?
+    kullaniciadi       String? @db.VarChar(30)
+    sunucuparola       String? @db.VarChar(255)
+}
+
+model paneller {
+    ID       Int     @id @default(autoincrement())
+    PANELADI String? @db.Char(30)
+    ACIKLAMA String? @db.Char(200)
+
+    @@index([PANELADI], name: "PANELADI")
+}
+
+model pdks {
+    id         Int       @unique @default(autoincrement())
+    tarih      DateTime? @db.Date
+    f_kodu     String?   @db.VarChar(10)
+    partno     String?   @db.VarChar(3)
+    girissaati DateTime? @db.DateTime(0)
+    girenkisi  String?   @db.VarChar(100)
+    cikissaati DateTime? @db.DateTime(0)
+    cikankisi  String?   @db.VarChar(100)
+
+    @@unique([tarih, f_kodu, partno], name: "UK_pdks")
+}
+
+model postakodlari {
+    ID     Int     @id @default(autoincrement())
+    ILKODU String? @db.VarChar(10)
+    PKODU  String? @db.VarChar(10)
+    ADRES  String? @db.VarChar(100)
+
+    @@index([PKODU], name: "ILCEKODU")
+    @@index([ILKODU], name: "ILKODU")
+}
+
+model proseccihazayarlari {
+    ID         Int       @id @default(autoincrement())
+    CIHAZID    Int?
+    ONEK       String?   @db.VarChar(10)
+    ACCOUNT    String?   @db.VarChar(10)
+    IP1        String?   @db.VarChar(20)
+    IP2        String?   @db.VarChar(20)
+    PORT1      Int?
+    PORT2      Int?
+    ACCOUNT1   String?   @db.VarChar(10)
+    ACCOUNT2   String?   @db.VarChar(10)
+    DEV        String?   @db.VarChar(10)
+    ARM        Boolean?
+    DI0        String?   @db.VarChar(10)
+    DO0        String?   @db.VarChar(10)
+    ERR        String?   @db.VarChar(10)
+    SW         String?   @db.VarChar(10)
+    HW         String?   @db.VarChar(10)
+    PW         String?   @db.VarChar(10)
+    CMS_OPT    Int?      @db.SmallInt
+    DEV_OPT    Int?      @db.SmallInt
+    RPT_INT    Int?
+    PHONE1     String?   @db.VarChar(15)
+    PHONE2     String?   @db.VarChar(15)
+    PHONE3     String?   @db.VarChar(15)
+    PHONE4     String?   @db.VarChar(15)
+    PHONE5     String?   @db.VarChar(15)
+    PHONE6     String?   @db.VarChar(15)
+    PHONE7     String?   @db.VarChar(15)
+    PHONE8     String?   @db.VarChar(15)
+    PHONE0     String?   @db.VarChar(15)
+    ERROR      String?   @db.VarChar(255)
+    ZAMAN      DateTime? @db.DateTime(0)
+    OUTPUT     String?   @db.VarChar(255)
+    FW_UPDATE  String?   @db.VarChar(255)
+    PRM_UPDATE String?   @db.VarChar(255)
+    GUNCEL     Boolean?  @default(true)
+    AHM        String?   @db.VarChar(1)
+    APN        String?   @db.VarChar(255)
+    gnczamani  DateTime? @db.DateTime(0)
+
+    @@index([ACCOUNT], name: "ABONEKODU")
+    @@index([CIHAZID], name: "CIHAZID")
+}
+
+model proseccihazyardim {
+    ID       Int    @default(autoincrement())
+    KOD      String @db.VarChar(10)
+    ACIKLAMA Bytes? @db.Blob
+
+    @@id([ID, KOD])
+}
+
+model pushsender {
+    id               Int       @id @default(autoincrement())
+    mesaj            String?   @db.VarChar(255)
+    title            String?   @db.VarChar(255)
+    sonuc            String    @default("B") @db.VarChar(1)
+    musteriid        Int?
+    gonderilmetarihi DateTime? @db.DateTime(6)
+    emirzamani       DateTime? @db.DateTime(0)
+}
+
+model receiverformats {
+    ID                Int     @id @default(autoincrement())
+    FORMAT            String? @db.Char(1)
+    ADI               String? @db.VarChar(30)
+    FRM_BASLAMA       Int?
+    FRM_UZUNLUK       Int?
+    RNO_BASLAMA       Int?
+    RNO_UZUNLUK       Int?
+    LCR_BASLAMA       Int?
+    LCR_UZUNLUK       Int?
+    ACD_BASLAMA       Int?
+    ACD_UZUNLUK       Int?
+    EQU_BASLAMA       Int?
+    EQU_UZUNLUK       Int?
+    ECD_BASLAMA       Int?
+    ECD_UZUNLUK       Int?
+    GNO_BASLAMA       Int?
+    GNO_UZUNLUK       Int?
+    ZNO_BASLAMA       Int?
+    ZNO_UZUNLUK       Int?
+    SAA_BASLAMA       Int?
+    SAA_UZUNLUK       Int?
+    DAK_BASLAMA       Int?
+    DAK_UZUNLUK       Int?
+    SAN_BASLAMA       Int?
+    SAN_UZUNLUK       Int?
+    GUN_BASLAMA       Int?
+    GUN_UZUNLUK       Int?
+    AY_BASLAMA        Int?
+    AY_UZUNLUK        Int?
+    YIL_BASLAMA       Int?
+    YIL_UZUNLUK       Int?
+    ACC_BAS_CHAR      String? @db.Char(1)
+    ACC_BIT_CHAR      String? @db.Char(1)
+    DATA_BAS_CHAR     String? @db.Char(1)
+    DATA_BIT_CHAR     String? @db.Char(1)
+    PHN_BASLAMA       Int?
+    PHN_UZUNLUK       Int?
+    EVN_GELEN_CODE    String? @db.Char(1)
+    EVN_CONVERT_CODE  String? @db.Char(1)
+    REST_GELEN_CODE   String? @db.Char(1)
+    REST_CONVERT_CODE String? @db.Char(1)
+    CLASSZONEBIRLES   String? @db.Char(1)
+    MIN               Int?
+    MAX               Int?
+    REC_ID            Int?
+    YORUMLAMA         String? @db.Char(1)
+    CID_BASLAMA       Int?
+    CID_CHAR          String? @db.Char(1)
+    DIREKISLE         String? @db.Char(1)
+    DATABOYU          Int?    @default(0)
+    OTM_CID           String? @default("H") @db.Char(1)
+
+    @@unique([FORMAT, ID], name: "FORMAT")
+    @@index([ID], name: "ID")
+    @@index([REC_ID], name: "REC_ID")
+}
+
+model receivers {
+    ID                   Int       @id @default(autoincrement())
+    RECNO                String?   @db.VarChar(3)
+    REC_KODU             String?   @default("0000") @db.VarChar(10)
+    F_KODU               String?   @default("REC.001") @db.VarChar(10)
+    ADI                  String?   @db.VarChar(20)
+    COM                  Int?
+    BAUD                 String?   @db.VarChar(10)
+    PARITY               String?   @db.VarChar(10)
+    DATABIT              String?   @db.VarChar(10)
+    STOPBIT              String?   @db.VarChar(10)
+    FLOWCONTROL          String?   @db.VarChar(10)
+    HANDSHAKE            Int?
+    ACK                  Int?
+    NACK                 Int?
+    BUZZERSTOP           Int?
+    RECEIVEDATA          Int?
+    DATETIME             String?   @db.VarChar(20)
+    MODEM_II             String?   @db.VarChar(20)
+    CLOCKSIGNAL          String?   @db.VarChar(20)
+    ENDDATA              Int?
+    AKTIF                String?   @db.Char(1)
+    REC_ACK              Int?
+    HANDSHAKE_STR        String?   @db.VarChar(30)
+    PC_ADI               String?   @db.VarChar(20)
+    PC_NO                Int?
+    IPSERI               String?   @db.VarChar(4)
+    IP                   String?   @db.VarChar(20)
+    PORT                 Int?
+    SUNUCU               String?   @default("H") @db.Char(1)
+    MODEL                String?   @default("DİĞER") @db.VarChar(10)
+    ONLINE               Int?
+    DTR                  String?   @default("E") @db.VarChar(1)
+    RTS                  String?   @default("E") @db.VarChar(1)
+    USEDTR               String?   @default("H") @db.VarChar(1)
+    USERTS               String?   @default("H") @db.VarChar(1)
+    REQDSR               String?   @default("H") @db.VarChar(1)
+    REQCTS               String?   @default("H") @db.VarChar(1)
+    DATALENGTH           Int?      @default(0)
+    PROTOKOL             Int?
+    ISLE_PC_NO           Int?
+    TCPUDP               String?   @default("TCP") @db.VarChar(3)
+    TELNOMESAJDANSONRA   String?   @default("H") @db.Char(1)
+    HANDSHAKE_SURE       Int?
+    VIDEOFIED            String?   @default("H") @db.Char(1)
+    ZONE_TABLOSU         Int?
+    komutsunucuportu     Int?      @default(9000)
+    komutsunucuaktif     String?   @default("H") @db.VarChar(1)
+    komutsunucuip        String?   @db.VarChar(20)
+    sonsinyalzamani      DateTime? @db.DateTime(0)
+    sonsinyal            String?   @db.VarChar(255)
+    komutsunucusifre     String?   @db.VarChar(255)
+    komutsunucukullanici String?   @db.VarChar(255)
+    ONEK                 String?   @db.VarChar(3)
+    DISIPTEL             String?   @db.VarChar(20)
+    DISPORT              Int?
+
+    @@index([COM], name: "COM")
+    @@index([ID], name: "ID")
+}
+
+model receivers_protokol {
+    ID          Int     @id @default(autoincrement())
+    ADI         String? @db.VarChar(20)
+    PROTOKOLYOK String? @default("H") @db.Char(1)
+}
+
+model sabit_tablo_varsayilanlar {
+    id       Int     @id @default(autoincrement())
+    fieldadi String? @db.VarChar(100)
+    degeri   String? @db.VarChar(100)
+    tabloadi String? @db.VarChar(100)
+
+    @@index([tabloadi], name: "IDX_sabit_mst_varsayilan_tabloadi")
+}
+
+model sabitler {
+    ID                   Int      @id @default(autoincrement())
+    KODU                 String?  @db.VarChar(20)
+    FIRMAADI             String?  @db.VarChar(100)
+    YETKILI1             String?  @db.VarChar(30)
+    YETKILI2             String?  @db.VarChar(30)
+    ADRES1               String?  @db.VarChar(100)
+    ADRES2               String?  @db.VarChar(100)
+    ILCE                 String?  @db.VarChar(30)
+    IL                   String?  @db.VarChar(30)
+    PKODU                String?  @db.VarChar(6)
+    TEL1                 String?  @db.VarChar(15)
+    TEL2                 String?  @db.VarChar(15)
+    FAX1                 String?  @db.VarChar(15)
+    FAX2                 String?  @db.VarChar(15)
+    MESLEKTATILKONTROL   Boolean? @default(true)
+    MAXSINYALADETI       Int?     @default(50) @db.SmallInt
+    WEB                  String?  @db.VarChar(60)
+    ANTET                Bytes?
+    EMAIL_ADRESS         String?  @db.VarChar(150)
+    MI_ALANKODU          String?  @db.VarChar(10)
+    DISHAT               String?  @db.VarChar(10)
+    TATILKONTROL         Boolean? @default(true)
+    ALARM_SES            String?  @db.VarChar(255)
+    ALANKODUEKLE         String?  @default("H") @db.Char(1)
+    PASSMASKELE          Boolean? @default(true)
+    SINYALKONTROLSURESI  Int?     @default(5)
+    VERSIYON             String?  @default("3") @db.VarChar(10)
+    OTMISLENDIMESAJI     String?  @default("Otomatik Islendi") @db.VarChar(50)
+    SMSBITTARABNLIKTEN   Boolean? @default(false)
+    COKLUHATTAKIBI       Boolean? @default(false)
+    OZELDURUMABONELIKTEN Boolean? @default(false)
+    COKLUWEBKULLANICI    Boolean? @default(false)
+    MINDISKBOYUTU        Int?     @default(1024)
+    abonenobaslangic     Int?
+    abonenohaneadeti     Int?
+    VDAIRE               String?  @db.VarChar(30)
+    VNO                  String?  @db.VarChar(30)
+}
+
+model satisfiyatisimleri {
+    ID       Int     @unique @default(autoincrement())
+    ISIM     String? @db.VarChar(30)
+    ZAMORANI Int?
+}
+
+model servis_alarm {
+    id               Int       @id @default(autoincrement())
+    f_kodu           String?   @db.VarChar(50)
+    alarm            String?   @db.VarChar(50)
+    tarih            DateTime? @db.DateTime(0)
+    gonderilmetarihi DateTime? @db.DateTime(0)
+    durum            String?   @default("N") @db.VarChar(1)
+}
+
+model servis_haberverilecekler {
+    id               Int       @id @default(autoincrement())
+    f_kodu           String?   @db.VarChar(50)
+    adisoyadi        String?   @db.VarChar(150)
+    sifre            String?   @db.VarChar(50)
+    telefon          String?   @db.VarChar(50)
+    durum            String?   @default("N") @db.VarChar(1)
+    tarih            DateTime? @db.DateTime(0)
+    gonderilmetarihi DateTime? @db.DateTime(0)
+    sira             Int?
+}
+
+model servis_musteri {
+    id               Int       @id @default(autoincrement())
+    f_kodu           String?   @db.VarChar(50)
+    adisoyadi        String?   @db.VarChar(200)
+    telefon          String?   @db.VarChar(50)
+    adres            String?   @db.Text
+    email            String?   @db.VarChar(250)
+    durum            String?   @default("N") @db.VarChar(1)
+    tarih            DateTime? @db.DateTime(0)
+    gonderilmetarihi DateTime? @db.DateTime(0)
+}
+
+model servisler {
+    ID                     Int       @id @default(autoincrement())
+    F_KODU                 String?   @db.VarChar(6)
+    PARTNO                 String?   @db.Char(3)
+    FIRMA_ADI              String?   @db.VarChar(60)
+    SERVISNO               String?   @db.VarChar(10)
+    SONUC                  String?   @db.VarChar(60)
+    SERVISVEREN            String?   @db.VarChar(30)
+    SERVISALAN             String?   @db.VarChar(30)
+    SERVISBASLAMASAATI     String?   @db.VarChar(5)
+    SERVISBITISSAATI       String?   @db.VarChar(5)
+    VERILENSERVISDETAYI    String?   @db.MediumText
+    ABONEBILDIRMETARIHI    DateTime? @db.DateTime(0)
+    SERVISVERILMETARIHI    DateTime? @db.DateTime(0)
+    SERVISEGIDILMETARIHI   DateTime? @db.DateTime(0)
+    SERVISKESINBITISTARIHI DateTime? @db.DateTime(0)
+    KAPANDI                String?   @default("H") @db.Char(1)
+    tipi                   Int?
+
+    @@index([F_KODU, PARTNO], name: "F_KODU")
+    @@index([SERVISNO], name: "SERVISNO")
+    @@index([SONUC], name: "SONUC")
+}
+
+model servissonuc {
+    ID    Int     @id @default(autoincrement())
+    SONUC String? @db.Char(50)
+
+    @@index([SONUC], name: "MESLEKGRB")
+}
+
+model servistipleri {
+    ID  Int     @id @default(autoincrement())
+    TIP String? @db.Char(50)
+
+    @@index([TIP], name: "MESLEKGRB")
+}
+
+model seskayitlari {
+    ID        Int       @id @default(autoincrement())
+    CH_ID     Int?
+    TYPE      Int?
+    NUMBER    String?   @db.VarChar(25)
+    STARTDATE DateTime? @db.Date
+    ENDDATE   DateTime? @db.Date
+    STARTTIME DateTime? @db.Time(0)
+    ENDTIME   DateTime? @db.Time(0)
+    DURATION  DateTime? @db.Time(0)
+    ACIKLAMA  String?   @db.VarChar(200)
+    SOUNDFILE String?   @db.VarChar(60)
+    F_KODU    String?   @db.VarChar(10)
+    PARTNO    String?   @db.VarChar(3)
+
+    @@index([F_KODU, PARTNO], name: "F_KODU")
+}
+
+model sessions {
+    sid     String   @id @db.VarChar(255)
+    sess    String   @db.Text
+    expired DateTime @db.DateTime(0)
+
+    @@index([expired], name: "sessions_expired_index")
+}
+
+model sinyabasliklari {
+    ID              Int     @id @default(autoincrement())
+    KODU            Int?
+    FORMAT          String? @db.VarChar(10)
+    ACIKLAMASI      String? @db.Char(60)
+    PROTOKOLTURU    Int?
+    MOBILDEGORUNSUN String? @default("H") @db.VarChar(1)
+
+    @@index([FORMAT], name: "FORMAT")
+    @@index([KODU], name: "KODU")
+    @@index([PROTOKOLTURU], name: "PROTOKOLTURU")
+}
+
+model sinyaliletimturleri {
+    ID         Int     @default(autoincrement())
+    SINYALTIPI String  @unique @default("") @db.VarChar(30)
+    KODU       String? @db.VarChar(1)
+
+    @@id([ID, SINYALTIPI])
+}
+
+model sinyaltipleri {
+    ID                  Int      @id @default(autoincrement())
+    KOD                 String?  @unique @db.VarChar(4)
+    SINYALTIPI          String   @db.VarChar(40)
+    DUZELMESI           String?  @db.VarChar(3)
+    SMS_EML_ACIKLAMA    String?  @db.VarChar(100)
+    SESDOSYASI          String?  @db.VarChar(200)
+    ERTELE              String?  @default("H") @db.VarChar(1)
+    TOPLUISLE           String?  @default("H") @db.VarChar(1)
+    TIP                 String?  @default("A") @db.VarChar(1)
+    UCRETSIZSMS         String?  @default("H") @db.Char(1)
+    SMSILEISLE          String?  @default("H") @db.Char(1)
+    DUZELDI_OTM_ISLE    String?  @default("H") @db.Char(1)
+    WEBCANLIFILTRE      String?  @default("H") @db.Char(1)
+    OTM_ERTELEME_SURESI Int      @default(0)
+    degistirilemez      Boolean? @default(false)
+    silinemez           Boolean? @default(false)
+
+    @@index([DUZELMESI], name: "UK_sinyaltipleri_DUZELMESI")
+}
+
+model sinyaltipleri_ {
+    ID                  Int      @id @default(autoincrement())
+    KOD                 String?  @unique @db.VarChar(4)
+    SINYALTIPI          String   @db.VarChar(40)
+    DUZELMESI           String?  @db.VarChar(3)
+    SMS_EML_ACIKLAMA    String?  @db.VarChar(100)
+    SESDOSYASI          String?  @db.VarChar(200)
+    ERTELE              String?  @default("H") @db.VarChar(1)
+    TOPLUISLE           String?  @default("H") @db.VarChar(1)
+    TIP                 String?  @default("A") @db.VarChar(1)
+    UCRETSIZSMS         String?  @default("H") @db.Char(1)
+    SMSILEISLE          String?  @default("H") @db.Char(1)
+    DUZELDI_OTM_ISLE    String?  @default("H") @db.Char(1)
+    WEBCANLIFILTRE      String?  @default("H") @db.Char(1)
+    OTM_ERTELEME_SURESI Int      @default(0)
+    degistirilemez      Boolean? @default(false)
+    silinemez           Boolean? @default(false)
+
+    @@index([DUZELMESI], name: "UK_sinyaltipleri_DUZELMESI")
+}
+
+model sinyalturleri {
+    ID             Int      @id @default(autoincrement())
+    KODU           String?  @db.VarChar(4)
+    ACIKLAMA       String?  @db.VarChar(100)
+    ALARM          String?  @default("E") @db.Char(1)
+    ONCELIK        Int?     @default(5)
+    ZEMINRENGI     Int?     @default(16777215)
+    YAZIRENGI      Int?     @default(0)
+    ERTELENEBILIR  String?  @default("H") @db.Char(1)
+    SINYALTIPID    Int?
+    PROSEDUR       String?  @db.Text
+    degistirilemez Boolean? @default(false)
+    silinemez      Boolean? @default(false)
+
+    @@index([KODU], name: "KODU")
+    @@index([ONCELIK], name: "ONCELIK")
+    @@index([SINYALTIPID], name: "UK_sinyalturleri_SINYALTIPID")
+}
+
+model sinyalturleri_ {
+    ID             Int      @id @default(autoincrement())
+    KODU           String?  @db.VarChar(4)
+    ACIKLAMA       String?  @db.VarChar(100)
+    ALARM          String?  @default("E") @db.Char(1)
+    ONCELIK        Int?     @default(5)
+    ZEMINRENGI     Int?     @default(16777215)
+    YAZIRENGI      Int?     @default(0)
+    ERTELENEBILIR  String?  @default("H") @db.Char(1)
+    SINYALTIPID    Int?
+    PROSEDUR       String?  @db.Text
+    degistirilemez Boolean? @default(false)
+    silinemez      Boolean? @default(false)
+
+    @@index([KODU], name: "KODU")
+    @@index([ONCELIK], name: "ONCELIK")
+    @@index([SINYALTIPID], name: "UK_sinyalturleri_SINYALTIPID")
+}
+
+model sistemkullanicilari {
+    ID            Int     @id @default(autoincrement())
+    F_KODU        String? @db.VarChar(10)
+    PARTNO        String? @db.Char(3)
+    SIRA          Int?    @db.SmallInt
+    ADISOYADI     String? @db.VarChar(30)
+    GOREVI        String? @db.VarChar(30)
+    YAKINLIGI     String? @db.VarChar(100)
+    TEL1          String? @db.VarChar(15)
+    TEL2          String? @db.VarChar(15)
+    TEL3          String? @db.VarChar(15)
+    TEL4          String? @db.VarChar(15)
+    PAROLA        String? @db.VarChar(55)
+    KULLANICIKODU String? @db.VarChar(15)
+    ALARM         String? @default("H") @db.VarChar(1)
+    SICILNO       String? @db.VarChar(10)
+    ALARMSEBEBI   String? @db.VarChar(30)
+    ALARMTIPI     Int?    @default(2)
+
+    @@index([ADISOYADI], name: "ADISOYADI")
+    @@index([F_KODU, PARTNO], name: "F_KODU")
+    @@index([F_KODU, ADISOYADI, TEL1, TEL2, TEL3, TEL4], name: "IDX_sistemkullanicilari")
+    @@index([SIRA], name: "SIRA")
+}
+
+model sistemkullanicilari_ {
+    ID            Int     @id @default(autoincrement())
+    F_KODU        String? @db.VarChar(10)
+    PARTNO        String? @db.Char(3)
+    SIRA          Int?    @db.SmallInt
+    ADISOYADI     String? @db.VarChar(30)
+    GOREVI        String? @db.VarChar(30)
+    YAKINLIGI     String? @db.VarChar(100)
+    TEL1          String? @db.VarChar(15)
+    TEL2          String? @db.VarChar(15)
+    TEL3          String? @db.VarChar(15)
+    TEL4          String? @db.VarChar(15)
+    PAROLA        String? @db.VarChar(255)
+    KULLANICIKODU String? @db.VarChar(255)
+    ALARM         String? @default("H") @db.VarChar(1)
+    SICILNO       String? @db.VarChar(255)
+    ALARMSEBEBI   String? @db.VarChar(255)
+    ALARMTIPI     Int?    @default(2)
+
+    @@index([ADISOYADI], name: "ADISOYADI")
+    @@index([F_KODU, PARTNO], name: "F_KODU")
+    @@index([F_KODU, ADISOYADI, TEL1, TEL2, TEL3, TEL4], name: "IDX_sistemkullanicilari")
+    @@index([SIRA], name: "SIRA")
+}
+
+model sms_emirleri {
+    id          Int       @id @default(autoincrement())
+    emirzamani  DateTime? @db.DateTime(0)
+    emirtipi    Int?      @db.TinyInt
+    mesaj       String?   @db.Text
+    islendi     String?   @default("H") @db.Char(1)
+    mesajsirano Int?
+    telno       String?   @db.VarChar(50)
+    mesgul      String?   @default("H") @db.Char(1)
+}
+
+model sms_giden {
+    ID          Int       @id @default(autoincrement())
+    F_KODU      String?   @db.VarChar(20)
+    PARTNO      String?   @db.VarChar(3)
+    ADI         String?   @db.VarChar(60)
+    MESAJ       String?   @db.Text
+    TARIH       DateTime? @db.DateTime(0)
+    MESAJID     String?   @db.VarChar(20)
+    SONUC       String?   @db.VarChar(150)
+    TELNO       String?   @db.VarChar(50)
+    GONDERILDI  String?   @default("H") @db.VarChar(1)
+    RAPORSONUC  String?   @db.VarChar(150)
+    CH_ID       Int?
+    MESAJSIRANO Int?      @default(-1)
+    BEKLEMEDE   String?   @default("H") @db.VarChar(1)
+    MESAJTIPI   String?   @db.VarChar(32)
+
+    @@index([BEKLEMEDE], name: "BEKLEMEDE")
+    @@index([F_KODU], name: "F_KODU")
+    @@index([GONDERILDI], name: "GONDERILDI")
+    @@index([PARTNO], name: "PARTNO")
+    @@index([TARIH], name: "TARIH")
+}
+
+model sms_giden_arizali {
+    ID          Int       @id @default(autoincrement())
+    F_KODU      String?   @db.VarChar(20)
+    PARTNO      String?   @db.VarChar(3)
+    ADI         String?   @db.VarChar(60)
+    MESAJ       String?   @db.Text
+    TARIH       DateTime? @db.DateTime(0)
+    MESAJID     String?   @db.VarChar(20)
+    SONUC       String?   @db.VarChar(150)
+    TELNO       String?   @db.VarChar(50)
+    GONDERILDI  String?   @default("H") @db.VarChar(1)
+    RAPORSONUC  String?   @db.VarChar(150)
+    CH_ID       Int?
+    MESAJSIRANO String?   @db.VarChar(11)
+    BEKLEMEDE   String?   @default("H") @db.VarChar(1)
+    MESAJTIPI   String?   @db.VarChar(32)
+
+    @@index([BEKLEMEDE], name: "BEKLEMEDE")
+    @@index([F_KODU], name: "F_KODU")
+    @@index([GONDERILDI], name: "GONDERILDI")
+    @@index([PARTNO], name: "PARTNO")
+    @@index([TARIH], name: "TARIH")
+}
+
+model sms_giden_copy {
+    ID          Int       @id @default(autoincrement())
+    F_KODU      String?   @db.VarChar(20)
+    PARTNO      String?   @db.VarChar(3)
+    ADI         String?   @db.VarChar(60)
+    MESAJ       String?   @db.Text
+    TARIH       DateTime? @db.DateTime(0)
+    MESAJID     String?   @db.VarChar(20)
+    SONUC       String?   @db.VarChar(150)
+    TELNO       String?   @db.VarChar(50)
+    GONDERILDI  String?   @default("H") @db.VarChar(1)
+    RAPORSONUC  String?   @db.VarChar(150)
+    CH_ID       Int?
+    MESAJSIRANO Int?      @default(-1)
+    BEKLEMEDE   String?   @default("H") @db.VarChar(1)
+    MESAJTIPI   String?   @db.VarChar(32)
+
+    @@index([BEKLEMEDE], name: "BEKLEMEDE")
+    @@index([F_KODU], name: "F_KODU")
+    @@index([GONDERILDI], name: "GONDERILDI")
+    @@index([PARTNO], name: "PARTNO")
+    @@index([TARIH], name: "TARIH")
+}
+
+model sms_gonderilen {
+    ID         Int       @id @default(autoincrement())
+    F_KODU     String?   @db.VarChar(20)
+    PARTNO     String?   @db.VarChar(3)
+    ADI        String?   @db.VarChar(60)
+    MESAJ      String?   @db.Text
+    TARIH      DateTime? @db.DateTime(0)
+    MESAJID    String?   @db.VarChar(20)
+    SONUC      String?   @db.VarChar(150)
+    TELNO      String?   @db.VarChar(50)
+    GONDERILDI String?   @default("H") @db.VarChar(1)
+    RAPORSONUC String?   @db.VarChar(150)
+    CH_ID      Int?
+
+    @@index([ADI], name: "ADI")
+    @@index([GONDERILDI], name: "GONDERILDI")
+}
+
+model smsayarlari {
+    id             Int       @id @default(autoincrement())
+    aciklama       String?   @db.VarChar(30)
+    smsfirmakodu   String?   @db.VarChar(20)
+    apiKey         String?   @db.VarChar(40)
+    token          String?   @db.VarChar(40)
+    orginator      String    @db.VarChar(30)
+    kullaniciadi   String?   @db.VarChar(20)
+    sifre          String?   @db.VarChar(100)
+    bayikodu       String?   @db.VarChar(50)
+    musterikodu    String?   @db.VarChar(20)
+    aktif          Boolean?
+    kalankontor    Int?
+    uyarilimiti    Int?
+    uyariperiyodu  Int?      @default(10)
+    sonalarmzamani DateTime? @db.DateTime(0)
+}
+
+model smscihazlari {
+    ID                     Int     @id @default(autoincrement())
+    ADI                    String? @db.VarChar(30)
+    COM                    Int?
+    BAUD                   Int?    @default(9600)
+    PARITY                 String? @db.VarChar(10)
+    DATABIT                Int?    @default(8)
+    STOPBIT                Int?    @default(1)
+    FLOWCONTROL            String? @db.VarChar(10)
+    AKTIF                  String? @db.VarChar(20)
+    PCNO                   Int?    @default(1)
+    YUKLENENKONTOR         Int?    @default(0)
+    KULLANILANKONTOR       Int?    @default(0)
+    KALANKONTOR            Int?    @default(0)
+    TOPLAMKULLANILANKONTOR Int?    @default(0)
+
+    @@index([COM], name: "COM")
+}
+
+model smsgenelayarlar {
+    id                      Int       @id @default(autoincrement())
+    smsaraci                Boolean?  @default(false)
+    smskreditakibi          Boolean?  @default(false)
+    abn_bitim_uyari_gun     Int?      @default(15)
+    abn_bitim_uyari_periyod Int?      @default(3)
+    abn_bit_alr_saati       DateTime? @db.Time(6)
+    aynismsbeklemesuresi    Int?      @default(2)
+    yenismsbeklemesuresi    Int?      @default(10)
+    smskaraktersiniri       Int?      @default(160)
+}
+
+model smssablonlari {
+    ID                 Int     @id @default(autoincrement())
+    KOD                String? @db.VarChar(20)
+    SABLON             String? @db.Text
+    POSTWEBLIK         String? @db.VarChar(255)
+    ACIKLAMA           String? @db.Text
+    TIP                Int?
+    SONUCTIPI          Int?
+    SONUCBAS           String? @db.VarChar(20)
+    SONUCBIT           String? @db.VarChar(20)
+    BASARILIDEGERI     String? @db.VarChar(5)
+    BASARILIIDBAS      String? @db.VarChar(20)
+    BASARILIIDBIT      String? @db.VarChar(20)
+    BASARISIZIDBAS     String? @db.VarChar(20)
+    BASARISIZIDBIT     String? @db.VarChar(20)
+    VeyaBASARILIDEGERI String? @db.VarChar(5)
+
+    @@index([KOD], name: "smssablon_kod")
+}
+
+model smssonuctanimlari {
+    ID       Int     @id @default(autoincrement()) @db.UnsignedInt
+    SABLONID Int?
+    KODU     String? @db.VarChar(4)
+    ACIKLAMA String? @db.VarChar(200)
+}
+
+model sonsmsler {
+    ID        Int       @id @default(autoincrement())
+    F_KODU    String?   @db.VarChar(10)
+    PARTNO    String?   @db.VarChar(3)
+    MESAJTIPI String?   @db.VarChar(32)
+    ZAMAN     DateTime? @db.DateTime(0)
+    TELNO     String?   @db.VarChar(20)
+}
+
+model sorumlukodlari {
+    ID          Int     @id @default(autoincrement())
+    SORUMLUKODU Int?
+    ACIKLAMA    String? @db.VarChar(20)
+
+    @@index([SORUMLUKODU], name: "SORUMLUKODU")
+}
+
+model stokkarti {
+    ID              Int     @unique @default(autoincrement())
+    KODU            String? @db.VarChar(10)
+    ADI             String? @db.VarChar(100)
+    ACIKLAMA        String? @db.VarChar(200)
+    RENGI           String? @db.VarChar(15)
+    MARKA           Int?
+    URUNGRUBU       Int?
+    RESIM           Bytes?  @db.Blob
+    BIRIM           Int?
+    GIRENMIKTAR     Float?  @db.Float
+    CIKANMIKTAR     Float?  @db.Float
+    MEVCUTMIKTAR    Float?  @db.Float
+    BARKODU         String? @db.VarChar(20)
+    abn_sms         String? @default("H") @db.Char(1)
+    abn_eposta      String? @default("H") @db.Char(1)
+    abn_IVR         String? @default("H") @db.Char(1)
+    abn_mobil       String? @default("H") @db.Char(1)
+    abn_web         String? @default("H") @db.Char(1)
+    abn_tatil_Takip String? @default("H") @db.Char(1)
+    DOVIZ_TIPI      String? @db.VarChar(3)
+}
+
+model stokozeldurum {
+    ID          Int      @id @default(autoincrement())
+    urunkodu    String?  @db.VarChar(10)
+    SINYALTIPI  String?  @db.Char(3)
+    ALARM       Boolean?
+    SMS         Boolean?
+    EPOSTA      Boolean?
+    IVR         Boolean?
+    PUSHMESSAGE Boolean?
+
+    @@index([urunkodu], name: "urunkodu")
+}
+
+model stoksatisfiyatlari {
+    ID            Int     @unique @default(autoincrement())
+    ISIM          String? @db.VarChar(30)
+    FIYAT         Float?
+    STOK_ID       Int?
+    FIYAT_ISIM_ID Int?
+}
+
+model sunucukomutlari {
+    id         Int       @unique @default(autoincrement())
+    sn         String    @db.VarChar(10)
+    zaman      DateTime? @db.DateTime(0)
+    komutid    Int
+    gonderildi String?   @default("H") @db.VarChar(1)
+    sianame    String?   @db.VarChar(10)
+    cidname    String?   @db.VarChar(10)
+    gelencevap String?   @db.VarChar(255)
+    sifre      String?   @db.VarChar(4)
+    skomut     String?   @db.VarChar(255)
+    freecmd    Boolean?  @default(false)
+    password   String?   @db.VarChar(255)
+}
+
+model sunucukomuttanimlari {
+    id          Int     @unique @default(autoincrement()) @db.UnsignedInt
+    komuttanimi String? @db.VarChar(30)
+    cihazno     Int?
+    state       String? @db.VarChar(10)
+    num         String? @db.Char(10)
+    command     String? @db.VarChar(20)
+    type        String? @db.VarChar(10)
+    ttl         Int?    @default(30)
+    schemaname  String? @db.VarChar(25)
+    OTM_MODULID Int?
+}
+
+model tahsilatturleri {
+    ID             Int      @default(autoincrement())
+    tahsilatturu   String   @default("") @db.Char(50)
+    bayiborclandir Boolean? @default(false)
+
+    @@id([ID, tahsilatturu])
+    @@index([tahsilatturu], name: "MESLEKGRB")
+}
+
+model tarihce {
+    ID            Int       @id @default(autoincrement())
+    ABONEID       Int?
+    F_KODU        String?   @db.VarChar(10)
+    PARTNO        String?   @db.Char(3)
+    UNVANI        String?   @db.VarChar(150)
+    BASLAMATARIHI DateTime? @db.Date
+    BITISTARIHI   DateTime? @db.Date
+    BAGLAYANFIRMA String?   @db.VarChar(60)
+    ACIKLAMA      String?   @db.Text
+
+    @@index([ABONEID], name: "ABONEID")
+    @@index([F_KODU], name: "F_KODU")
+    @@index([PARTNO], name: "PARTNO")
+}
+
+model tatilmeslekgrup {
+    ID          Int  @id @default(autoincrement())
+    MESLEKGRBID Int?
+    TATILGUNID  Int?
+
+    @@index([MESLEKGRBID], name: "MESLEKGRB")
+    @@index([TATILGUNID], name: "TATILGUNID")
+}
+
+model telcevirmeayar {
+    ID    Int     @id @default(autoincrement())
+    TELNO String? @db.VarChar(10)
+    CEVIR String? @db.VarChar(10)
+
+    @@index([TELNO], name: "TELNO")
+}
+
+model terminaller {
+    ID          Int     @id @default(autoincrement())
+    IPADRESI    String? @db.Char(20)
+    TERMINALADI String? @db.Char(50)
+
+    @@index([IPADRESI], name: "IPADRESI")
+}
+
+model toplutahsilat {
+    id             Int       @unique @default(autoincrement())
+    tarih          DateTime? @db.DateTime(0)
+    fisno          String?   @db.VarChar(15)
+    tahsilatiyapan String?   @db.VarChar(35)
+    aciklama       String?   @db.VarChar(255)
+}
+
+model toplutahsilatdetay {
+    id         Int       @id @default(autoincrement())
+    fisid      Int?      @unique
+    cariid     Int?
+    fistipi    Int?
+    tarih      DateTime? @db.Date
+    aciklama   String?   @db.VarChar(255)
+    odemetipi  String?   @db.VarChar(30)
+    vadetarihi DateTime? @db.Date
+    b_a        String?   @db.VarChar(1)
+    tutar      Float?    @db.Float
+}
+
+model ulkeler {
+    ID       Int     @id @default(autoincrement())
+    ULKEKODU String? @db.VarChar(10)
+    ULKE     String? @db.VarChar(50)
+
+    @@index([ULKEKODU], name: "ULKEKODU")
+}
+
+model urungruplari {
+    ID       Int     @unique @default(autoincrement())
+    KODU     String? @db.VarChar(10)
+    ACIKLAMA String? @db.VarChar(100)
+}
+
+model user_log {
+    ID        Int       @id @default(autoincrement())
+    F_KODU    String?   @db.VarChar(10)
+    PARTNO    String?   @db.VarChar(3)
+    KULLANICI String?   @db.VarChar(30)
+    TABLO     String?   @db.VarChar(60)
+    ALANLAR   String?   @db.Text
+    DEGERLER  Bytes?
+    ISLEM     String?   @db.VarChar(30)
+    TARIH     DateTime? @db.DateTime(0)
+
+    @@index([KULLANICI], name: "KULLANICI")
+    @@index([TARIH], name: "TARIH")
+}
+
+model userpushtoken {
+    id     Int     @id @default(autoincrement())
+    mustid Int?
+    token  String? @db.VarChar(255)
+    takip  Boolean @default(false)
+    cihaz  String? @default("A") @db.Char(1)
+}
+
+model users {
+    id                       Int       @id @default(autoincrement()) @db.UnsignedInt
+    email                    String    @db.VarChar(45)
+    password                 String    @db.VarChar(255)
+    salt                     String    @db.VarChar(255)
+    firstname                String?   @db.VarChar(255)
+    lastname                 String?   @db.VarChar(255)
+    username                 String?   @db.VarChar(45)
+    roles                    String?   @default("user") @db.VarChar(255)
+    created_at               DateTime? @default(now()) @db.Timestamp(0)
+    updated_at               DateTime? @default(now()) @db.Timestamp(0)
+    provider                 String?   @default("local") @db.VarChar(255)
+    provider_data            String?   @db.MediumText
+    provider_data_plus       String?   @db.MediumText
+    provider_ids             String?   @db.VarChar(1024)
+    reset_password_token     String?   @db.VarChar(45)
+    reset_password_expires   DateTime? @db.Timestamp(6)
+    email_verification_token String?   @db.VarChar(255)
+    email_verified           Boolean?  @default(false)
+}
+
+model videofied {
+    id       Int     @id @default(autoincrement())
+    F_KODU   String? @db.VarChar(10)
+    PARTNO   String? @db.VarChar(3)
+    SERI     String? @db.VarChar(25)
+    camcount Int?
+    FPV      String? @db.VarChar(5)
+    REF      String? @db.VarChar(20)
+    CNXTYPE  Int?
+
+    @@index([F_KODU, PARTNO], name: "videofied_fkodu")
+}
+
+model videofied_camlist {
+    id       Int     @id @default(autoincrement())
+    F_KODU   String? @db.VarChar(10)
+    PARTNO   String? @db.VarChar(3)
+    SERI     String? @db.VarChar(25)
+    CAMINDEX Int?
+    CAMNAME  String? @db.VarChar(30)
+}
+
+model videofied_cmdlist {
+    id       Int     @id @default(autoincrement())
+    F_KODU   String? @db.VarChar(10)
+    PARTNO   String? @db.VarChar(3)
+    SERI     String? @db.VarChar(25)
+    CMDINDEX Int?
+    CMDNAME  String? @db.VarChar(30)
+}
+
+model videofied_logs {
+    id        Int       @id @default(autoincrement())
+    F_KODU    String?   @db.VarChar(10)
+    PARTNO    String?   @db.VarChar(3)
+    SERI      String?   @db.VarChar(25)
+    EDATE     DateTime? @db.DateTime(0)
+    LOGDATE   DateTime? @db.DateTime(0)
+    LOGDETAIL String?   @db.VarChar(255)
+
+    @@index([F_KODU, PARTNO], name: "videofiedlogs_F_KODU")
+}
+
+model webmenu {
+    id         Int     @id @default(autoincrement())
+    adi        String? @db.VarChar(150)
+    ustid      Int?
+    sira       Int?
+    icon       String? @db.VarChar(150)
+    varsayilan Int?    @default(1)
+    kodu       String? @db.VarChar(50)
+
+    @@index([ustid], name: "index")
+}
+
+model webtalepler {
+    ID     Int       @id @default(autoincrement())
+    TARIH  DateTime? @db.DateTime(0)
+    F_KODU String?   @db.VarChar(10)
+    PARTNO String?   @db.VarChar(3)
+    KONU   String?   @db.VarChar(100)
+    DETAY  String?   @db.Text
+    AKTIF  String?   @default("H") @db.Char(1)
+}
+
+model yazilimservisleri {
+    ID                Int       @id @default(autoincrement())
+    serviskodu        String?   @db.VarChar(10)
+    Servisaciklamasi  String?   @db.VarChar(50)
+    sonaktiflikzamani DateTime? @db.DateTime(0)
+    aktif             Boolean?  @default(true)
+    servisdisisuresi  Int?      @default(180)
+    server1activetime DateTime? @db.DateTime(0)
+    server2activetime DateTime? @db.DateTime(0)
+    Server1Alarm      Boolean?  @default(false)
+    Server2Alarm      Boolean?  @default(false)
+
+    @@index([serviskodu, sonaktiflikzamani], name: "serviskodu")
+}
+
+model yetkitanimlari {
+    ID         Int     @unique @default(autoincrement())
+    KATAGORIID Int?
+    KATEGORI   String? @db.VarChar(20)
+    BOLUMID    Int?
+    BOLUM      String? @db.VarChar(60)
+    EKLE       String? @default("E") @db.VarChar(1)
+    SIL        String? @default("E") @db.VarChar(1)
+    GOR        String? @default("E") @db.VarChar(1)
+    DUZELT     String? @default("E") @db.VarChar(1)
+    SORGU      String? @default("E") @db.VarChar(1)
+
+    @@index([BOLUMID], name: "BOLUMID")
+    @@index([KATAGORIID], name: "KATAGORIID")
+}
