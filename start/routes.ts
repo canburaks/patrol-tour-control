@@ -44,7 +44,7 @@ Route.post('/form-endpoint', async ctx => {
 
 // COMPANY AND OPERATOR
 /* OPERATOR */
-Route.get(`/operator/:OP_KODU/:F_KODU?/:PAGE?`, async ctx => {
+Route.get(`/_operator/:OP_KODU/:F_KODU?/:PAGE?`, async ctx => {
 	let { request, response, params, session, view } = ctx
 	// URL values
 	const OP_KODU = params.OP_KODU
@@ -100,6 +100,77 @@ Route.get(`/operator/:OP_KODU/:F_KODU?/:PAGE?`, async ctx => {
 	return response.redirect().toPath('/logout')
 })
 
+Route.get(`/operator/:OP_KODU/:F_KODU?/:DATE?`, async ctx => {
+	let { request, response, params, session, view } = ctx
+	// URL values
+	const OP_KODU = params.OP_KODU
+	const TARGET_PAGE = params.DATE
+	const DATE = params.DATE
+	const FIRMA_KODU = params.F_KODU
+	// Session values
+	const PAROLA = session.get('PAROLA')
+	const ACCOUNT_TYPE = session.get('ACCOUNT_TYPE')
+	const GIRIS_KODU = session.get('GIRIS_KODU')
+	// CHECK
+	console.log('OPERATOR check: ', OP_KODU, GIRIS_KODU, PAROLA, FIRMA_KODU, TARGET_PAGE)
+	if (OP_KODU === GIRIS_KODU) {
+		const OPERATOR = await new Bayi(GIRIS_KODU, PAROLA)
+		const isAuthorized = await OPERATOR.init()
+		const haveMusteriDate = await OPERATOR.getMusteriler()
+		// RENDER DASHBOARD
+		if (!FIRMA_KODU) {
+			console.log('No Company')
+			return view.render('operator', { OPERATOR })
+		}
+		// CHECK IF LOOKING COMPANY MESAJLAR
+		if (FIRMA_KODU && TARGET_PAGE) {
+			console.log('Operator is looking a company data')
+			// CHECK WHETHER THE COMPANY IS ITS CLIENT
+			if (OPERATOR.MUSTERI_FIRMA_CODES.includes(FIRMA_KODU)) {
+				console.log("target and current company ID's are matched")
+				let SESSION_MUSTERI
+				// Get MUSTERI FROM SESSION
+				SESSION_MUSTERI = session.get('MUSTERI')
+				//console.log('SESSION', SESSION_MUSTERI)
+				const NEW_MUSTERI_OBJECT = new Musteri(FIRMA_KODU, null)
+
+				if (!SESSION_MUSTERI) {
+					session.put('MUSTERI', NEW_MUSTERI_OBJECT)
+					response.cookie('MUSTERI', NEW_MUSTERI_OBJECT)
+				}
+
+				//console.log('NEW MUSTERI', NEW_MUSTERI_OBJECT)
+				//console.log('session müşteri: ', SESSION_MUSTERI)
+				let currentDateMesajlar = await NEW_MUSTERI_OBJECT.getMessagesbyDate({
+					DATE: params.DATE
+				})
+				SESSION_MUSTERI = session.get('MUSTERI')
+				console.log('SE', SESSION_MUSTERI)
+				//console.log('currentDateMesajlar', currentDateMesajlar)
+				NEW_MUSTERI_OBJECT.MESAJLAR = {
+					...SESSION_MUSTERI.MESAJLAR,
+					...NEW_MUSTERI_OBJECT.MESAJLAR
+				}
+				//console.log('Mesajlar', NEW_MUSTERI_OBJECT)
+				SESSION_MUSTERI.MESAJLAR[DATE] = currentDateMesajlar
+				//const UPDATED_MUSTERI = { ...SESSION_MUSTERI, ...NEW_MUSTERI_OBJECT }
+				session.put('MUSTERI', NEW_MUSTERI_OBJECT)
+				response.cookie('MUSTERI', NEW_MUSTERI_OBJECT)
+				//console.log('company mesajlar', SESSION_MUSTERI)
+				return view.render('company', {
+					MUSTERI: NEW_MUSTERI_OBJECT,
+					DATE,
+					PAGE: TARGET_PAGE
+				})
+			}
+			console.log('Error: this is not client of this OPERATOR.')
+			return response.redirect().toPath(`/operator/${OP_KODU}/`)
+		}
+	} else {
+	}
+	console.log("Error: Session operator code and session operator code doesn't match.")
+	return response.redirect().toPath('/logout')
+})
 /* COMPANY */
 /* COMPANY */
 Route.get('/company/:F_KODU/:DATE?', async ctx => {
