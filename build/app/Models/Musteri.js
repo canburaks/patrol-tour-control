@@ -37,7 +37,6 @@ class Musteri {
     async authorize() {
         const musteriData = await Musteri.prisma.queryMusteri(this.GIRIS_KODU, this.PAROLA);
         if (musteriData) {
-            console.log('Musteri/Company is authenticated', musteriData);
             this.AUTH = true;
             this.ID = musteriData.ID;
             this.NAME = musteriData.FIRMA_ADI;
@@ -56,7 +55,6 @@ class Musteri {
     }
     async getMessagesbyPage(params) {
         const mesajData = await Musteri.prisma.queryMesajlar(params);
-        console.log('mesajdata', mesajData);
         assert_1.default(mesajData, `Mesaj/sinyal data for FIRMA_KODU:${this.FIRMA_KODU}--PAGE:${params.PAGE} is null/undefined`);
         assert_1.default(mesajData.length > 0, `There are no mesaj/sinyal for FIRMA_KODU:${this.FIRMA_KODU}--PAGE:${params.PAGE}`);
         this.MESAJLAR[params.PAGE] = mesajData;
@@ -92,9 +90,7 @@ class Musteri {
             START = today.toSQLDate();
             END = tomorrow.toSQLDate();
         }
-        const raw = `SELECT ALARMKODU, BOLGE, KULLANICI, MESAJTIPI, MESAJ, TARIH FROM mesajlar WHERE F_KODU = "${this.GIRIS_KODU}" AND TARIH BETWEEN "${START}" AND "${END} LIMIT = 5";`;
-        console.log('raw', raw);
-        console.log('START END', START, END);
+        const raw = `SELECT ALARMKODU, BOLGE, KULLANICI, MESAJTIPI, MESAJ, TARIH FROM mesajlar WHERE  ALARMKODU="E120" AND F_KODU = "${this.GIRIS_KODU}" AND TARIH BETWEEN "${START}" AND "${END} LIMIT = 5";`;
         let rawMesajData = await PrismaController_1.prisma.$queryRaw(raw);
         let mesajData = rawMesajData.map(r => ({
             ...r,

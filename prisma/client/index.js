@@ -3212,7 +3212,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "/home/cbs/Projects/Github/patrol-tour-control-ssr/prisma/client",
+      "value": "/Users/webmeister/Github/patrol-tour-control/prisma/client",
       "fromEnvVar": null
     },
     "config": {},
@@ -3254,8 +3254,8 @@ Object.assign(exports, Prisma)
  * In order to make `ncc` and `@vercel/nft` happy.
  * The process.cwd() annotation is only needed for https://github.com/vercel/vercel/tree/master/packages/now-next
 **/
-path.join(__dirname, 'query-engine-debian-openssl-1.1.x');
-path.join(process.cwd(), './prisma/client/query-engine-debian-openssl-1.1.x');
+path.join(__dirname, 'query-engine-darwin');
+path.join(process.cwd(), './prisma/client/query-engine-darwin');
 
 /**
  * Annotation for `@vercel/nft`

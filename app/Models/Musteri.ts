@@ -17,7 +17,7 @@ export default class Musteri {
 	public MESAJLAR = {}
 	public LATEST_MESAJLAR = []
 
-	constructor(F_KODU, MPAROLA) {
+	constructor(F_KODU, MPAROLA: any) {
 		this.PAROLA = MPAROLA
 		this.GIRIS_KODU = F_KODU
 	}
@@ -26,7 +26,7 @@ export default class Musteri {
 		const musteriData = await Musteri.prisma.queryMusteri(this.GIRIS_KODU, this.PAROLA)
 		// IF PASSWORD IS CORRECT
 		if (musteriData) {
-			console.log('Musteri/Company is authenticated', musteriData)
+			//console.log('Musteri/Company is authenticated', musteriData)
 			this.AUTH = true
 			this.ID = musteriData.ID
 			this.NAME = musteriData.FIRMA_ADI
@@ -48,7 +48,7 @@ export default class Musteri {
 	}
 	public async getMessagesbyPage(params) {
 		const mesajData = await Musteri.prisma.queryMesajlar(params)
-		console.log('mesajdata', mesajData)
+		//console.log('mesajdata', mesajData)
 		assert(
 			mesajData,
 			`Mesaj/sinyal data for FIRMA_KODU:${this.FIRMA_KODU}--PAGE:${params.PAGE} is null/undefined`
@@ -90,9 +90,9 @@ export default class Musteri {
 			START = today.toSQLDate()
 			END = tomorrow.toSQLDate()
 		}
-		const raw = `SELECT ALARMKODU, BOLGE, KULLANICI, MESAJTIPI, MESAJ, TARIH FROM mesajlar WHERE F_KODU = "${this.GIRIS_KODU}" AND TARIH BETWEEN "${START}" AND "${END} LIMIT = 5";`
-		console.log('raw', raw)
-		console.log('START END', START, END)
+		const raw = `SELECT ALARMKODU, BOLGE, KULLANICI, MESAJTIPI, MESAJ, TARIH FROM mesajlar WHERE  ALARMKODU="E120" AND F_KODU = "${this.GIRIS_KODU}" AND TARIH BETWEEN "${START}" AND "${END} LIMIT = 5";`
+		//console.log('raw', raw)
+		//console.log('START END', START, END)
 		let rawMesajData = await prisma.$queryRaw(raw)
 		let mesajData = rawMesajData.map(r => ({
 			...r,

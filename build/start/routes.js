@@ -16,7 +16,7 @@ Route_1.default.get('/form', async (ctx) => {
 Route_1.default.post('/form-endpoint', async (ctx) => {
     return new MailController_1.default().formHandler(ctx);
 });
-Route_1.default.get(`/operator/:OP_KODU/:F_KODU?/:PAGE?`, async (ctx) => {
+Route_1.default.get(`/_operator/:OP_KODU/:F_KODU?/:PAGE?`, async (ctx) => {
     let { request, response, params, session, view } = ctx;
     const OP_KODU = params.OP_KODU;
     const TARGET_PAGE = params.PAGE;
@@ -55,6 +55,62 @@ Route_1.default.get(`/operator/:OP_KODU/:F_KODU?/:PAGE?`, async (ctx) => {
                     OPERATOR,
                     PAGE: TARGET_PAGE,
                     MUSTERI: currentMusteri
+                });
+            }
+            console.log('Error: this is not client of this OPERATOR.');
+            return response.redirect().toPath(`/operator/${OP_KODU}/`);
+        }
+    }
+    else {
+    }
+    console.log("Error: Session operator code and session operator code doesn't match.");
+    return response.redirect().toPath('/logout');
+});
+Route_1.default.get(`/operator/:OP_KODU/:F_KODU?/:DATE?`, async (ctx) => {
+    let { request, response, params, session, view } = ctx;
+    const OP_KODU = params.OP_KODU;
+    const TARGET_PAGE = params.DATE;
+    const DATE = params.DATE;
+    const FIRMA_KODU = params.F_KODU;
+    const PAROLA = session.get('PAROLA');
+    const ACCOUNT_TYPE = session.get('ACCOUNT_TYPE');
+    const GIRIS_KODU = session.get('GIRIS_KODU');
+    console.log('OPERATOR check: ', OP_KODU, GIRIS_KODU, PAROLA, FIRMA_KODU, TARGET_PAGE);
+    if (OP_KODU === GIRIS_KODU) {
+        const OPERATOR = await new Bayi_1.default(GIRIS_KODU, PAROLA);
+        const isAuthorized = await OPERATOR.init();
+        const haveMusteriDate = await OPERATOR.getMusteriler();
+        if (!FIRMA_KODU) {
+            console.log('No Company');
+            return view.render('operator', { OPERATOR });
+        }
+        if (FIRMA_KODU && TARGET_PAGE) {
+            console.log('Operator is looking a company data');
+            if (OPERATOR.MUSTERI_FIRMA_CODES.includes(FIRMA_KODU)) {
+                console.log("target and current company ID's are matched");
+                let SESSION_MUSTERI;
+                SESSION_MUSTERI = session.get('MUSTERI');
+                const NEW_MUSTERI_OBJECT = new Musteri_1.default(FIRMA_KODU, null);
+                if (!SESSION_MUSTERI) {
+                    session.put('MUSTERI', NEW_MUSTERI_OBJECT);
+                    response.cookie('MUSTERI', NEW_MUSTERI_OBJECT);
+                }
+                let currentDateMesajlar = await NEW_MUSTERI_OBJECT.getMessagesbyDate({
+                    DATE: params.DATE
+                });
+                SESSION_MUSTERI = session.get('MUSTERI');
+                console.log('SE', SESSION_MUSTERI);
+                NEW_MUSTERI_OBJECT.MESAJLAR = {
+                    ...SESSION_MUSTERI.MESAJLAR,
+                    ...NEW_MUSTERI_OBJECT.MESAJLAR
+                };
+                SESSION_MUSTERI.MESAJLAR[DATE] = currentDateMesajlar;
+                session.put('MUSTERI', NEW_MUSTERI_OBJECT);
+                response.cookie('MUSTERI', NEW_MUSTERI_OBJECT);
+                return view.render('company', {
+                    MUSTERI: NEW_MUSTERI_OBJECT,
+                    DATE,
+                    PAGE: TARGET_PAGE
                 });
             }
             console.log('Error: this is not client of this OPERATOR.');

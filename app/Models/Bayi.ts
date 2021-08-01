@@ -22,17 +22,17 @@ export default class Bayi {
 	public async init() {
 		let isAuthorized = await this.authorize()
 		if (!isAuthorized) {
-			console.log('NOT AUTHORIZED. BAYI GIRIS KODU: ', this.GIRIS_KODU)
+			//console.log('NOT AUTHORIZED. BAYI GIRIS KODU: ', this.GIRIS_KODU)
 			return false
 		}
 		if (isAuthorized) {
-			console.log('Successfully authorized. GIRIS KODU: ', this.GIRIS_KODU)
+			//console.log('Successfully authorized. GIRIS KODU: ', this.GIRIS_KODU)
 			let bayiData = await this.getBayiData()
 			if (!bayiData) {
 				console.log('Error: There is no BAYI data with GIRIS KODU: ', this.GIRIS_KODU)
 				return false
 			}
-			console.log('Successfully get BAYI data with GIRIS_KODU: ', this.GIRIS_KODU)
+			//console.log('Successfully get BAYI data with GIRIS_KODU: ', this.GIRIS_KODU)
 			let musteriData = await this.getMusteriler()
 			if (!musteriData) {
 				console.log('Error: No Musteri data of BAYI with GIRIS KODU: ', this.GIRIS_KODU)
@@ -44,7 +44,7 @@ export default class Bayi {
 
 	public async authorize() {
 		const operatorData = await Bayi.prisma.queryOperators(this.GIRIS_KODU, this.PAROLA)
-		console.log('query from bayi: ', operatorData)
+		//console.log('query from bayi: ', operatorData)
 		// IF PASSWORD IS CORRECT
 		if (operatorData) {
 			this.AUTH = true
@@ -57,7 +57,7 @@ export default class Bayi {
 
 	public async getBayiData() {
 		const bayilerData = await Bayi.prisma.queryBayiler(this.GIRIS_KODU)
-		console.log('query bayi from bayi: ', bayilerData)
+		//console.log('query bayi from bayi: ', bayilerData)
 		this.BAYI_ADI = bayilerData.ADI
 		this.NAME = bayilerData.ADI
 		if (bayilerData) return true
