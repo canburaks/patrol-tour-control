@@ -46,6 +46,18 @@ class Musteri {
         }
         return false;
     }
+    async authorizeWithoutPassword() {
+        const musteriData = await Musteri.prisma.queryMusteriWithoutPassword(this.GIRIS_KODU);
+        if (musteriData) {
+            this.AUTH = true;
+            this.ID = musteriData.ID;
+            this.NAME = musteriData.FIRMA_ADI;
+            this.FIRMA_ADI = musteriData.FIRMA_ADI;
+            this.BAYI_ID = musteriData.BAYI;
+            return true;
+        }
+        return false;
+    }
     async getLatestMessages() {
         const mesajData = await Musteri.prisma.queryLatestMessageByMuster(this.FIRMA_KODU);
         assert_1.default(mesajData, `Latest mesajData for FIRMA_KODU:${this.FIRMA_KODU} is null/undefined`);

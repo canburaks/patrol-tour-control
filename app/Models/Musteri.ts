@@ -36,6 +36,20 @@ export default class Musteri {
 		}
 		return false
 	}
+	public async authorizeWithoutPassword() {
+		const musteriData = await Musteri.prisma.queryMusteriWithoutPassword(this.GIRIS_KODU)
+		// IF PASSWORD IS CORRECT
+		if (musteriData) {
+			//console.log('Musteri/Company is authenticated', musteriData)
+			this.AUTH = true
+			this.ID = musteriData.ID
+			this.NAME = musteriData.FIRMA_ADI
+			this.FIRMA_ADI = musteriData.FIRMA_ADI
+			this.BAYI_ID = musteriData.BAYI
+			return true
+		}
+		return false
+	}
 	public async getLatestMessages() {
 		const mesajData = await Musteri.prisma.queryLatestMessageByMuster(this.FIRMA_KODU)
 		assert(mesajData, `Latest mesajData for FIRMA_KODU:${this.FIRMA_KODU} is null/undefined`)

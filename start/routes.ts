@@ -38,7 +38,7 @@ Route.get('/form', async ctx => {
 
 // FORM ENDPOINT
 Route.post('/form-endpoint', async ctx => {
-	return new MailController().formHandler(ctx)
+	return await new MailController().formHandler(ctx)
 })
 /*-------------------------------------*/
 
@@ -133,6 +133,7 @@ Route.get(`/operator/:OP_KODU/:F_KODU?/:DATE?`, async ctx => {
 				SESSION_MUSTERI = session.get('MUSTERI')
 				//console.log('SESSION', SESSION_MUSTERI)
 				const NEW_MUSTERI_OBJECT = new Musteri(FIRMA_KODU, null)
+				await NEW_MUSTERI_OBJECT.authorizeWithoutPassword()
 
 				if (!SESSION_MUSTERI) {
 					session.put('MUSTERI', NEW_MUSTERI_OBJECT)
@@ -158,6 +159,7 @@ Route.get(`/operator/:OP_KODU/:F_KODU?/:DATE?`, async ctx => {
 				response.cookie('MUSTERI', NEW_MUSTERI_OBJECT)
 				//console.log('company mesajlar', SESSION_MUSTERI)
 				return view.render('company', {
+					OPERATOR,
 					MUSTERI: NEW_MUSTERI_OBJECT,
 					DATE,
 					PAGE: TARGET_PAGE
