@@ -193,6 +193,19 @@ class PrismaController {
             }
         });
     }
+    async queryMusteriWithoutPassword(F_KODU) {
+        return await PrismaController.client.musteri.findFirst({
+            where: {
+                F_KODU: F_KODU
+            },
+            select: {
+                ID: true,
+                F_KODU: true,
+                FIRMA_ADI: true,
+                BAYI: true
+            }
+        });
+    }
     async queryMusteriByBayi(BAYI) {
         return await PrismaController.client.musteri.findMany({
             where: {

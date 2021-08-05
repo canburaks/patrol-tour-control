@@ -14,7 +14,7 @@ Route_1.default.get('/form', async (ctx) => {
     return ctx.view.render('emails/form');
 });
 Route_1.default.post('/form-endpoint', async (ctx) => {
-    return new MailController_1.default().formHandler(ctx);
+    return await new MailController_1.default().formHandler(ctx);
 });
 Route_1.default.get(`/_operator/:OP_KODU/:F_KODU?/:PAGE?`, async (ctx) => {
     let { request, response, params, session, view } = ctx;
@@ -85,6 +85,7 @@ Route_1.default.get(`/operator/:OP_KODU/:F_KODU?/:DATE?`, async (ctx) => {
                 let SESSION_MUSTERI;
                 SESSION_MUSTERI = session.get('MUSTERI');
                 const NEW_MUSTERI_OBJECT = new Musteri_1.default(FIRMA_KODU, null);
+                await NEW_MUSTERI_OBJECT.authorizeWithoutPassword();
                 if (!SESSION_MUSTERI) {
                     session.put('MUSTERI', NEW_MUSTERI_OBJECT);
                     response.cookie('MUSTERI', NEW_MUSTERI_OBJECT);
@@ -102,6 +103,7 @@ Route_1.default.get(`/operator/:OP_KODU/:F_KODU?/:DATE?`, async (ctx) => {
                 session.put('MUSTERI', NEW_MUSTERI_OBJECT);
                 response.cookie('MUSTERI', NEW_MUSTERI_OBJECT);
                 return view.render('company', {
+                    OPERATOR,
                     MUSTERI: NEW_MUSTERI_OBJECT,
                     DATE,
                     PAGE: TARGET_PAGE
