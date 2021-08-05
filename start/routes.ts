@@ -55,7 +55,7 @@ Route.get(`/_operator/:OP_KODU/:F_KODU?/:PAGE?`, async ctx => {
 	const ACCOUNT_TYPE = session.get('ACCOUNT_TYPE')
 	const GIRIS_KODU = session.get('GIRIS_KODU')
 	// CHECK
-	console.log('OPERATOR check: ', OP_KODU, GIRIS_KODU, PAROLA, FIRMA_KODU, TARGET_PAGE)
+	//console.log('OPERATOR check: ', OP_KODU, GIRIS_KODU, PAROLA, FIRMA_KODU, TARGET_PAGE)
 	if (OP_KODU === GIRIS_KODU) {
 		const OPERATOR = await new Bayi(GIRIS_KODU, PAROLA)
 		const isAuthorized = await OPERATOR.init()
@@ -83,20 +83,20 @@ Route.get(`/_operator/:OP_KODU/:F_KODU?/:PAGE?`, async ctx => {
 					currentMusteri.MESAJLAR = {}
 					currentMusteri.MESAJLAR[TARGET_PAGE] = currentPageData
 				}
-				console.log('parsed MUSTERI data', currentMusteri)
-				console.log('final operator data: ', OPERATOR)
+				//console.log('parsed MUSTERI data', currentMusteri)
+				//console.log('final operator data: ', OPERATOR)
 				return view.render('operator', {
 					OPERATOR,
 					PAGE: TARGET_PAGE,
 					MUSTERI: currentMusteri
 				})
 			}
-			console.log('Error: this is not client of this OPERATOR.')
+			//console.log('Error: this is not client of this OPERATOR.')
 			return response.redirect().toPath(`/operator/${OP_KODU}/`)
 		}
 	} else {
 	}
-	console.log("Error: Session operator code and session operator code doesn't match.")
+	//console.log("Error: Session operator code and session operator code doesn't match.")
 	return response.redirect().toPath('/logout')
 })
 
@@ -112,7 +112,7 @@ Route.get(`/operator/:OP_KODU/:F_KODU?/:DATE?`, async ctx => {
 	const ACCOUNT_TYPE = session.get('ACCOUNT_TYPE')
 	const GIRIS_KODU = session.get('GIRIS_KODU')
 	// CHECK
-	console.log('OPERATOR check: ', OP_KODU, GIRIS_KODU, PAROLA, FIRMA_KODU, TARGET_PAGE)
+	//console.log('OPERATOR check: ', OP_KODU, GIRIS_KODU, PAROLA, FIRMA_KODU, TARGET_PAGE)
 	if (OP_KODU === GIRIS_KODU) {
 		const OPERATOR = await new Bayi(GIRIS_KODU, PAROLA)
 		const isAuthorized = await OPERATOR.init()
@@ -163,31 +163,31 @@ Route.get(`/operator/:OP_KODU/:F_KODU?/:DATE?`, async ctx => {
 					PAGE: TARGET_PAGE
 				})
 			}
-			console.log('Error: this is not client of this OPERATOR.')
+			//console.log('Error: this is not client of this OPERATOR.')
 			return response.redirect().toPath(`/operator/${OP_KODU}/`)
 		}
 	} else {
 	}
-	console.log("Error: Session operator code and session operator code doesn't match.")
+	//console.log("Error: Session operator code and session operator code doesn't match.")
 	return response.redirect().toPath('/logout')
 })
 /* COMPANY */
 /* COMPANY */
 Route.get('/company/:F_KODU/:DATE?', async ctx => {
 	let { request, response, params, session, view } = ctx
-	console.log('params', params)
+	//console.log('params', params)
 	// URL values
 	const TARGET_FIRMA_KODU = params.F_KODU
 	const DATE = params.DATE
-	console.log('company route: ', params.F_KODU, params.DATE)
+	//console.log('company route: ', params.F_KODU, params.DATE)
 	// Session values
 	const PAROLA = session.get('PAROLA')
 	const ACCOUNT_TYPE = session.get('ACCOUNT_TYPE')
 	const GIRIS_KODU = session.get('GIRIS_KODU')
-	console.log('company route values: ', TARGET_FIRMA_KODU, PAROLA, GIRIS_KODU, ACCOUNT_TYPE)
+	//console.log('company route values: ', TARGET_FIRMA_KODU, PAROLA, GIRIS_KODU, ACCOUNT_TYPE)
 	// musteri Object
 	if (parseInt(GIRIS_KODU) === parseInt(TARGET_FIRMA_KODU)) {
-		console.log("target and current company ID's are matched")
+		//console.log("target and current company ID's are matched")
 		// Get MUSTERI FROM SESSION
 		const SESSION_MUSTERI = session.get('MUSTERI')
 		const NEW_MUSTERI_OBJECT = new Musteri(SESSION_MUSTERI.GIRIS_KODU, SESSION_MUSTERI.PAROLA)
@@ -212,12 +212,12 @@ Route.get('/_company/:F_KODU/:PAGE?', async ctx => {
 	// URL values
 	const TARGET_FIRMA_KODU = params.F_KODU
 	const PAGE = parseInt(params.PAGE) || 1
-	console.log('company route: ', params.F_KODU, params.PAGE)
+	//console.log('company route: ', params.F_KODU, params.PAGE)
 	// Session values
 	const PAROLA = session.get('PAROLA')
 	const ACCOUNT_TYPE = session.get('ACCOUNT_TYPE')
 	const GIRIS_KODU = session.get('GIRIS_KODU')
-	console.log('company route values: ', TARGET_FIRMA_KODU, PAROLA, GIRIS_KODU, ACCOUNT_TYPE)
+	//console.log('company route values: ', TARGET_FIRMA_KODU, PAROLA, GIRIS_KODU, ACCOUNT_TYPE)
 	// musteri Object
 	if (parseInt(GIRIS_KODU) === parseInt(TARGET_FIRMA_KODU)) {
 		console.log("target and current company ID's are matched")
@@ -241,7 +241,7 @@ Route.get('/login', async ctx => {
 	let { request, response, session, view } = ctx
 	let sessionValue = session.get(COOKIE_NAME, {})
 	let sessionError = session.get('Error')
-	console.log('login error: ', sessionError)
+	//console.log('login error: ', sessionError)
 	//console.log('Login route session value: ', sessionError)
 	return view.render('auth/login', { error: sessionError && sessionError })
 })
@@ -250,7 +250,7 @@ Route.post('/login', async ctx => {
 	const GIRIS_KODU = ctx.request.input('accountId')
 	const PAROLA = ctx.request.input('password')
 	const ACCOUNT_TYPE = ctx.request.input('accountType')
-	console.log('Form values: ', GIRIS_KODU, PAROLA, ACCOUNT_TYPE)
+	//console.log('Form values: ', GIRIS_KODU, PAROLA, ACCOUNT_TYPE)
 	if (!GIRIS_KODU || !PAROLA || !ACCOUNT_TYPE) {
 		return ctx.response.redirect().toPath('/login')
 	}
@@ -259,7 +259,7 @@ Route.post('/login', async ctx => {
 		const OPERATOR = await new Bayi(GIRIS_KODU, PAROLA)
 		const isAuthorized = await OPERATOR.init()
 		if (isAuthorized) {
-			console.log('Successfully logging...', GIRIS_KODU, PAROLA, ACCOUNT_TYPE)
+			//console.log('Successfully logging...', GIRIS_KODU, PAROLA, ACCOUNT_TYPE)
 			ctx.session.put('PAROLA', PAROLA)
 			ctx.response.cookie('PAROLA', PAROLA)
 			ctx.session.put('ACCOUNT_TYPE', ACCOUNT_TYPE)
