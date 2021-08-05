@@ -1,3 +1,5 @@
+import '../css/app.css'
+
 /*
 import 'regenerator-runtime/runtime.js'
 import React from 'react'
