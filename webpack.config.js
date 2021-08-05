@@ -67,6 +67,10 @@ Encore.copyFiles({
 	to: 'js/libs/[path][name].[ext]'
 })
 Encore.copyFiles({
+	from: './resources/css',
+	to: 'css/[path][name].[ext]'
+})
+Encore.copyFiles({
 	from: './resources/css/libs',
 	to: 'css/libs/[path][name].[ext]'
 })
